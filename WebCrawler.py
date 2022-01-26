@@ -4,13 +4,10 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 
 class WebCrawler:
-    def __init__(self):
+    def __init__(self, startUrl):
+        if startUrl == '':
+            startUrl = 'https://google.com'
         self.service = Service(ChromeDriverManager().install())
-        self.driver = webdriver.Chrome(service=self.service, chrome_options=self.options())
+        self.driver = webdriver.Chrome(service=self.service)
+        self.driver.get(startUrl)
 
-    def options(self):
-        result = webdriver.ChromeOptions()
-        return result
-
-    def openWindow(self):
-        self.driver.maximize_window(self)
