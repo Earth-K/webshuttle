@@ -19,7 +19,7 @@ class MyApp(QWidget):
         self._logBox = QTextEdit(self)
         self._logBox.setReadOnly(True)
         startBtn = QPushButton('Browser Open', self)
-        startBtn.clicked.connect(self._openWindow)
+        startBtn.clicked.connect(self._openBrowser)
         self._lineText = QLineEdit()
         self._lineText.setPlaceholderText('https://example.com')
         self.setLayout(self._vboxLayout(self._lineText, startBtn, self._logBox))
@@ -38,7 +38,7 @@ class MyApp(QWidget):
         result.addWidget(logBox)
         return result
 
-    def _openWindow(self):
+    def _openBrowser(self):
         self._webCrawler = WebCrawler(self._lineText.text())
 
 
