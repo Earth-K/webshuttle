@@ -41,6 +41,7 @@ class MyApp(QWidget):
     def _openBrowser(self):
         self._webCrawler = WebCrawler(self._lineText.text())
         self._addMouseOverLeave()
+        self._addTooltip()
 
     def _addMouseOverLeave(self):
         script = ''' 
@@ -60,6 +61,29 @@ class MyApp(QWidget):
           }
         }
         func(childNodes);
+        '''
+        self._webCrawler.executeJs(script)
+
+    def _addTooltip(self):
+        script = ''' 
+        let wsTooltip = document.createElement('div');
+        wsTooltip.id = "ws-tooltip";
+        wsTooltip.style.width = "100px";
+        wsTooltip.style.height = "45px";
+        wsTooltip.style.backgroundColor = "tomato";
+        wsTooltip.style.display = "flex";
+        wsTooltip.style.justifyContent = "center";
+        wsTooltip.style.alignItems = "center";
+        
+        let wsBtn = document.createElement('button');
+        wsBtn.id = "ws-select-btn";
+        wsBtn.innerText = "선택";
+        wsBtn.style.width = "50px";
+        wsBtn.style.height = "30px"
+        
+        wsTooltip.appendChild(wsBtn);
+        
+        document.body.appendChild(wsTooltip);
         '''
         self._webCrawler.executeJs(script)
 
