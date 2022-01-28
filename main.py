@@ -40,9 +40,9 @@ class MyApp(QWidget):
 
     def _openBrowser(self):
         self._webCrawler = WebCrawler(self._lineText.text())
-        self._addClassAtAllElements()
+        self._addMouseOverLeave()
 
-    def _addClassAtAllElements(self):
+    def _addMouseOverLeave(self):
         script = ''' 
         let childNodes = document.getElementsByTagName('body')[0].childNodes;
         const func = (c) => {
@@ -50,12 +50,10 @@ class MyApp(QWidget):
           for(let i = 0 ; i<c.length; i++) {
             c[i].addEventListener("mouseover", function(event) {
                 event.stopPropagation();
-                console.log(event);
                 event.target.style.border = "3px solid rgba(217,217,243,90)";
             });
             c[i].addEventListener("mouseleave", function(event) {
                 event.stopPropagation();
-                console.log(event);
                 event.target.style.border = "";
             });
             func(c[i].childNodes);
