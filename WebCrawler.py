@@ -7,7 +7,7 @@ class WebCrawler:
     def __init__(self, startUrl):
         if startUrl == '':
             startUrl = 'http://google.com'
-        if not startUrl.startswith('http://'):
+        if not startUrl.startswith('http://') | startUrl.startswith('https://'):
             startUrl = 'http://' + startUrl
         self.service = Service(ChromeDriverManager().install())
         self.driver = webdriver.Chrome(service=self.service)
