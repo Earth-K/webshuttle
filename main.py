@@ -46,10 +46,10 @@ class MyApp(QWidget):
 
     def _init_eventlistener(self, webCrawler):
         injector = EventListenerInjector(webCrawler)
-        injector.add_tooltip()
         injector.add_mouseover()
         injector.add_mouseleave()
         injector.add_mousedown_right()
+        injector.add_tooltip()
 
 
 if __name__ == '__main__':
