@@ -12,43 +12,44 @@ class MyApp(QWidget):
         self._webCrawler = None
         self._logBox = None
         self._lineText = None
-        self._initUI()
+        self._init_ui()
 
-    def _initUI(self):
+    def _init_ui(self):
         self.resize(400, 400)
-        self._moveToCenter()
+        self._move_to_center()
         self.setWindowTitle('WebShuttle')
         self._logBox = QTextEdit(self)
         self._logBox.setReadOnly(True)
         startBtn = QPushButton('Browser Open', self)
-        startBtn.clicked.connect(self._openBrowser)
+        startBtn.clicked.connect(self._open_browser)
         self._lineText = QLineEdit()
         self._lineText.setPlaceholderText('https://example.com')
-        self.setLayout(self._vboxLayout(self._lineText, startBtn, self._logBox))
+        self.setLayout(self._vbox_layout(self._lineText, startBtn, self._logBox))
         self.show()
 
-    def _moveToCenter(self):
+    def _move_to_center(self):
         qRect = self.frameGeometry()
         centerPos = QDesktopWidget().availableGeometry().center()
         qRect.moveCenter(centerPos)
         self.move(qRect.topLeft())
 
-    def _vboxLayout(self, lineText, startBtn, logBox):
+    def _vbox_layout(self, lineText, startBtn, logBox):
         result = QVBoxLayout()
         result.addWidget(lineText)
         result.addWidget(startBtn)
         result.addWidget(logBox)
         return result
 
-    def _openBrowser(self):
+    def _open_browser(self):
         self._webCrawler = WebCrawler(self._lineText.text())
-        self._initEventListener(self._webCrawler)
+        self._init_eventlistener(self._webCrawler)
 
-    def _initEventListener(self, webCrawler):
+    def _init_eventlistener(self, webCrawler):
         injector = EventListenerInjector(webCrawler)
-        injector.addTooltip()
-        injector.addMouseOverLeave()
-        injector.addMouseDownRight()
+        injector.add_tooltip()
+        injector.add_mouseover()
+        injector.add_mouseleave()
+        injector.add_mousedown_right()
 
 
 if __name__ == '__main__':

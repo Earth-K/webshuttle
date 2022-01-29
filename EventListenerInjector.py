@@ -1,9 +1,9 @@
 class EventListenerInjector:
 
-    def __init__(self, webCrawler):
-        self._webCrawler = webCrawler
+    def __init__(self, web_crawler):
+        self._web_crawler = web_crawler
 
-    def addMouseOverLeave(self):
+    def add_mouseover(self):
         script = ''' 
         let childNodes = document.getElementsByTagName('body')[0].childNodes;
         const func = (c) => {
@@ -13,6 +13,19 @@ class EventListenerInjector:
                 event.stopPropagation();
                 event.target.style.border = "3px solid rgba(217,217,243,90)";
             });
+            func(c[i].childNodes);
+          }
+        }
+        func(childNodes);
+        '''
+        self._web_crawler.execute_js(script)
+
+    def add_mouseleave(self):
+        script = ''' 
+        let childNodes = document.getElementsByTagName('body')[0].childNodes;
+        const func = (c) => {
+          if(c==undefined) return;
+          for(let i = 0 ; i<c.length; i++) {
             c[i].addEventListener("mouseleave", function(event) {
                 event.stopPropagation();
                 event.target.style.border = "";
@@ -22,9 +35,9 @@ class EventListenerInjector:
         }
         func(childNodes);
         '''
-        self._webCrawler.executeJs(script)
+        self._web_crawler.execute_js(script)
 
-    def addTooltip(self):
+    def add_tooltip(self):
         script = ''' 
         let wsTooltip = document.createElement('div');
         wsTooltip.id = "ws-tooltip";
@@ -45,9 +58,9 @@ class EventListenerInjector:
 
         document.body.appendChild(wsTooltip);
         '''
-        self._webCrawler.executeJs(script)
+        self._web_crawler.execute_js(script)
 
-    def addMouseDownRight(self):
+    def add_mousedown_right(self):
         script = ''' 
         window.oncontextmenu = function (event) {   event.preventDefault() }
         let childNodes = document.getElementsByTagName('body')[0].childNodes;
@@ -72,4 +85,4 @@ class EventListenerInjector:
         }
         func(childNodes);
         '''
-        self._webCrawler.executeJs(script)
+        self._web_crawler.execute_js(script)

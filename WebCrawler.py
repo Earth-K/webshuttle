@@ -4,15 +4,15 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 
 class WebCrawler:
-    def __init__(self, startUrl):
-        if startUrl == '':
-            startUrl = 'http://google.com'
-        if not startUrl.startswith('http://') | startUrl.startswith('https://'):
-            startUrl = 'http://' + startUrl
+    def __init__(self, start_url):
+        if start_url == '':
+            start_url = 'http://google.com'
+        if not start_url.startswith('http://') | start_url.startswith('https://'):
+            start_url = 'http://' + start_url
         self.service = Service(ChromeDriverManager().install())
         self.driver = webdriver.Chrome(service=self.service)
-        self.driver.get(startUrl)
+        self.driver.get(start_url)
         self.driver.implicitly_wait(2)
 
-    def executeJs(self, script):
+    def execute_js(self, script):
         self.driver.execute_script(script)
