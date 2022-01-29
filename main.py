@@ -42,6 +42,7 @@ class MyApp(QWidget):
         self._webCrawler = WebCrawler(self._lineText.text())
         self._addMouseOverLeave()
         self._addTooltip()
+        self._addMouseDownRight()
 
     def _addMouseOverLeave(self):
         script = ''' 
@@ -84,6 +85,33 @@ class MyApp(QWidget):
         wsTooltip.appendChild(wsBtn);
         
         document.body.appendChild(wsTooltip);
+        '''
+        self._webCrawler.executeJs(script)
+
+    def _addMouseDownRight(self):
+        script = ''' 
+        window.oncontextmenu = function (event) {   event.preventDefault() }
+        let childNodes = document.getElementsByTagName('body')[0].childNodes;
+        const func = (c) => {
+          if(c==undefined) return;
+          for(let i = 0 ; i<c.length; i++) {
+            c[i].addEventListener("mousedown", function(event) {
+                if(event.which != 3) return;
+                let posTop = window.scrollY + event.clientY+3;
+                let posLeft = event.clientX+3;
+                let wsTooltip = document.getElementById("ws-tooltip"); 
+                wsTooltip.style.position = "absolute";
+                wsTooltip.style.top = posTop.toString()+"px";
+                wsTooltip.style.left = posLeft.toString()+"px";
+                wsTooltip.style.display = "flex";
+                wsTooltip.style.justifyContent = "center";
+                wsTooltip.style.alignItems = "center";
+                event.stopPropagation();
+            });
+            func(c[i].childNodes);
+          }
+        }
+        func(childNodes);
         '''
         self._webCrawler.executeJs(script)
 
