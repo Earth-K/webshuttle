@@ -20,11 +20,13 @@ class MyApp(QWidget):
         self.setWindowTitle('WebShuttle')
         self._logBox = QTextEdit(self)
         self._logBox.setReadOnly(True)
-        startBtn = QPushButton('Browser Open', self)
-        startBtn.clicked.connect(self._open_browser)
+        start_btn = QPushButton('Browser Open', self)
+        start_btn.clicked.connect(self._open_browser)
+        get_element_btn = QPushButton('Get Target Element', self)
+        get_element_btn.clicked.connect(self._get_target_element)
         self._lineText = QLineEdit()
         self._lineText.setPlaceholderText('https://example.com')
-        self.setLayout(self._vbox_layout(self._lineText, startBtn, self._logBox))
+        self.setLayout(self._vbox_layout(self._lineText, start_btn, get_element_btn, self._logBox))
         self.show()
 
     def _move_to_center(self):
@@ -33,10 +35,11 @@ class MyApp(QWidget):
         qRect.moveCenter(centerPos)
         self.move(qRect.topLeft())
 
-    def _vbox_layout(self, line_text, start_btn, log_box):
+    def _vbox_layout(self, line_text, start_btn, get_element_btn, log_box):
         result = QVBoxLayout()
         result.addWidget(line_text)
         result.addWidget(start_btn)
+        result.addWidget(get_element_btn)
         result.addWidget(log_box)
         return result
 
@@ -50,6 +53,10 @@ class MyApp(QWidget):
         injector.add_mouseleave()
         injector.add_mousedown_right()
         injector.add_tooltip()
+
+    def _get_target_element(self):
+        result = self._webCrawler.get_target_element()
+        self._logBox.setText(result.text)
 
 
 if __name__ == '__main__':

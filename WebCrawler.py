@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.remote.webelement import WebElement
 
 
 class WebCrawler:
@@ -15,4 +16,7 @@ class WebCrawler:
         self.driver.implicitly_wait(2)
 
     def execute_js(self, script):
-        self.driver.execute_script(script)
+        return self.driver.execute_script(script)
+
+    def get_target_element(self):
+        return self.driver.find_elements_by_class_name("ws-target-element")[0]
