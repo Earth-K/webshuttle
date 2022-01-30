@@ -53,6 +53,11 @@ class EventListenerInjector:
         wsBtn.innerText = "선택";
         wsBtn.style.width = "50px";
         wsBtn.style.height = "30px"
+        
+        wsBtn.addEventListener("click", () => {
+            let wsTargetElement = document.getElementsByClassName("ws-target-element")[0];
+            console.log(wsTargetElement);
+        });
 
         wsTooltip.appendChild(wsBtn);
 
@@ -78,6 +83,12 @@ class EventListenerInjector:
                 wsTooltip.style.display = "flex";
                 wsTooltip.style.justifyContent = "center";
                 wsTooltip.style.alignItems = "center";
+                let wsTargetElement = document.getElementsByClassName(" ws-target-element")[0];
+                if(wsTargetElement != undefined) {
+                    let startIdx = wsTargetElement.className.indexOf(" ws-target-element");
+                    wsTargetElement.className = wsTargetElement.className.substring(0,startIdx);
+                } 
+                event.target.className += " ws-target-element";
                 event.stopPropagation();
             });
             func(c[i].childNodes);
