@@ -33,19 +33,19 @@ class MyApp(QWidget):
         qRect.moveCenter(centerPos)
         self.move(qRect.topLeft())
 
-    def _vbox_layout(self, lineText, startBtn, logBox):
+    def _vbox_layout(self, line_text, start_btn, log_box):
         result = QVBoxLayout()
-        result.addWidget(lineText)
-        result.addWidget(startBtn)
-        result.addWidget(logBox)
+        result.addWidget(line_text)
+        result.addWidget(start_btn)
+        result.addWidget(log_box)
         return result
 
     def _open_browser(self):
         self._webCrawler = WebCrawler(self._lineText.text())
         self._init_eventlistener(self._webCrawler)
 
-    def _init_eventlistener(self, webCrawler):
-        injector = EventListenerInjector(webCrawler)
+    def _init_eventlistener(self, web_crawler):
+        injector = EventListenerInjector(web_crawler)
         injector.add_mouseover()
         injector.add_mouseleave()
         injector.add_mousedown_right()
