@@ -4,21 +4,18 @@ class EventListenerInjector:
         self._web_crawler = web_crawler
 
     def add_mouseover(self):
-        jsFile = open("js/add_mouseover.js", "r")
-        self._web_crawler.execute_js(jsFile.read())
-        jsFile.close()
+        self._execute_js("js/add_mouseover.js")
 
     def add_mouseleave(self):
-        jsFile = open("js/add_mouseleave.js", "r")
-        self._web_crawler.execute_js(jsFile.read())
-        jsFile.close()
+        self._execute_js("js/add_mouseleave.js")
 
     def add_tooltip(self):
-        jsFile = open("js/add_tooltip.js", "r")
-        self._web_crawler.execute_js(jsFile.read())
-        jsFile.close()
+        self._execute_js("js/add_tooltip.js")
 
     def add_mousedown_right(self):
-        jsFile = open("js/add_mousedown_right.js", "r")
+        self._execute_js("js/add_mousedown_right.js")
+
+    def _execute_js(self, file_path):
+        jsFile = open(file_path, "r")
         self._web_crawler.execute_js(jsFile.read())
         jsFile.close()
