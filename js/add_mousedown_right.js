@@ -18,6 +18,8 @@ const func = (c) => {
             wsTooltip.style.alignItems = "center";
             let wsTargetElement = document.getElementsByClassName(" ws-target-element")[0];
             if (wsTargetElement !== undefined) {
+                wsTargetElement.style.border = "";
+                wsTargetElement.setAttribute("selected", "false");
                 let startIdx = wsTargetElement.className.indexOf(" ws-target-element");
                 wsTargetElement.className = wsTargetElement.className.substring(0, startIdx);
             }

@@ -4,7 +4,10 @@ const func = (c) => {
     for (let i = 0; i < c.length; i++) {
         c[i].addEventListener("mouseleave", function (event) {
             event.stopPropagation();
-            event.target.style.border = "";
+            if (event.target.getAttribute("selected") === null
+                || event.target.getAttribute("selected") === "false") {
+                event.target.style.border = "";
+            }
         });
         func(c[i].childNodes);
     }

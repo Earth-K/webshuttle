@@ -21,6 +21,8 @@ wsBtn.style.alignItems = "center";
 
 wsBtn.addEventListener("click", () => {
     let wsTargetElement = document.getElementsByClassName("ws-target-element")[0];
+    wsTargetElement.style.border = "3px solid rgba(217,217,243,90)";
+    wsTargetElement.setAttribute("selected", "true");
     console.log(wsTargetElement);
 });
 
