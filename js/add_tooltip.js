@@ -6,12 +6,18 @@ wsTooltip.style.backgroundColor = "tomato";
 wsTooltip.style.display = "none";
 wsTooltip.style.justifyContent = "center";
 wsTooltip.style.alignItems = "center";
+wsTooltip.style.border = "1px solid";
 
-let wsBtn = document.createElement('button');
+let wsBtn = document.createElement('div');
 wsBtn.id = "ws-select-btn";
 wsBtn.innerText = "Select";
-wsBtn.style.width = "50px";
-wsBtn.style.height = "30px";
+wsBtn.style.color = "white";
+wsBtn.style.width = "100%";
+wsBtn.style.height = "100%";
+wsBtn.style.display = "flex";
+wsBtn.style.cursor = "pointer";
+wsBtn.style.justifyContent = "center";
+wsBtn.style.alignItems = "center";
 
 wsBtn.addEventListener("click", () => {
     let wsTargetElement = document.getElementsByClassName("ws-target-element")[0];
