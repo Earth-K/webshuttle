@@ -11,8 +11,12 @@ class MyApp(QWidget):
         super().__init__()
         self._webCrawler = None
         self._logBox = None
+        self._content = None
         self._lineText = None
+        self._check_btn = None
         self._init_ui()
+        self._element_x = None
+        self._element_y = None
 
     def _init_ui(self):
         self.resize(400, 400)
@@ -26,7 +30,9 @@ class MyApp(QWidget):
         get_element_btn.clicked.connect(self._get_target_element)
         self._lineText = QLineEdit()
         self._lineText.setPlaceholderText('https://example.com')
-        self.setLayout(self._vbox_layout(self._lineText, start_btn, get_element_btn, self._logBox))
+        check_btn = QPushButton('Check')
+        check_btn.clicked.connect(self._check_difference)
+        self.setLayout(self._vbox_layout(self._lineText, start_btn, get_element_btn, check_btn, self._logBox))
         self.show()
 
     def _move_to_center(self):
@@ -35,11 +41,12 @@ class MyApp(QWidget):
         qRect.moveCenter(centerPos)
         self.move(qRect.topLeft())
 
-    def _vbox_layout(self, line_text, start_btn, get_element_btn, log_box):
+    def _vbox_layout(self, line_text, start_btn, get_element_btn, check_btn, log_box):
         result = QVBoxLayout()
         result.addWidget(line_text)
         result.addWidget(start_btn)
         result.addWidget(get_element_btn)
+        result.addWidget(check_btn)
         result.addWidget(log_box)
         return result
 
@@ -56,7 +63,15 @@ class MyApp(QWidget):
 
     def _get_target_element(self):
         result = self._webCrawler.get_target_element()
-        self._logBox.setText(result.text)
+        self._content = result.text
+
+    def _check_difference(self, web_crawler):
+        url = self._lineText.text()
+        tmp_web_crawler = web_crawler(url)
+        element = tmp_web_crawler.driver.execute_script('return document.elementFromPoint(arguments[0], arguments[1]);',
+                                                        self._element_x, self._element_y)
+        if self._content != element.text :
+            self._logBox.setText('Got News!')
 
 
 if __name__ == '__main__':
