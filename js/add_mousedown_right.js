@@ -8,7 +8,7 @@ const func = (c) => {
         c[i].addEventListener("mousedown", function (event) {
             if (event.which !== 3) return;
             let posTop = window.scrollY + event.clientY + 3;
-            let posLeft = event.clientX + 3;
+            let posLeft = window.scrollX + event.clientX + 3;
             let wsTooltip = document.getElementById("ws-tooltip");
             wsTooltip.style.position = "absolute";
             wsTooltip.style.top = posTop.toString() + "px";

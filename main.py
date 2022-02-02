@@ -1,4 +1,7 @@
 import sys
+import time
+
+from selenium.webdriver.remote.webelement import WebElement
 
 from EventListenerInjector import EventListenerInjector
 from WebCrawler import WebCrawler
@@ -7,32 +10,36 @@ from PyQt5.QtWidgets import QApplication, QWidget, QDesktopWidget, QPushButton, 
 
 class MyApp(QWidget):
 
+    _log_textedit: QTextEdit
+    _webCrawler: WebCrawler
+
     def __init__(self):
         super().__init__()
-        self._webCrawler = None
-        self._logBox = None
-        self._content = None
+        self._contents = None
         self._lineText = None
         self._check_btn = None
-        self._init_ui()
         self._element_x = None
         self._element_y = None
+        self._scroll_x = None
+        self._scroll_y = None
+        self._element_class_names = None
+        self._init_ui()
 
     def _init_ui(self):
         self.resize(400, 400)
         self._move_to_center()
         self.setWindowTitle('WebShuttle')
-        self._logBox = QTextEdit(self)
-        self._logBox.setReadOnly(True)
-        start_btn = QPushButton('Browser Open', self)
+        self._log_textedit = QTextEdit(self)
+        self._log_textedit.setReadOnly(True)
+        start_btn = QPushButton('Open the chrome browser', self)
         start_btn.clicked.connect(self._open_browser)
-        get_element_btn = QPushButton('Get Target Element', self)
-        get_element_btn.clicked.connect(self._get_target_element)
+        get_element_btn = QPushButton('Get target element data', self)
+        get_element_btn.clicked.connect(self._get_target_element_data)
         self._lineText = QLineEdit()
         self._lineText.setPlaceholderText('https://example.com')
         check_btn = QPushButton('Check')
-        check_btn.clicked.connect(self._check_difference)
-        self.setLayout(self._vbox_layout(self._lineText, start_btn, get_element_btn, check_btn, self._logBox))
+        check_btn.clicked.connect(self._check)
+        self.setLayout(self._vbox_layout(self._lineText, start_btn, get_element_btn, check_btn, self._log_textedit))
         self.show()
 
     def _move_to_center(self):
@@ -61,17 +68,30 @@ class MyApp(QWidget):
         injector.add_mousedown_right()
         injector.add_tooltip()
 
-    def _get_target_element(self):
-        result = self._webCrawler.get_target_element()
-        self._content = result.text
+    def _get_target_element_data(self):
+        result: WebElement = self._webCrawler.get_target_element()
+        self._element_y = self._webCrawler.get_element_pos_y()
+        self._element_x = self._webCrawler.get_element_pos_x()
+        self._scroll_x = self._webCrawler.get_scroll_x()
+        self._scroll_y = self._webCrawler.get_scroll_y()
+        self._contents = result.text
 
-    def _check_difference(self, web_crawler):
+        self._log_textedit.setText('Successfully get target element data.\n')
+        self._log_textedit.append('scroll_y : {0}'.format(self._scroll_y))
+        self._log_textedit.append('scroll_x : {0}'.format(self._scroll_x))
+        self._log_textedit.append('element_y : {0}'.format(self._element_y))
+        self._log_textedit.append('element_x : {0}'.format(self._element_x))
+        self._log_textedit.append('\n--- contents ---\n')
+        self._log_textedit.append(self._contents)
+
+    def _check(self):
         url = self._lineText.text()
-        tmp_web_crawler = web_crawler(url)
-        element = tmp_web_crawler.driver.execute_script('return document.elementFromPoint(arguments[0], arguments[1]);',
-                                                        self._element_x, self._element_y)
-        if self._content != element.text :
-            self._logBox.setText('Got News!')
+        tmp_web_crawler = WebCrawler(url)
+        tmp_web_crawler.scroll_to(self._scroll_x, self._scroll_y)
+        time.sleep(3)
+        element = tmp_web_crawler.execute_js(
+            'return document.elementFromPoint({0}, {1});'.format(self._element_x, self._element_y))
+        self._log_textedit.setText(element.text)
 
 
 if __name__ == '__main__':
