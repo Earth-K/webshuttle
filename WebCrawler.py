@@ -1,6 +1,5 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.remote.webelement import WebElement
 from webdriver_manager.chrome import ChromeDriverManager
 
 
@@ -26,21 +25,21 @@ class WebCrawler:
         return self.driver.find_elements_by_class_name("ws-target-element")[0]
 
     def get_scroll_y(self):
-        return self.execute_js("return window.pageYOffset;")
+        return self.execute_js("return window.scrollY;")
 
     def get_scroll_x(self):
-        return self.execute_js("return window.pageXOffset;")
+        return self.execute_js("return window.scrollX;")
 
     def get_element_pos_x(self):
         return self.execute_js(
             '''
-            let targetElement = document.getElementsByClassName('ws-target-element')[0];
-            return targetElement.getBoundingClientRect().left + targetElement.getBoundingClientRect().width/2;
+            let targetElement = document.getElementById('ws-tooltip');
+            return targetElement.getBoundingClientRect().left-3;
             ''')
 
     def get_element_pos_y(self):
         return self.execute_js(
             '''
-            let targetElement = document.getElementsByClassName('ws-target-element')[0];
-            return targetElement.getBoundingClientRect().top + targetElement.getBoundingClientRect().height/2;
+            let targetElement = document.getElementById('ws-tooltip');
+            return targetElement.getBoundingClientRect().top-3;
             ''')
