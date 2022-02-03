@@ -4,7 +4,8 @@ const func = (c) => {
     for (let i = 0; i < c.length; i++) {
         c[i].addEventListener("mouseover", function (event) {
             event.stopPropagation();
-            event.target.style.border = "3px solid rgba(217,217,243,90)";
+            event.target.setAttribute("data-originBackgroundColor", event.target.style.backgroundColor);
+            event.target.style.backgroundColor = "rgba(217,217,243,0.5)";
         });
         func(c[i].childNodes);
     }

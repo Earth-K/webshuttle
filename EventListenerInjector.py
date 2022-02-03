@@ -16,6 +16,6 @@ class EventListenerInjector:
         self._execute_js("js/add_mousedown_right.js")
 
     def _execute_js(self, file_path):
-        jsFile = open(file_path, "r")
+        jsFile = open(file_path, "r", encoding='utf-8')
         self._web_crawler.execute_js(jsFile.read())
         jsFile.close()
