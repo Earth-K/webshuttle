@@ -9,7 +9,6 @@ from PyQt5.QtWidgets import QApplication, QWidget, QDesktopWidget, QPushButton, 
 
 
 class MyApp(QWidget):
-
     _log_textedit: QTextEdit
     _webCrawler: WebCrawler
 
@@ -26,7 +25,7 @@ class MyApp(QWidget):
         self._init_ui()
 
     def _init_ui(self):
-        self.resize(400, 400)
+        self.resize(750, 500)
         self._move_to_center()
         self.setWindowTitle('WebShuttle')
         self._log_textedit = QTextEdit(self)
@@ -75,8 +74,7 @@ class MyApp(QWidget):
         self._scroll_x = self._webCrawler.get_scroll_x()
         self._scroll_y = self._webCrawler.get_scroll_y()
         self._contents = result.text
-
-        self._log_textedit.setText('Successfully get target element data.\n')
+        self._log_textedit.setText('{0} - Successfully get target element data.\n'.format(self._local_time_now()))
         self._log_textedit.append('scroll_y : {0}'.format(self._scroll_y))
         self._log_textedit.append('scroll_x : {0}'.format(self._scroll_x))
         self._log_textedit.append('element_y : {0}'.format(self._element_y))
@@ -88,10 +86,20 @@ class MyApp(QWidget):
         url = self._lineText.text()
         tmp_web_crawler = WebCrawler(url)
         tmp_web_crawler.scroll_to(self._scroll_x, self._scroll_y)
+        self._log_textedit.setText(
+            '{0} - scroll_to({1}, {2})\n'.format(self._local_time_now(), self._scroll_x, self._scroll_y))
         time.sleep(3)
         element = tmp_web_crawler.execute_js(
             'return document.elementFromPoint({0}, {1});'.format(self._element_x, self._element_y))
-        self._log_textedit.setText(element.text)
+        self._log_textedit.append(
+            '{0} - Get text of document.elementFromPoint({1}, {2}) \n'.format(self._local_time_now(), self._element_x,
+                                                                              self._element_y))
+        self._log_textedit.append(element.text)
+
+    def _local_time_now(self):
+        now = time.localtime()
+        return "%04d/%02d/%02d %02d:%02d:%02d" % (
+            now.tm_year, now.tm_mon, now.tm_mday, now.tm_hour, now.tm_min, now.tm_sec)
 
 
 if __name__ == '__main__':
