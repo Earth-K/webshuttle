@@ -8,15 +8,29 @@ from WebCrawler import WebCrawler
 from PyQt5.QtWidgets import QApplication, QWidget, QDesktopWidget, QPushButton, QVBoxLayout, QTextEdit, QLineEdit
 
 
+def init_event_listener(web_crawler):
+    injector = EventListenerInjector(web_crawler)
+    injector.add_mouseover()
+    injector.add_mouseleave()
+    injector.add_mousedown_right()
+    injector.add_tooltip()
+
+
+def local_time_now():
+    now = time.localtime()
+    return "%04d/%02d/%02d %02d:%02d:%02d" % (
+        now.tm_year, now.tm_mon, now.tm_mday, now.tm_hour, now.tm_min, now.tm_sec)
+
+
 class MyApp(QWidget):
-    _log_textedit: QTextEdit
+    textedit_log: QTextEdit
     _webCrawler: WebCrawler
 
     def __init__(self):
         super().__init__()
+        self.textedit_log = QTextEdit()
+        self.lineedit = QLineEdit()
         self._contents = None
-        self._lineText = None
-        self._check_btn = None
         self._element_x = None
         self._element_y = None
         self._scroll_x = None
@@ -28,17 +42,9 @@ class MyApp(QWidget):
         self.resize(750, 500)
         self._move_to_center()
         self.setWindowTitle('WebShuttle')
-        self._log_textedit = QTextEdit(self)
-        self._log_textedit.setReadOnly(True)
-        start_btn = QPushButton('Open in chrome browser', self)
-        start_btn.clicked.connect(self._open_browser)
-        get_element_btn = QPushButton('Get target element data', self)
-        get_element_btn.clicked.connect(self._get_target_element_data)
-        self._lineText = QLineEdit()
-        self._lineText.setPlaceholderText('https://example.com')
-        check_btn = QPushButton('Check')
-        check_btn.clicked.connect(self._check)
-        self.setLayout(self._vbox_layout(self._lineText, start_btn, get_element_btn, check_btn, self._log_textedit))
+
+        vbox_layout = self._vbox_layout()
+        self.setLayout(vbox_layout)
         self.show()
 
     def _move_to_center(self):
@@ -47,25 +53,42 @@ class MyApp(QWidget):
         qRect.moveCenter(centerPos)
         self.move(qRect.topLeft())
 
-    def _vbox_layout(self, line_text, start_btn, get_element_btn, check_btn, log_box):
+    def _vbox_layout(self):
         result = QVBoxLayout()
-        result.addWidget(line_text)
-        result.addWidget(start_btn)
-        result.addWidget(get_element_btn)
-        result.addWidget(check_btn)
-        result.addWidget(log_box)
+        lineedit = self.lineedit_url()
+        result.addWidget(lineedit)
+        result.addWidget(self._button_open_browser(lineedit))
+        result.addWidget(self._button_get_element_data())
+        result.addWidget(self._button_check())
+        result.addWidget(self._textedit_log())
         return result
 
-    def _open_browser(self):
-        self._webCrawler = WebCrawler(self._lineText.text())
-        self._init_eventlistener(self._webCrawler)
+    def _button_check(self):
+        button_check = QPushButton('Check')
+        button_check.clicked.connect(self._check)
+        return button_check
 
-    def _init_eventlistener(self, web_crawler):
-        injector = EventListenerInjector(web_crawler)
-        injector.add_mouseover()
-        injector.add_mouseleave()
-        injector.add_mousedown_right()
-        injector.add_tooltip()
+    def _button_get_element_data(self):
+        button_get_element = QPushButton('Get target element data', self)
+        button_get_element.clicked.connect(self._get_target_element_data)
+        return button_get_element
+
+    def _button_open_browser(self, lineedit):
+        button_open_browser = QPushButton('Open in chrome browser', self)
+        button_open_browser.clicked.connect(lambda: self._open_browser(lineedit))
+        return button_open_browser
+
+    def _textedit_log(self):
+        self.textedit_log.setReadOnly(True)
+        return self.textedit_log
+
+    def lineedit_url(self):
+        self.lineedit.setPlaceholderText('https://example.com')
+        return self.lineedit
+
+    def _open_browser(self, lineedit):
+        self._webCrawler = WebCrawler(lineedit.text())
+        init_event_listener(self._webCrawler)
 
     def _get_target_element_data(self):
         result: WebElement = self._webCrawler.get_target_element()
@@ -74,32 +97,27 @@ class MyApp(QWidget):
         self._scroll_x = self._webCrawler.get_scroll_x()
         self._scroll_y = self._webCrawler.get_scroll_y()
         self._contents = result.text
-        self._log_textedit.setText('{0} - get target element data.\n'.format(self._local_time_now()))
-        self._log_textedit.append('scroll_y : {0}'.format(self._scroll_y))
-        self._log_textedit.append('scroll_x : {0}'.format(self._scroll_x))
-        self._log_textedit.append('element_y : {0}'.format(self._element_y))
-        self._log_textedit.append('element_x : {0}'.format(self._element_x))
-        self._log_textedit.append('\n--- contents ---\n')
-        self._log_textedit.append(self._contents)
+        self.textedit_log.setText('{0} - get target element data.\n'.format(local_time_now()))
+        self.textedit_log.append('scroll_y : {0}'.format(self._scroll_y))
+        self.textedit_log.append('scroll_x : {0}'.format(self._scroll_x))
+        self.textedit_log.append('element_y : {0}'.format(self._element_y))
+        self.textedit_log.append('element_x : {0}'.format(self._element_x))
+        self.textedit_log.append('\n--- contents ---\n')
+        self.textedit_log.append(self._contents)
 
     def _check(self):
-        url = self._lineText.text()
+        url = self.lineedit.text()
         tmp_web_crawler = WebCrawler(url)
         tmp_web_crawler.scroll_to(self._scroll_x, self._scroll_y)
-        self._log_textedit.setText(
-            '{0} - scrollTo({1}, {2}).\n'.format(self._local_time_now(), self._scroll_x, self._scroll_y))
+        self.textedit_log.setText(
+            '{0} - scrollTo({1}, {2}).\n'.format(local_time_now(), self._scroll_x, self._scroll_y))
         time.sleep(3)
         element = tmp_web_crawler.execute_js(
             'return document.elementFromPoint({0}, {1});'.format(self._element_x, self._element_y))
-        self._log_textedit.append(
-            '{0} - get text of document.elementFromPoint({1}, {2}).\n'.format(self._local_time_now(), self._element_x,
+        self.textedit_log.append(
+            '{0} - get text of document.elementFromPoint({1}, {2}).\n'.format(local_time_now(), self._element_x,
                                                                               self._element_y))
-        self._log_textedit.append(element.text)
-
-    def _local_time_now(self):
-        now = time.localtime()
-        return "%04d/%02d/%02d %02d:%02d:%02d" % (
-            now.tm_year, now.tm_mon, now.tm_mday, now.tm_hour, now.tm_min, now.tm_sec)
+        self.textedit_log.append(element.text)
 
 
 if __name__ == '__main__':
