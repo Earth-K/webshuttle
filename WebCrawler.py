@@ -19,7 +19,7 @@ class WebCrawler:
         return self.driver.execute_script(script)
 
     def scroll_to(self, x, y):
-        self.driver.execute_script("window.scrollTo({0}, {1});".format(x, y))
+        self.driver.execute_script("scrollTo({0}, {1});".format(x, y))
 
     def get_target_element(self):
         return self.driver.find_elements_by_class_name("ws-target-element")[0]

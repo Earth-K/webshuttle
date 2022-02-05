@@ -74,7 +74,7 @@ class MyApp(QWidget):
         self._scroll_x = self._webCrawler.get_scroll_x()
         self._scroll_y = self._webCrawler.get_scroll_y()
         self._contents = result.text
-        self._log_textedit.setText('{0} - Successfully get target element data.\n'.format(self._local_time_now()))
+        self._log_textedit.setText('{0} - get target element data.\n'.format(self._local_time_now()))
         self._log_textedit.append('scroll_y : {0}'.format(self._scroll_y))
         self._log_textedit.append('scroll_x : {0}'.format(self._scroll_x))
         self._log_textedit.append('element_y : {0}'.format(self._element_y))
@@ -87,12 +87,12 @@ class MyApp(QWidget):
         tmp_web_crawler = WebCrawler(url)
         tmp_web_crawler.scroll_to(self._scroll_x, self._scroll_y)
         self._log_textedit.setText(
-            '{0} - scroll_to({1}, {2})\n'.format(self._local_time_now(), self._scroll_x, self._scroll_y))
+            '{0} - scrollTo({1}, {2}).\n'.format(self._local_time_now(), self._scroll_x, self._scroll_y))
         time.sleep(3)
         element = tmp_web_crawler.execute_js(
             'return document.elementFromPoint({0}, {1});'.format(self._element_x, self._element_y))
         self._log_textedit.append(
-            '{0} - Get text of document.elementFromPoint({1}, {2}) \n'.format(self._local_time_now(), self._element_x,
+            '{0} - get text of document.elementFromPoint({1}, {2}).\n'.format(self._local_time_now(), self._element_x,
                                                                               self._element_y))
         self._log_textedit.append(element.text)
 
