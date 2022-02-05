@@ -30,7 +30,7 @@ class MyApp(QWidget):
         self.setWindowTitle('WebShuttle')
         self._log_textedit = QTextEdit(self)
         self._log_textedit.setReadOnly(True)
-        start_btn = QPushButton('Open the chrome browser', self)
+        start_btn = QPushButton('Open in chrome browser', self)
         start_btn.clicked.connect(self._open_browser)
         get_element_btn = QPushButton('Get target element data', self)
         get_element_btn.clicked.connect(self._get_target_element_data)

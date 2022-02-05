@@ -7,24 +7,38 @@ wsTooltip.style.display = "none";
 wsTooltip.style.justifyContent = "center";
 wsTooltip.style.alignItems = "center";
 wsTooltip.style.border = "1px solid";
+wsTooltip.setAttribute('data-click-log','');
 
-let wsBtn = document.createElement('div');
-wsBtn.id = "ws-select-btn";
-wsBtn.innerText = "Select";
-wsBtn.style.color = "white";
-wsBtn.style.width = "100%";
-wsBtn.style.height = "100%";
-wsBtn.style.display = "flex";
-wsBtn.style.cursor = "pointer";
-wsBtn.style.justifyContent = "center";
-wsBtn.style.alignItems = "center";
+let selectBtn = document.createElement('div');
+selectBtn.id = "ws-select-btn";
+selectBtn.innerText = "Select";
+selectBtn.style.color = "white";
+selectBtn.style.width = "50%";
+selectBtn.style.height = "100%";
+selectBtn.style.borderRight = "1px solid black";
+selectBtn.style.display = "flex";
+selectBtn.style.cursor = "pointer";
+selectBtn.style.justifyContent = "center";
+selectBtn.style.alignItems = "center";
 
-wsBtn.addEventListener("click", () => {
+selectBtn.addEventListener("click", () => {
     let wsTargetElement = document.getElementsByClassName("ws-target-element")[0];
     wsTargetElement.style.backgroundColor = "rgba(217,217,243,0.5)";
     wsTargetElement.setAttribute("selected", "true");
     console.log(wsTargetElement);
 });
 
-wsTooltip.appendChild(wsBtn);
+let clickBtn = document.createElement('div');
+clickBtn.id = "ws-click-btn";
+clickBtn.innerText = "Click";
+clickBtn.style.color = "white";
+clickBtn.style.width = "50%";
+clickBtn.style.height = "100%";
+clickBtn.style.display = "flex";
+clickBtn.style.cursor = "pointer";
+clickBtn.style.justifyContent = "center";
+clickBtn.style.alignItems = "center";
+
+wsTooltip.appendChild(selectBtn);
+wsTooltip.appendChild(clickBtn);
 document.body.appendChild(wsTooltip);
