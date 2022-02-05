@@ -39,6 +39,20 @@ clickBtn.style.cursor = "pointer";
 clickBtn.style.justifyContent = "center";
 clickBtn.style.alignItems = "center";
 
+clickBtn.addEventListener("click", () => {
+    const ws_tooltip = document.getElementById("ws-tooltip");
+    const tooltip_rect = ws_tooltip.getBoundingClientRect();
+    const targetElementX = tooltip_rect.left-3;
+    const targetElementY = tooltip_rect.top-3;
+    const scrollY = window.scrollY;
+    const scrollX = window.scrollX;
+    let lastClickPos = '('+targetElementX+'+'+scrollX+','+targetElementY+'+'+scrollY+')';
+    console.log(targetElementX + ", " + targetElementY);
+    console.log(document.elementFromPoint(targetElementX, targetElementY));
+    wsTooltip.setAttribute('data-click-log', lastClickPos);
+});
+
+
 wsTooltip.appendChild(selectBtn);
 wsTooltip.appendChild(clickBtn);
 document.body.appendChild(wsTooltip);
