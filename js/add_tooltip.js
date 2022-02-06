@@ -22,10 +22,11 @@ selectBtn.style.justifyContent = "center";
 selectBtn.style.alignItems = "center";
 
 selectBtn.addEventListener("click", () => {
-    let wsTargetElement = document.getElementsByClassName("ws-target-element")[0];
+    const wsTargetElement = document.getElementsByClassName("ws-target-element")[0];
     wsTargetElement.style.backgroundColor = "rgba(217,217,243,0.5)";
     wsTargetElement.setAttribute("selected", "true");
     console.log(wsTargetElement);
+    console.log(wsTargetElement.id);
 });
 
 let clickBtn = document.createElement('div');
@@ -46,7 +47,7 @@ clickBtn.addEventListener("click", () => {
     const targetElementY = tooltip_rect.top-3;
     const scrollY = window.scrollY;
     const scrollX = window.scrollX;
-    let lastClickPos = '('+targetElementX+'+'+scrollX+','+targetElementY+'+'+scrollY+')';
+    const lastClickPos = '('+targetElementX+'+'+scrollX+','+targetElementY+'+'+scrollY+')';
     console.log(targetElementX + ", " + targetElementY);
     console.log(document.elementFromPoint(targetElementX, targetElementY));
     wsTooltip.setAttribute('data-click-log', lastClickPos);

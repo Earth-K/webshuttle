@@ -1,6 +1,8 @@
 import sys
+import threading
 import time
 
+from selenium import webdriver
 from selenium.webdriver.remote.webelement import WebElement
 
 from EventListenerInjector import EventListenerInjector
@@ -30,6 +32,8 @@ class MyApp(QWidget):
         super().__init__()
         self.textedit_log = QTextEdit()
         self.lineedit = QLineEdit()
+        self.lineedit_period = QLineEdit()
+        self.thread_auto_check = None
         self._contents = None
         self._element_x = None
         self._element_y = None
@@ -42,7 +46,6 @@ class MyApp(QWidget):
         self.resize(750, 500)
         self._move_to_center()
         self.setWindowTitle('WebShuttle')
-
         vbox_layout = self._vbox_layout()
         self.setLayout(vbox_layout)
         self.show()
@@ -59,9 +62,14 @@ class MyApp(QWidget):
         result.addWidget(lineedit)
         result.addWidget(self._button_open_browser(lineedit))
         result.addWidget(self._button_get_element_data())
+        result.addWidget(self._lineedit_period())
         result.addWidget(self._button_check())
         result.addWidget(self._textedit_log())
         return result
+
+    def _lineedit_period(self):
+        self.lineedit_period.setPlaceholderText('Check Period (sec)')
+        return self.lineedit_period
 
     def _button_check(self):
         button_check = QPushButton('Check')
@@ -106,18 +114,31 @@ class MyApp(QWidget):
         self.textedit_log.append(self._contents)
 
     def _check(self):
-        url = self.lineedit.text()
-        tmp_web_crawler = WebCrawler(url)
-        tmp_web_crawler.scroll_to(self._scroll_x, self._scroll_y)
-        self.textedit_log.setText(
-            '{0} - scrollTo({1}, {2}).\n'.format(local_time_now(), self._scroll_x, self._scroll_y))
-        time.sleep(3)
-        element = tmp_web_crawler.execute_js(
-            'return document.elementFromPoint({0}, {1});'.format(self._element_x, self._element_y))
-        self.textedit_log.append(
-            '{0} - get text of document.elementFromPoint({1}, {2}).\n'.format(local_time_now(), self._element_x,
-                                                                              self._element_y))
-        self.textedit_log.append(element.text)
+        self.thread_auto_check = threading.Thread(target=self.check_content, args=(
+            self.lineedit.text(), self._scroll_x, self._scroll_y, self._element_x, self._element_y))
+        self.thread_auto_check.daemon = True
+        self.thread_auto_check.start()
+
+    def check_content(self, lineedit_url, scroll_x, scroll_y, element_x, element_y):
+        url = lineedit_url
+        while True:
+            options = webdriver.ChromeOptions()  # 크롬 옵션 객체 생성
+            options.add_argument('headless')  # headless 모드 설정
+            options.add_argument("--start-maximized")  # add
+            options.add_argument('window-size=1920x1080')
+            options.add_argument("disable-gpu")
+            tmp_web_crawler = WebCrawler(url, options)
+            time.sleep(1)
+            tmp_web_crawler.scroll_to(scroll_x, scroll_y)
+            print('{0} - scrollTo({1}, {2}).\n'.format(local_time_now(), scroll_x, scroll_y))
+            time.sleep(2)
+            element = tmp_web_crawler.execute_js(
+                'return document.elementFromPoint({0}, {1});'.format(element_x, element_y))
+            print('{0} - get text of document.elementFromPoint({1}, {2}).\n'.format(local_time_now(), self._element_x,
+                                                                                    self._element_y))
+            print(element.text)
+            tmp_web_crawler.close_driver()
+            time.sleep(int(self._lineedit_period().text()))
 
 
 if __name__ == '__main__':

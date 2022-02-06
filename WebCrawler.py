@@ -4,16 +4,19 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 
 class WebCrawler:
-    def __init__(self, start_url):
+    def __init__(self, start_url, options=None):
         if start_url == '':
             start_url = 'http://google.com'
         if not start_url.startswith('http://') | start_url.startswith('https://'):
             start_url = 'http://' + start_url
         self.service = Service(ChromeDriverManager().install())
-        self.driver = webdriver.Chrome(service=self.service)
+        if options is None:
+            self.driver = webdriver.Chrome(service=self.service)
+        else:
+            self.driver = webdriver.Chrome(service=self.service, options=options)
         self.driver.maximize_window()
+        self.driver.implicitly_wait(3)
         self.driver.get(start_url)
-        self.driver.implicitly_wait(2)
 
     def execute_js(self, script):
         return self.driver.execute_script(script)
@@ -43,3 +46,6 @@ class WebCrawler:
             let targetElement = document.getElementById('ws-tooltip');
             return targetElement.getBoundingClientRect().top-3;
             ''')
+
+    def close_driver(self):
+        self.driver.close()
