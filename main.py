@@ -7,7 +7,8 @@ from selenium.webdriver.remote.webelement import WebElement
 
 from EventListenerInjector import EventListenerInjector
 from WebCrawler import WebCrawler
-from PyQt5.QtWidgets import QApplication, QWidget, QDesktopWidget, QPushButton, QVBoxLayout, QTextEdit, QLineEdit
+from PyQt5.QtWidgets import QApplication, QWidget, QDesktopWidget, QPushButton, QVBoxLayout, QTextEdit, QLineEdit, \
+    QHBoxLayout, QLabel
 
 
 def init_event_listener(web_crawler):
@@ -59,13 +60,27 @@ class MyApp(QWidget):
     def _vbox_layout(self):
         result = QVBoxLayout()
         lineedit = self.lineedit_url()
-        result.addWidget(lineedit)
-        result.addWidget(self._button_open_browser(lineedit))
+        hbox_layout_url = QHBoxLayout()
+        label_url = QLabel("URL : ")
+        hbox_layout_url.addWidget(label_url)
+        hbox_layout_url.addWidget(lineedit)
+        hbox_layout_url.addWidget(self._button_open_browser(lineedit))
+        result.addLayout(hbox_layout_url)
+
+        hbox_layout_check_period = QHBoxLayout()
+        hbox_layout_check_period.addWidget(QLabel("Check Period : "))
+        hbox_layout_check_period.addWidget(self._lineedit_period())
+        hbox_layout_check_period.addWidget(self._button_check())
+        result.addLayout(hbox_layout_check_period)
+
         result.addWidget(self._button_get_element_data())
-        result.addWidget(self._lineedit_period())
-        result.addWidget(self._button_check())
         result.addWidget(self._textedit_log())
+        result.addWidget(self._button_save())
         return result
+
+    def _button_save(self):
+        button_save = QPushButton('Save this setting')
+        return button_save
 
     def _lineedit_period(self):
         self.lineedit_period.setPlaceholderText('Check Period (sec)')
