@@ -4,9 +4,6 @@ window.oncontextmenu = function (event) {
 const childNodes = document.getElementsByTagName('body')[0].childNodes;
 
 function addEventRight(event) {
-    if (event.which !== 3) {
-        return;
-    }
     const posTop = window.scrollY + event.clientY + 3;
     const posLeft = window.scrollX + event.clientX + 3;
     const wsTooltip = document.getElementById("ws-tooltip");
@@ -28,9 +25,6 @@ function addEventRight(event) {
 }
 
 function addEventLeft(event) {
-    if (event.which !== 1) {
-        return;
-    }
     const tooltip = document.getElementById('ws-tooltip');
     tooltip.style.display = "none";
 }
@@ -39,8 +33,14 @@ const func = (c) => {
     if (c === undefined) return;
     for (let i = 0; i < c.length; i++) {
         c[i].addEventListener("mousedown", function (event) {
-            addEventLeft(event);
-            addEventRight(event);
+            switch (event.which) {
+                case 1:
+                    addEventLeft(event);
+                    break;
+                case 3:
+                    addEventRight(event);
+                    break;
+            }
         });
         func(c[i].childNodes);
     }
