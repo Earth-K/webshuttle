@@ -12,9 +12,9 @@ class WebCrawler:
         self.service = Service(ChromeDriverManager().install())
         if options is None:
             self.driver = webdriver.Chrome(service=self.service)
+            self.driver.maximize_window()
         else:
             self.driver = webdriver.Chrome(service=self.service, options=options)
-        self.driver.maximize_window()
         self.driver.implicitly_wait(3)
         self.driver.get(start_url)
 
@@ -22,7 +22,7 @@ class WebCrawler:
         return self.driver.execute_script(script)
 
     def scroll_to(self, x, y):
-        self.driver.execute_script("scrollTo({0}, {1});".format(x, y))
+        self.driver.execute_script("window.scrollBy({0}, {1});".format(x, y))
 
     def get_target_element(self):
         return self.driver.find_elements_by_class_name("ws-target-element")[0]
