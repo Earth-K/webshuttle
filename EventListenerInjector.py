@@ -15,6 +15,9 @@ class EventListenerInjector:
     def add_mousedown_right(self):
         self._execute_js("js/add_mousedown.js")
 
+    def add_origin_background_color(self):
+        self._execute_js("js/add_originBackgroundColor.js")
+
     def _execute_js(self, file_path):
         jsFile = open(file_path, "r", encoding='utf-8')
         self._web_crawler.execute_js(jsFile.read())
