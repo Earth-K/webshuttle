@@ -43,12 +43,12 @@ class MainWindow(QMainWindow):
         self.widgets.addWidget(SettingWidget(self))
         self.setCentralWidget(self.widgets)
 
-        go_main_page = QAction('main', self)
+        go_main_page = QAction('Main', self)
         go_main_page.setShortcut('Ctrl+1')
         go_main_page.setStatusTip('Show the main page.')
         go_main_page.triggered.connect(lambda: go_main_widget(self.widgets))
 
-        go_setting_page = QAction('shuttles', self)
+        go_setting_page = QAction('Shuttles', self)
         go_setting_page.setShortcut('Ctrl+2')
         go_setting_page.setStatusTip('Show the saved shuttles')
         go_setting_page.triggered.connect(lambda: go_setting_widget(self.widgets))
@@ -174,12 +174,19 @@ class MyApp(QWidget):
         self._element_x = self._webCrawler.get_element_pos_x()
         self._scroll_x = self._webCrawler.get_scroll_x()
         self._scroll_y = self._webCrawler.get_scroll_y()
+        self._element_class_names = self._webCrawler.get_element_class_names()
         self._contents = result.text
         self.textedit_log.setText('{0} - get target element data.\n'.format(local_time_now()))
         self.textedit_log.append('scroll_y : {0}'.format(self._scroll_y))
         self.textedit_log.append('scroll_x : {0}'.format(self._scroll_x))
         self.textedit_log.append('element_y : {0}'.format(self._element_y))
         self.textedit_log.append('element_x : {0}'.format(self._element_x))
+        self.textedit_log.append('class names : {0}'.format(self._element_class_names))
+        self.textedit_log.append('id : {0}'.format(self._webCrawler.get_element_id()))
+        elements = self._webCrawler.get_elements_by_classnames(self._element_class_names)
+        self.textedit_log.append('--- elements ---\n')
+        for e in elements:
+            self.textedit_log.append('{0}\n'.format(e.text))
         self.textedit_log.append('\n--- contents ---\n')
         self.textedit_log.append(self._contents)
 
@@ -202,11 +209,10 @@ class MyApp(QWidget):
             tmp_web_crawler.scroll_to(scroll_x, scroll_y)
             print('{0} - scrollTo({1}, {2}).\n'.format(local_time_now(), scroll_x, scroll_y))
             time.sleep(2)
-            element = tmp_web_crawler.execute_js(
-                'return document.elementFromPoint({0}, {1});'.format(element_x, element_y))
-            print('{0} - get text of document.elementFromPoint({1}, {2}).\n'.format(local_time_now(), self._element_x,
-                                                                                    self._element_y))
-            print(element.text)
+            elements = tmp_web_crawler.get_elements_by_classnames(self._element_class_names)
+            self.textedit_log.append('--- element ---\n')
+            for e in elements:
+                self.textedit_log.append('{0}'.format(e.text+'\n'))
             tmp_web_crawler.close_driver()
             time.sleep(int(self._lineedit_period().text()))
 

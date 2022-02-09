@@ -45,7 +45,31 @@ class WebCrawler:
             '''
             let targetElement = document.getElementById('ws-tooltip');
             return targetElement.getBoundingClientRect().top-3;
-            ''')
+            '''
+        )
 
     def close_driver(self):
         self.driver.close()
+
+    def get_element_class_names(self):
+        return self.execute_js(
+            '''
+            const ws_target_element = document.getElementsByClassName('ws-target-element')[0];
+            let className = ws_target_element.className;
+            const startIdx = className.indexOf(' ws-target-element');
+            return className.substring(0, startIdx); 
+            '''
+        )
+
+    def get_element_id(self):
+        return self.execute_js(
+            '''
+            const ws_target_element = document.getElementsByClassName('ws-target-element')[0];
+            return ws_target_element.id 
+            '''
+        )
+
+    def get_elements_by_classnames(self, class_names):
+        return self.execute_js(
+            'return document.getElementsByClassName("' + class_names + '")'
+        )

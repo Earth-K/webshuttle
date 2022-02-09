@@ -13,14 +13,25 @@ function addEventRight(event) {
     wsTooltip.style.display = "flex";
     wsTooltip.style.justifyContent = "center";
     wsTooltip.style.alignItems = "center";
-    const wsTargetElement = document.getElementsByClassName(" ws-target-element")[0];
-    if (wsTargetElement !== undefined) {
-        wsTargetElement.style.backgroundColor = event.target.getAttribute("data-originBackgroundColor");
-        wsTargetElement.setAttribute("selected", "false");
-        const startIdx = wsTargetElement.className.indexOf(" ws-target-element");
-        wsTargetElement.className = wsTargetElement.className.substring(0, startIdx);
+
+    while (true) {
+        const wsTargetElements = document.getElementsByClassName("ws-target-element");
+        console.log(wsTargetElements)
+        if (wsTargetElements.length === 0) {
+            break;
+        }
+        for (let i = 0; i < wsTargetElements.length; i++) {
+            wsTargetElements[i].style.backgroundColor = wsTargetElements[i].getAttribute("data-originBackgroundColor");
+            wsTargetElements[i].setAttribute("selected", "false");
+            const startIdx = wsTargetElements[i].className.indexOf(" ws-target-element");
+            wsTargetElements[i].className = wsTargetElements[i].className.substring(0, startIdx);
+        }
     }
-    event.target.className += " ws-target-element";
+
+    const wsTargetClassElements = document.getElementsByClassName(event.target.className);
+    for (let i = 0; i < wsTargetClassElements.length; i++) {
+        wsTargetClassElements[i].className += " ws-target-element";
+    }
     event.stopPropagation();
 }
 
