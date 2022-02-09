@@ -29,8 +29,12 @@ function addEventRight(event) {
     }
 
     const wsTargetClassElements = document.getElementsByClassName(event.target.className);
-    for (let i = 0; i < wsTargetClassElements.length; i++) {
-        wsTargetClassElements[i].className += " ws-target-element";
+    if (wsTargetClassElements.length === 0) {
+        document.elementFromPoint(posTop - 3, posLeft - 3).className = " ws-target-element";
+    } else {
+        for (let i = 0; i < wsTargetClassElements.length; i++) {
+            wsTargetClassElements[i].className += " ws-target-element";
+        }
     }
     event.stopPropagation();
 }
