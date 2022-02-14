@@ -34,12 +34,12 @@ class MainWidget(QWidget):
         self.lineedit = QLineEdit()
         self.lineedit_period = QLineEdit()
         self.thread_auto_check = None
-        self._contents = None
-        self._element_x = None
-        self._element_y = None
-        self._scroll_x = None
-        self._scroll_y = None
-        self._element_class_names = None
+        self.contents = None
+        self.element_x = None
+        self.element_y = None
+        self.scroll_x = None
+        self.scroll_y = None
+        self.element_class_names = None
         self._init_ui()
 
     def _init_ui(self):
@@ -65,12 +65,7 @@ class MainWidget(QWidget):
 
         result.addWidget(self._button_get_element_data())
         result.addWidget(self._textedit_log())
-        result.addWidget(self._button_save())
         return result
-
-    def _button_save(self):
-        button_save = QPushButton('Save this shuttle')
-        return button_save
 
     def _lineedit_period(self):
         self.lineedit_period.setPlaceholderText('Check Period (sec)')
@@ -105,29 +100,29 @@ class MainWidget(QWidget):
 
     def _get_target_element_data(self):
         result: WebElement = self._webCrawler.get_target_element()
-        self._element_y = self._webCrawler.get_element_pos_y()
-        self._element_x = self._webCrawler.get_element_pos_x()
-        self._scroll_x = self._webCrawler.get_scroll_x()
-        self._scroll_y = self._webCrawler.get_scroll_y()
-        self._element_class_names = self._webCrawler.get_element_class_names()
-        self._contents = result.text
+        self.element_y = self._webCrawler.get_element_pos_y()
+        self.element_x = self._webCrawler.get_element_pos_x()
+        self.scroll_x = self._webCrawler.get_scroll_x()
+        self.scroll_y = self._webCrawler.get_scroll_y()
+        self.element_class_names = self._webCrawler.get_element_class_names()
+        self.contents = result.text
         self.textedit_log.setText('{0} - get target element data.\n'.format(local_time_now()))
-        self.textedit_log.append('scroll_y : {0}'.format(self._scroll_y))
-        self.textedit_log.append('scroll_x : {0}'.format(self._scroll_x))
-        self.textedit_log.append('element_y : {0}'.format(self._element_y))
-        self.textedit_log.append('element_x : {0}'.format(self._element_x))
-        self.textedit_log.append('class names : {0}'.format(self._element_class_names))
+        self.textedit_log.append('scroll_y : {0}'.format(self.scroll_y))
+        self.textedit_log.append('scroll_x : {0}'.format(self.scroll_x))
+        self.textedit_log.append('element_y : {0}'.format(self.element_y))
+        self.textedit_log.append('element_x : {0}'.format(self.element_x))
+        self.textedit_log.append('class names : {0}'.format(self.element_class_names))
         self.textedit_log.append('id : {0}'.format(self._webCrawler.get_element_id()))
-        elements = self._webCrawler.get_elements_by_classnames(self._element_class_names)
+        elements = self._webCrawler.get_elements_by_classnames(self.element_class_names)
         self.textedit_log.append('--- elements ---\n')
         for e in elements:
             self.textedit_log.append('{0}\n'.format(e.text))
         self.textedit_log.append('\n--- contents ---\n')
-        self.textedit_log.append(self._contents)
+        self.textedit_log.append(self.contents)
 
     def _check(self):
         self.thread_auto_check = threading.Thread(target=self.check_content, args=(
-            self.lineedit.text(), self._scroll_x, self._scroll_y, self._element_x, self._element_y))
+            self.lineedit.text(), self.scroll_x, self.scroll_y, self.element_x, self.element_y))
         self.thread_auto_check.daemon = True
         self.thread_auto_check.start()
 
@@ -144,7 +139,7 @@ class MainWidget(QWidget):
             tmp_web_crawler.scroll_to(scroll_x, scroll_y)
             print('{0} - scrollTo({1}, {2}).\n'.format(local_time_now(), scroll_x, scroll_y))
             time.sleep(2)
-            elements = tmp_web_crawler.get_elements_by_classnames(self._element_class_names)
+            elements = tmp_web_crawler.get_elements_by_classnames(self.element_class_names)
             self.textedit_log.append('--- element ---\n')
             for e in elements:
                 self.textedit_log.append('{0}'.format(e.text+'\n'))
