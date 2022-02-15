@@ -36,9 +36,11 @@ class MainWindow(QMainWindow):
 
     def _go_setting_widget(self, widgets):
         widgets.setCurrentIndex(1)
+        self.toolBar.setVisible(False)
 
     def _go_main_widget(self, widgets):
         widgets.setCurrentIndex(0)
+        self.toolBar.setVisible(True)
 
     def _shuttle_page_action(self):
         result = QAction('Shuttles', self)
