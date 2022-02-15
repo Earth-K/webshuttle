@@ -129,9 +129,9 @@ class MainWidget(QWidget):
     def check_content(self, lineedit_url, scroll_x, scroll_y, element_x, element_y):
         url = lineedit_url
         while True:
-            options = webdriver.ChromeOptions()  # 크롬 옵션 객체 생성
-            options.add_argument('headless')  # headless 모드 설정
-            options.add_argument("--start-maximized")  # add
+            options = webdriver.ChromeOptions()
+            options.add_argument('headless')
+            options.add_argument("--start-maximized")
             options.add_argument('window-size=1920x1080')
             options.add_argument("disable-gpu")
             tmp_web_crawler = WebCrawler(url, options)

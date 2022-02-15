@@ -8,14 +8,6 @@ from widgets.MainWidget import MainWidget
 from widgets.ShuttlesWidget import ShuttlesWidget
 
 
-def go_setting_widget(widgets):
-    widgets.setCurrentIndex(1)
-
-
-def go_main_widget(widgets):
-    widgets.setCurrentIndex(0)
-
-
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
@@ -26,36 +18,48 @@ class MainWindow(QMainWindow):
         self.widgets.addWidget(self.main_widget)
         self.widgets.addWidget(self.shuttles_widget)
         self.setCentralWidget(self.widgets)
-
-        go_main_page = QAction('Main', self)
-        go_main_page.setShortcut('Ctrl+1')
-        go_main_page.setStatusTip('Show the main page.')
-        go_main_page.triggered.connect(lambda: go_main_widget(self.widgets))
-
-        go_setting_page = QAction('Shuttles', self)
-        go_setting_page.setShortcut('Ctrl+2')
-        go_setting_page.setStatusTip('Show the saved shuttles')
-        go_setting_page.triggered.connect(lambda: go_setting_widget(self.widgets))
-
         self.statusBar()
 
         menubar = self.menuBar()
-        menubar.setNativeMenuBar(False)
+        menubar.setNativeMenuBar(True)
         menu_move = menubar.addMenu('&View')
-        menu_move.addAction(go_main_page)
-        menu_move.addAction(go_setting_page)
+        menu_move.addAction(self._main_page_action())
+        menu_move.addAction(self._shuttle_page_action())
 
-        save_action = QAction(QIcon('save.png'), 'Save this shuttle', self)
-        save_action.setShortcut('Ctrl+S')
-        save_action.setStatusTip('Save this shuttle')
-        save_action.triggered.connect(self._save_shuttle)
         self.toolBar = self.addToolBar('Save this shuttle')
-        self.toolBar.addAction(save_action)
+        self.toolBar.addAction(self._save_action())
 
         self.resize(750, 500)
         self._move_to_center()
         self.setWindowTitle('WebShuttle')
         self.show()
+
+    def _go_setting_widget(self, widgets):
+        widgets.setCurrentIndex(1)
+
+    def _go_main_widget(self, widgets):
+        widgets.setCurrentIndex(0)
+
+    def _shuttle_page_action(self):
+        result = QAction('Shuttles', self)
+        result.setShortcut('Ctrl+2')
+        result.setStatusTip('Show the saved shuttles')
+        result.triggered.connect(lambda: self._go_setting_widget(self.widgets))
+        return result
+
+    def _main_page_action(self):
+        result = QAction('Main', self)
+        result.setShortcut('Ctrl+1')
+        result.setStatusTip('Show the main page.')
+        result.triggered.connect(lambda: self._go_main_widget(self.widgets))
+        return result
+
+    def _save_action(self):
+        result = QAction(QIcon('save.png'), 'Save this shuttle', self)
+        result.setShortcut('Ctrl+S')
+        result.setStatusTip('Save this shuttle')
+        result.triggered.connect(self._save_shuttle)
+        return result
 
     def _move_to_center(self):
         qRect = self.frameGeometry()
