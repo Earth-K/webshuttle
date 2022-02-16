@@ -2,7 +2,7 @@ import sys
 
 from PyQt5 import QtWidgets
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QApplication, QDesktopWidget, QAction, QMainWindow, QPushButton
+from PyQt5.QtWidgets import QApplication, QDesktopWidget, QAction, QMainWindow, QPushButton, QMessageBox
 
 from widgets.MainWidget import MainWidget
 from widgets.ShuttlesWidget import ShuttlesWidget
@@ -75,7 +75,8 @@ class MainWindow(QMainWindow):
         return button_save
 
     def _save_shuttle(self):
-        print(self.main_widget.lineedit_period.text())
+        QMessageBox.information(self, 'Success', 'Current settings saved in Shuttles menu.\n(Shortcut keys : Ctrl+2)',
+                                QMessageBox.Yes, QMessageBox.NoButton)
 
 
 if __name__ == '__main__':
