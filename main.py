@@ -75,6 +75,17 @@ class MainWindow(QMainWindow):
         return button_save
 
     def _save_shuttle(self):
+        main_widget = self.widgets.widget(0)
+        shuttles_widget = self.widgets.widget(1)
+        url = main_widget.lineedit.text()
+        check_period = main_widget.lineedit_period.text()
+        target_classes = main_widget.element_class_names
+        if url is None or check_period is None or target_classes is None:
+            QMessageBox.information(self, 'Failure',
+                                    'Some setting values are blank.',
+                                    QMessageBox.Yes, QMessageBox.NoButton)
+            return
+        shuttles_widget.add_shuttle(url, check_period, target_classes)
         QMessageBox.information(self, 'Success', 'Current settings saved in Shuttles menu.\n(Shortcut keys : Ctrl+2)',
                                 QMessageBox.Yes, QMessageBox.NoButton)
 
