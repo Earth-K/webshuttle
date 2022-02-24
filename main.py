@@ -4,6 +4,7 @@ from PyQt5 import QtWidgets
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QDesktopWidget, QAction, QMainWindow, QPushButton, QMessageBox
 
+from widgets.LogWidget import LogWidget
 from widgets.MainWidget import MainWidget
 from widgets.ShuttlesWidget import ShuttlesWidget
 
@@ -14,9 +15,11 @@ class MainWindow(QMainWindow):
 
         self.main_widget = MainWidget(self)
         self.shuttles_widget = ShuttlesWidget(self)
+        self.log_widget = LogWidget(self)
         self.widgets = QtWidgets.QStackedWidget()
         self.widgets.addWidget(self.main_widget)
         self.widgets.addWidget(self.shuttles_widget)
+        self.widgets.addWidget(self.log_widget)
         self.setCentralWidget(self.widgets)
         self.statusBar()
 
@@ -25,6 +28,7 @@ class MainWindow(QMainWindow):
         menu_move = menubar.addMenu('&View')
         menu_move.addAction(self._main_page_action())
         menu_move.addAction(self._shuttle_page_action())
+        menu_move.addAction(self._log_page_action())
 
         self.toolBar = self.addToolBar('Save this shuttle')
         self.toolBar.addAction(self._save_action())
@@ -34,6 +38,10 @@ class MainWindow(QMainWindow):
         self.setWindowTitle('WebShuttle')
         self.show()
 
+    def _go_log_widget(self, widgets):
+        widgets.setCurrentIndex(2)
+        self.toolBar.setVisible(False)
+
     def _go_setting_widget(self, widgets):
         widgets.setCurrentIndex(1)
         self.toolBar.setVisible(False)
@@ -41,6 +49,13 @@ class MainWindow(QMainWindow):
     def _go_main_widget(self, widgets):
         widgets.setCurrentIndex(0)
         self.toolBar.setVisible(True)
+
+    def _log_page_action(self):
+        result = QAction('Log', self)
+        result.setShortcut('Ctrl+3')
+        result.setStatusTip('Show the log page.')
+        result.triggered.connect(lambda: self._go_log_widget(self.widgets))
+        return result
 
     def _shuttle_page_action(self):
         result = QAction('Shuttles', self)
@@ -77,6 +92,7 @@ class MainWindow(QMainWindow):
     def _save_shuttle(self):
         main_widget = self.widgets.widget(0)
         shuttles_widget = self.widgets.widget(1)
+        log_widget = self.widgets.widget(2)
         url = main_widget.lineedit.text()
         check_period = main_widget.lineedit_period.text()
         target_classes = main_widget.element_class_names
