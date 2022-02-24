@@ -101,7 +101,7 @@ class MainWindow(QMainWindow):
                                     'Some setting values are blank.',
                                     QMessageBox.Yes, QMessageBox.NoButton)
             return
-        shuttles_widget.add_shuttle(url, check_period, target_classes)
+        shuttles_widget.add_shuttle(url, check_period, target_classes, log_widget.get_edittext())
         QMessageBox.information(self, 'Success', 'Current settings saved in Shuttles menu.\n(Shortcut keys : Ctrl+2)',
                                 QMessageBox.Yes, QMessageBox.NoButton)
 
