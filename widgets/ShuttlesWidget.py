@@ -3,6 +3,7 @@ import time
 
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit, QPushButton, QMessageBox
 from selenium import webdriver
+from selenium.webdriver.remote.webelement import WebElement
 
 from WebCrawler import WebCrawler
 from domain.Shuttle import Shuttle
@@ -92,6 +93,7 @@ class ShuttlesWidget(QWidget):
         thread.start()
 
     def _check_content(self, url, period, target_classes, log_edittext, start_btn: QPushButton):
+        text_list = []
         while True:
             options = webdriver.ChromeOptions()
             options.add_argument('headless')
@@ -101,8 +103,20 @@ class ShuttlesWidget(QWidget):
             tmp_web_crawler = WebCrawler(url.text(), options)
             time.sleep(1)
             elements = tmp_web_crawler.get_elements_by_classnames(target_classes.text())
-            for e in elements:
-                log_edittext.append(e.text)
+
+            if len(text_list) > 0:
+                new_text_list = []
+                for e in elements:
+                    new_text_list.append(e.text)
+                for new_text in new_text_list:
+                    if new_text not in text_list:
+                        log_edittext.append(new_text+"\n")
+                text_list = new_text_list
+            else:
+                for e in elements:
+                    text_list.append(e.text)
+                    log_edittext.append(e.text+"\n")
+
             tmp_web_crawler.close_driver()
 
             if start_btn.isEnabled() is True:
