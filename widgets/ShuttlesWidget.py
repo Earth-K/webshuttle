@@ -15,6 +15,13 @@ def shuttle_setting_layout(hbox_layout):
     return result
 
 
+def get_text_list(elements):
+    result = []
+    for e in elements:
+        result.append(e.text)
+    return result
+
+
 class ShuttlesWidget(QWidget):
     def __init__(self, parent):
         super(ShuttlesWidget, self).__init__(parent)
@@ -104,21 +111,26 @@ class ShuttlesWidget(QWidget):
             time.sleep(1)
             elements = tmp_web_crawler.get_elements_by_classnames(target_classes.text())
 
+            no_newline_text = ""
             if len(text_list) > 0:
-                new_text_list = []
-                for e in elements:
-                    new_text_list.append(e.text)
+                new_text_list = get_text_list(elements)
                 for new_text in new_text_list:
                     if new_text not in text_list:
-                        log_edittext.append(new_text+"\n")
+                        # 한 번에 보이는 정보의 양을 늘리기 위해 줄 바꿈 문자를 | 로 변경함
+                        no_newline_text += new_text.replace("\n", " | ") + "\n"
                 text_list = new_text_list
             else:
                 for e in elements:
                     text_list.append(e.text)
-                    log_edittext.append(e.text+"\n")
+                    # 한 번에 보이는 정보의 양을 늘리기 위해 줄 바꿈 문자를 | 로 변경함
+                    no_newline_text += e.text.replace("\n", " | ") + "\n"
+
+            if len(no_newline_text) > 0:
+                log_edittext.append(no_newline_text + "\n")
 
             tmp_web_crawler.close_driver()
 
             if start_btn.isEnabled() is True:
+                log_edittext.append("Stopped a shuttle." + "\n")
                 break
             time.sleep(int(period.text()))
