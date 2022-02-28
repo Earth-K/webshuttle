@@ -3,6 +3,8 @@ import sys
 from PyQt5 import QtWidgets
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QDesktopWidget, QAction, QMainWindow, QPushButton, QMessageBox
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 
 from widgets.LogWidget import LogWidget
 from widgets.MainWidget import MainWidget
@@ -13,8 +15,9 @@ class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
 
-        self.main_widget = MainWidget(self)
-        self.shuttles_widget = ShuttlesWidget(self)
+        chrome_service = Service(ChromeDriverManager().install())
+        self.main_widget = MainWidget(self, chrome_service)
+        self.shuttles_widget = ShuttlesWidget(self, chrome_service)
         self.log_widget = LogWidget(self)
         self.widgets = QtWidgets.QStackedWidget()
         self.widgets.addWidget(self.main_widget)

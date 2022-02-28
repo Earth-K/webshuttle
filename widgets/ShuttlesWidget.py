@@ -23,9 +23,10 @@ def get_text_list(elements):
 
 
 class ShuttlesWidget(QWidget):
-    def __init__(self, parent):
+    def __init__(self, parent, chrome_service):
         super(ShuttlesWidget, self).__init__(parent)
         self.shuttles = []
+        self.chrome_service = chrome_service
         self._init_ui()
 
     def _init_ui(self):
@@ -107,7 +108,7 @@ class ShuttlesWidget(QWidget):
             options.add_argument("--start-maximized")
             options.add_argument('window-size=1920x1080')
             options.add_argument("disable-gpu")
-            tmp_web_crawler = WebCrawler(url.text(), options)
+            tmp_web_crawler = WebCrawler(url.text(), options, self.chrome_service)
             time.sleep(1)
             elements = tmp_web_crawler.get_elements_by_classnames(target_classes.text())
 

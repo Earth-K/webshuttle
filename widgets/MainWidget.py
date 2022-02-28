@@ -28,7 +28,7 @@ class MainWidget(QWidget):
     textedit_log: QTextEdit
     _webCrawler: WebCrawler
 
-    def __init__(self, parent):
+    def __init__(self, parent, chrome_service):
         super(MainWidget, self).__init__(parent)
         self.textedit_log = QTextEdit()
         self.lineedit = QLineEdit()
@@ -41,6 +41,7 @@ class MainWidget(QWidget):
         self.scroll_y = None
         self.element_class_names = None
         self._init_ui()
+        self.chrome_service = chrome_service
 
     def _init_ui(self):
         vbox_layout = self._vbox_layout()
@@ -95,7 +96,7 @@ class MainWidget(QWidget):
         return self.lineedit
 
     def _open_browser(self, lineedit):
-        self._webCrawler = WebCrawler(lineedit.text())
+        self._webCrawler = WebCrawler(lineedit.text(), chrome_service=self.chrome_service)
         init_event_listener(self._webCrawler)
 
     def _get_target_element_data(self):
@@ -134,7 +135,7 @@ class MainWidget(QWidget):
             options.add_argument("--start-maximized")
             options.add_argument('window-size=1920x1080')
             options.add_argument("disable-gpu")
-            tmp_web_crawler = WebCrawler(url, options)
+            tmp_web_crawler = WebCrawler(url, options, self.chrome_service)
             time.sleep(1)
             elements = tmp_web_crawler.get_elements_by_classnames(self.element_class_names)
             self.textedit_log.append('--- element ---\n')
