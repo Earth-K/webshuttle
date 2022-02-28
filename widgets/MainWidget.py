@@ -122,11 +122,11 @@ class MainWidget(QWidget):
 
     def _check(self):
         self.thread_auto_check = threading.Thread(target=self.check_content, args=(
-            self.lineedit.text(), self.scroll_x, self.scroll_y, self.element_x, self.element_y))
+            self.lineedit.text(), self.scroll_x, self.scroll_y))
         self.thread_auto_check.daemon = True
         self.thread_auto_check.start()
 
-    def check_content(self, lineedit_url, scroll_x, scroll_y, element_x, element_y):
+    def check_content(self, lineedit_url, scroll_x, scroll_y):
         url = lineedit_url
         while True:
             options = webdriver.ChromeOptions()
@@ -136,9 +136,6 @@ class MainWidget(QWidget):
             options.add_argument("disable-gpu")
             tmp_web_crawler = WebCrawler(url, options)
             time.sleep(1)
-            tmp_web_crawler.scroll_to(scroll_x, scroll_y)
-            print('{0} - scrollTo({1}, {2}).\n'.format(local_time_now(), scroll_x, scroll_y))
-            time.sleep(2)
             elements = tmp_web_crawler.get_elements_by_classnames(self.element_class_names)
             self.textedit_log.append('--- element ---\n')
             for e in elements:

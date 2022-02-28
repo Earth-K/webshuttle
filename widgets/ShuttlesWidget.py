@@ -1,9 +1,9 @@
 import threading
 import time
 
+import pyglet
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit, QPushButton, QMessageBox
 from selenium import webdriver
-from selenium.webdriver.remote.webelement import WebElement
 
 from WebCrawler import WebCrawler
 from domain.Shuttle import Shuttle
@@ -127,6 +127,7 @@ class ShuttlesWidget(QWidget):
 
             if len(no_newline_text) > 0:
                 log_edittext.append(no_newline_text + "\n")
+                pyglet.resource.media('water.wav').play()
 
             tmp_web_crawler.close_driver()
 
