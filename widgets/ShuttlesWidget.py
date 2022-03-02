@@ -30,12 +30,18 @@ class ShuttlesWidget(QWidget):
         self._init_ui()
 
     def _init_ui(self):
-        self._vbox_layout = QVBoxLayout()
+        self.title_vbox_layout = QVBoxLayout()
         title = QLabel()
         title.setText("Saved Shuttles : ")
-        self._vbox_layout.addWidget(title)
-        self._vbox_layout.addStretch(4)
-        self.setLayout(self._vbox_layout)
+        self.shuttles_vbox_layout = QVBoxLayout()
+        self.title_vbox_layout.addWidget(title)
+        stretch_vbox_layout = QVBoxLayout()
+        stretch_vbox_layout.addStretch(4)
+        wrap_vbox_layout = QVBoxLayout()
+        wrap_vbox_layout.addLayout(self.title_vbox_layout)
+        wrap_vbox_layout.addLayout(self.shuttles_vbox_layout)
+        wrap_vbox_layout.addLayout(stretch_vbox_layout)
+        self.setLayout(wrap_vbox_layout)
         self.show()
 
     def add_shuttle(self, url, period, target_classes, log_edittext):
@@ -75,11 +81,21 @@ class ShuttlesWidget(QWidget):
         description = QLineEdit()
         description.setPlaceholderText('description...')
         hbox_layout_memo.addWidget(description)
+        delete_btn = QPushButton('remove')
+        delete_btn.clicked.connect(lambda: self.remove_shuttles(vbox_wrap_layout))
+        hbox_layout_memo.addWidget(delete_btn)
 
         vbox_wrap_layout.addLayout(hbox_layout_shuttle)
         vbox_wrap_layout.addLayout(hbox_layout_memo)
-        self._vbox_layout.addLayout(vbox_wrap_layout)
-        self._vbox_layout.addStretch(4)
+        self.shuttles_vbox_layout.addLayout(vbox_wrap_layout)
+
+    def remove_shuttles(self, vbox_wrap_layout: QVBoxLayout):
+        while vbox_wrap_layout.count():
+            child = vbox_wrap_layout.takeAt(0)
+            if child.widget() is not None:
+                child.widget().deleteLater()
+            else:
+                self.remove_shuttles(child.layout())
 
     def _stop(self, period, start_btn, stop_btn):
         period.setReadOnly(False)
