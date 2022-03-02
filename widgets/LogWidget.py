@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTextEdit, QLabel
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QTextEdit, QLabel
 
 
 class LogWidget(QWidget):
@@ -13,9 +13,15 @@ class LogWidget(QWidget):
         self._edit_text = QTextEdit()
         self._edit_text.setReadOnly(True)
         self._vbox_layout.addWidget(title)
+        clear_btn = QPushButton('clear')
+        clear_btn.clicked.connect(self.clear_text)
+        self._vbox_layout.addWidget(clear_btn)
         self._vbox_layout.addWidget(self._edit_text)
         self.setLayout(self._vbox_layout)
         self.show()
 
     def get_edittext(self):
         return self._edit_text
+
+    def clear_text(self):
+        self._edit_text.clear()
