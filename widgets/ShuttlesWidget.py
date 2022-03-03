@@ -6,7 +6,9 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit
 from selenium import webdriver
 
 from WebCrawler import WebCrawler
+from domain.LogText import LogText
 from domain.Shuttle import Shuttle
+from widgets.MainWidget import MainWidget
 
 
 def shuttle_setting_layout(hbox_layout):
@@ -150,7 +152,8 @@ class ShuttlesWidget(QWidget):
                     no_newline_text += e.text.replace("\n", " | ") + "\n"
 
             if len(no_newline_text) > 0:
-                log_edittext.append("[ " + shuttle_name_text + " ]")
+                log_text = LogText()
+                log_edittext.append("[ " + shuttle_name_text + " ]" + log_text.local_time_now())
                 log_edittext.append(no_newline_text + "\n")
                 pyglet.resource.media('water.wav').play()
 
