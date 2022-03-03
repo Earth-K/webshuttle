@@ -64,11 +64,21 @@ class ShuttlesWidget(QWidget):
         hbox_layout_shuttle.addWidget(period_lineedit)
         hbox_layout_shuttle.addWidget(QLabel('target classes : '))
         hbox_layout_shuttle.addWidget(target_classes_lineedit)
+
+        hbox_layout_memo = QHBoxLayout()
+        hbox_layout_memo.addWidget(QLabel('name : '))
+        shuttle_name = QLineEdit()
+        shuttle_name.setPlaceholderText('Set name...')
+        hbox_layout_memo.addWidget(shuttle_name)
+        delete_btn = QPushButton('remove')
+        delete_btn.clicked.connect(lambda: self.remove_shuttles(vbox_wrap_layout))
+        hbox_layout_memo.addWidget(delete_btn)
+
         start_btn = QPushButton('Start')
         stop_btn = QPushButton('Stop')
 
         start_btn.clicked.connect(
-            lambda: self._start(url_lineedit, period_lineedit, target_classes_lineedit, log_edittext, start_btn,
+            lambda: self._start(shuttle_name, url_lineedit, period_lineedit, target_classes_lineedit, log_edittext, start_btn,
                                 stop_btn))
         hbox_layout_shuttle.addWidget(start_btn)
 
@@ -76,17 +86,9 @@ class ShuttlesWidget(QWidget):
         stop_btn.clicked.connect(lambda: self._stop(period_lineedit, start_btn, stop_btn))
         hbox_layout_shuttle.addWidget(stop_btn)
 
-        hbox_layout_memo = QHBoxLayout()
-        hbox_layout_memo.addWidget(QLabel('description : '))
-        description = QLineEdit()
-        description.setPlaceholderText('description...')
-        hbox_layout_memo.addWidget(description)
-        delete_btn = QPushButton('remove')
-        delete_btn.clicked.connect(lambda: self.remove_shuttles(vbox_wrap_layout))
-        hbox_layout_memo.addWidget(delete_btn)
-
         vbox_wrap_layout.addLayout(hbox_layout_shuttle)
         vbox_wrap_layout.addLayout(hbox_layout_memo)
+
         self.shuttles_vbox_layout.addLayout(vbox_wrap_layout)
 
     def remove_shuttles(self, vbox_wrap_layout: QVBoxLayout):
@@ -102,7 +104,7 @@ class ShuttlesWidget(QWidget):
         stop_btn.setDisabled(True)
         start_btn.setDisabled(False)
 
-    def _start(self, url, period, target_classes, log_edittext, start_btn, stop_btn):
+    def _start(self, shuttle_name, url, period, target_classes, log_edittext, start_btn, stop_btn):
         if not period.text().isdigit():
             QMessageBox.information(self, 'Please input a number',
                                     "You have to input a number at field of 'check period'.",
@@ -112,11 +114,11 @@ class ShuttlesWidget(QWidget):
         start_btn.setDisabled(True)
         stop_btn.setDisabled(False)
         thread = threading.Thread(target=self._check_content,
-                                  args=(url, period, target_classes, log_edittext, start_btn))
+                                  args=(shuttle_name, url, period, target_classes, log_edittext, start_btn))
         thread.daemon = True
         thread.start()
 
-    def _check_content(self, url, period, target_classes, log_edittext, start_btn: QPushButton):
+    def _check_content(self, shuttle_name, url, period, target_classes, log_edittext, start_btn: QPushButton):
         text_list = []
         while True:
             options = webdriver.ChromeOptions()
@@ -128,6 +130,10 @@ class ShuttlesWidget(QWidget):
             time.sleep(1)
             elements = tmp_web_crawler.get_elements_by_classnames(target_classes.text())
 
+            shuttle_name_text = "No Named"
+            if shuttle_name.text() != "":
+                shuttle_name_text = shuttle_name.text()
+
             no_newline_text = ""
             if len(text_list) > 0:
                 new_text_list = get_text_list(elements)
@@ -137,12 +143,14 @@ class ShuttlesWidget(QWidget):
                         no_newline_text += new_text.replace("\n", " | ") + "\n"
                 text_list = new_text_list
             else:
+
                 for e in elements:
                     text_list.append(e.text)
                     # 한 번에 보이는 정보의 양을 늘리기 위해 줄 바꿈 문자를 | 로 변경함
                     no_newline_text += e.text.replace("\n", " | ") + "\n"
 
             if len(no_newline_text) > 0:
+                log_edittext.append("[ " + shuttle_name_text + " ]")
                 log_edittext.append(no_newline_text + "\n")
                 pyglet.resource.media('water.wav').play()
 
