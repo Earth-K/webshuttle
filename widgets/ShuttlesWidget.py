@@ -7,8 +7,6 @@ from selenium import webdriver
 
 from WebCrawler import WebCrawler
 from domain.LogText import LogText
-from domain.Shuttle import Shuttle
-from widgets.MainWidget import MainWidget
 
 
 def shuttle_setting_layout(hbox_layout):
@@ -47,8 +45,6 @@ class ShuttlesWidget(QWidget):
         self.show()
 
     def add_shuttle(self, url, period, target_classes, log_edittext):
-        self.shuttles.append(Shuttle(url, period, target_classes))
-
         url_lineedit = QLineEdit()
         url_lineedit.setText(url)
         url_lineedit.setReadOnly(True)
@@ -100,6 +96,23 @@ class ShuttlesWidget(QWidget):
                 child.widget().deleteLater()
             else:
                 self.remove_shuttles(child.layout())
+
+    def get_added_shuttles_array(self):
+        if self.shuttles_vbox_layout is None:
+            return
+        result = []
+        for i in range(self.shuttles_vbox_layout.count()):
+            shuttle_id = "shuttle"+str(i)
+            shuttle_wrap_layout = self.shuttles_vbox_layout.itemAt(i)
+            shuttle_data_list = []
+            for j in range(shuttle_wrap_layout.count()):
+                shuttle_inner_layout = shuttle_wrap_layout.itemAt(j)
+                for k in range(shuttle_inner_layout.count()):
+                    widget = shuttle_inner_layout.itemAt(k).widget()
+                    if type(widget) is QLineEdit:
+                        shuttle_data_list.append(widget.text())
+            result.append((shuttle_id, shuttle_data_list))
+        return result
 
     def _stop(self, period, start_btn, stop_btn):
         period.setReadOnly(False)
