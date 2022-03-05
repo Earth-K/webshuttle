@@ -97,7 +97,7 @@ class ShuttlesWidget(QWidget):
             else:
                 self.remove_shuttles(child.layout())
 
-    def get_added_shuttles_array(self):
+    def get_saved_shuttles_array(self):
         if self.shuttles_vbox_layout is None:
             return
         result = []

@@ -32,6 +32,8 @@ class MainWindow(QMainWindow):
         menu_move.addAction(self._main_page_action())
         menu_move.addAction(self._shuttle_page_action())
         menu_move.addAction(self._log_page_action())
+        menu_save = menubar.addMenu('&Save')
+        menu_save.addAction(self._export_saved_shuttles_action())
 
         self.toolBar = self.addToolBar('Save this shuttle')
         self.toolBar.addAction(self._save_action())
@@ -52,6 +54,13 @@ class MainWindow(QMainWindow):
     def _go_main_widget(self, widgets):
         widgets.setCurrentIndex(0)
         self.toolBar.setVisible(True)
+
+    def _export_saved_shuttles_action(self):
+        result = QAction('Save added shuttles', self)
+        result.setShortcut('Ctrl+4')
+        result.setStatusTip('Save added shuttles.')
+        result.triggered.connect(self._export_saved_shuttles)
+        return result
 
     def _log_page_action(self):
         result = QAction('Log', self)
@@ -107,6 +116,9 @@ class MainWindow(QMainWindow):
         shuttles_widget.add_shuttle(url, check_period, target_classes, log_widget.get_edittext())
         QMessageBox.information(self, 'Success', 'Current settings saved in Shuttles menu.\n(Shortcut keys : Ctrl+2)',
                                 QMessageBox.Yes, QMessageBox.NoButton)
+
+    def _export_saved_shuttles(self):
+        print(self.shuttles_widget.get_saved_shuttles_array())
 
 
 if __name__ == '__main__':
