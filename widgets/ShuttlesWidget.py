@@ -44,7 +44,7 @@ class ShuttlesWidget(QWidget):
         self.setLayout(wrap_vbox_layout)
         self.show()
 
-    def add_shuttle(self, url, period, target_classes, log_edittext):
+    def add_shuttle(self, url, period, target_classes, name):
         url_lineedit = QLineEdit()
         url_lineedit.setText(url)
         url_lineedit.setReadOnly(True)
@@ -63,21 +63,21 @@ class ShuttlesWidget(QWidget):
         hbox_layout_shuttle.addWidget(QLabel('target classes : '))
         hbox_layout_shuttle.addWidget(target_classes_lineedit)
 
-        hbox_layout_memo = QHBoxLayout()
-        hbox_layout_memo.addWidget(QLabel('name : '))
-        shuttle_name = QLineEdit()
+        hbox_layout_shuttle_name = QHBoxLayout()
+        hbox_layout_shuttle_name.addWidget(QLabel('name : '))
+        shuttle_name = QLineEdit(name)
         shuttle_name.setPlaceholderText('Set name...')
-        hbox_layout_memo.addWidget(shuttle_name)
+        hbox_layout_shuttle_name.addWidget(shuttle_name)
         delete_btn = QPushButton('remove')
         delete_btn.clicked.connect(lambda: self.remove_shuttles(vbox_wrap_layout))
-        hbox_layout_memo.addWidget(delete_btn)
+        hbox_layout_shuttle_name.addWidget(delete_btn)
 
         start_btn = QPushButton('Start')
         stop_btn = QPushButton('Stop')
 
         start_btn.clicked.connect(
-            lambda: self._start(shuttle_name, url_lineedit, period_lineedit, target_classes_lineedit, log_edittext, start_btn,
-                                stop_btn))
+            lambda: self._start(shuttle_name, url_lineedit, period_lineedit, target_classes_lineedit, shuttle_name,
+                                start_btn, stop_btn))
         hbox_layout_shuttle.addWidget(start_btn)
 
         stop_btn.setDisabled(True)
@@ -85,7 +85,7 @@ class ShuttlesWidget(QWidget):
         hbox_layout_shuttle.addWidget(stop_btn)
 
         vbox_wrap_layout.addLayout(hbox_layout_shuttle)
-        vbox_wrap_layout.addLayout(hbox_layout_memo)
+        vbox_wrap_layout.addLayout(hbox_layout_shuttle_name)
 
         self.shuttles_vbox_layout.addLayout(vbox_wrap_layout)
 
@@ -102,7 +102,7 @@ class ShuttlesWidget(QWidget):
             return
         result = []
         for i in range(self.shuttles_vbox_layout.count()):
-            shuttle_id = "shuttle"+str(i)
+            shuttle_id = "shuttle" + str(i)
             shuttle_wrap_layout = self.shuttles_vbox_layout.itemAt(i)
             shuttle_data_list = []
             for j in range(shuttle_wrap_layout.count()):

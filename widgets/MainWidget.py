@@ -31,6 +31,7 @@ class MainWidget(QWidget):
     def __init__(self, parent, chrome_service):
         super(MainWidget, self).__init__(parent)
         self.textedit_log = QTextEdit()
+        self.lineedit_shuttle_name = QLineEdit()
         self.lineedit = QLineEdit()
         self.lineedit_period = QLineEdit()
         self.thread_auto_check = None
@@ -50,6 +51,14 @@ class MainWidget(QWidget):
 
     def _vbox_layout(self):
         result = QVBoxLayout()
+
+        hbox_layout_shuttle_name_layout = QHBoxLayout()
+        hbox_layout_shuttle_name_layout.addWidget(QLabel('name : '))
+        shuttle_name = self.shuttle_name()
+        shuttle_name.setPlaceholderText('Set name...')
+        hbox_layout_shuttle_name_layout.addWidget(shuttle_name)
+        result.addLayout(hbox_layout_shuttle_name_layout)
+
         lineedit = self.lineedit_url()
         hbox_layout_url = QHBoxLayout()
         label_url = QLabel("URL : ")
@@ -90,6 +99,10 @@ class MainWidget(QWidget):
     def _textedit_log(self):
         self.textedit_log.setReadOnly(True)
         return self.textedit_log
+
+    def shuttle_name(self):
+        self.lineedit_shuttle_name.setPlaceholderText('name of shuttle...')
+        return self.lineedit_shuttle_name
 
     def lineedit_url(self):
         self.lineedit.setPlaceholderText('https://example.com')
