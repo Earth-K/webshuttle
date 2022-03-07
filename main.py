@@ -9,6 +9,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from widgets.LogWidget import LogWidget
 from widgets.MainWidget import MainWidget
 from widgets.ShuttlesWidget import ShuttlesWidget
+import configparser
 
 
 class MainWindow(QMainWindow):
@@ -118,7 +119,17 @@ class MainWindow(QMainWindow):
                                 QMessageBox.Yes, QMessageBox.NoButton)
 
     def _export_saved_shuttles(self):
-        print(self.shuttles_widget.get_saved_shuttles_array())
+        config = configparser.ConfigParser()
+        saved_shuttles_tuple_list = self.shuttles_widget.get_saved_shuttles_array()
+        for saved_shuttle in saved_shuttles_tuple_list:
+            shuttle_config_list = saved_shuttle[1]
+            shuttle_id = saved_shuttle[0]
+            config[shuttle_id] = {}
+            attributes = ['url', 'period', 'element_classes', 'name']
+            for i in range(0, len(shuttle_config_list)):
+                config[shuttle_id][attributes[i]] = shuttle_config_list[i]
+        with open('config.ini', 'w') as configfile:
+            config.write(configfile)
 
 
 if __name__ == '__main__':
