@@ -96,6 +96,7 @@ class ShuttlesWidget(QWidget):
                 child.widget().deleteLater()
             else:
                 self.remove_shuttles(child.layout())
+        vbox_wrap_layout.deleteLater()
 
     def get_saved_shuttles_array(self):
         if self.shuttles_vbox_layout is None:
