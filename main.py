@@ -40,6 +40,8 @@ class MainWindow(QMainWindow):
         self.toolBar = self.addToolBar('Save this shuttle')
         self.toolBar.addAction(self._save_action())
 
+        self._import_external_shuttles_config()
+
         self.resize(750, 500)
         self._move_to_center()
         self.setWindowTitle('WebShuttle')
@@ -131,8 +133,8 @@ class MainWindow(QMainWindow):
         config = configparser.ConfigParser()
         saved_shuttles_tuple_list = self.shuttles_widget.get_saved_shuttles_array()
         for saved_shuttle in saved_shuttles_tuple_list:
-            shuttle_config_list = saved_shuttle[1]
             shuttle_id = saved_shuttle[0]
+            shuttle_config_list = saved_shuttle[1]
             config[shuttle_id] = {}
             attributes = ['url', 'period', 'element_classes', 'name']
             for i in range(0, len(shuttle_config_list)):
