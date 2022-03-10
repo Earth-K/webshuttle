@@ -125,7 +125,7 @@ class MainWindow(QMainWindow):
                                     'Some setting values are blank.',
                                     QMessageBox.Yes, QMessageBox.NoButton)
             return
-        shuttles_widget.add_shuttle(url, check_period, target_classes, shuttle_name)
+        shuttles_widget.add_shuttle(url, check_period, target_classes, shuttle_name, log_widget.get_edittext())
         QMessageBox.information(self, 'Success', 'Current settings saved in Shuttles menu.\n(Shortcut keys : Ctrl+2)',
                                 QMessageBox.Yes, QMessageBox.NoButton)
 
@@ -136,7 +136,7 @@ class MainWindow(QMainWindow):
             shuttle_id = saved_shuttle[0]
             shuttle_config_list = saved_shuttle[1]
             config[shuttle_id] = {}
-            attributes = ['url', 'period', 'element_classes', 'name']
+            attributes = ['name', 'url', 'period', 'element_classes']
             for i in range(0, len(shuttle_config_list)):
                 config[shuttle_id][attributes[i]] = shuttle_config_list[i]
         with open('shuttlesConfig.ini', 'w') as configfile:
@@ -150,7 +150,8 @@ class MainWindow(QMainWindow):
             url = config[shuttle_id]['url']
             period = config[shuttle_id]['period']
             element_classes = config[shuttle_id]['element_classes']
-            self.shuttles_widget.add_shuttle(name=shuttle_name, url=url, period=period, target_classes=element_classes)
+            self.shuttles_widget.add_shuttle(name=shuttle_name, url=url, period=period, target_classes=element_classes,
+                                             log_edittext=self.log_widget.get_edittext())
 
 
 if __name__ == '__main__':

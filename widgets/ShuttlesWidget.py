@@ -2,7 +2,7 @@ import threading
 import time
 
 import pyglet
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit, QPushButton, QMessageBox
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit, QPushButton, QMessageBox, QSpinBox
 from selenium import webdriver
 
 from WebCrawler import WebCrawler
@@ -44,31 +44,30 @@ class ShuttlesWidget(QWidget):
         self.setLayout(wrap_vbox_layout)
         self.show()
 
-    def add_shuttle(self, url, period, target_classes, name):
+    def add_shuttle(self, url, period, target_classes, name, log_edittext):
         url_lineedit = QLineEdit()
         url_lineedit.setText(url)
-        url_lineedit.setReadOnly(True)
-        period_lineedit = QLineEdit()
-        period_lineedit.setText(period)
+        period_lineedit = QSpinBox()
+        period_lineedit.setMaximum(86400)
+        period_lineedit.setValue(int(period))
         target_classes_lineedit = QLineEdit()
         target_classes_lineedit.setText(target_classes)
-        target_classes_lineedit.setReadOnly(True)
 
         vbox_wrap_layout = QVBoxLayout()
         hbox_layout_shuttle = QHBoxLayout()
-        hbox_layout_shuttle.addWidget(QLabel('url : '))
+        hbox_layout_shuttle.addWidget(QLabel('URL : '))
         hbox_layout_shuttle.addWidget(url_lineedit)
-        hbox_layout_shuttle.addWidget(QLabel('check period : '))
+        hbox_layout_shuttle.addWidget(QLabel('Check Period(sec) : '))
         hbox_layout_shuttle.addWidget(period_lineedit)
-        hbox_layout_shuttle.addWidget(QLabel('target classes : '))
+        hbox_layout_shuttle.addWidget(QLabel('Target Classes : '))
         hbox_layout_shuttle.addWidget(target_classes_lineedit)
 
         hbox_layout_shuttle_name = QHBoxLayout()
-        hbox_layout_shuttle_name.addWidget(QLabel('name : '))
+        hbox_layout_shuttle_name.addWidget(QLabel('Shuttle Name : '))
         shuttle_name = QLineEdit(name)
-        shuttle_name.setPlaceholderText('Set name...')
+        shuttle_name.setPlaceholderText('set name...')
         hbox_layout_shuttle_name.addWidget(shuttle_name)
-        delete_btn = QPushButton('remove')
+        delete_btn = QPushButton('Remove')
         delete_btn.clicked.connect(lambda: self.remove_shuttles(vbox_wrap_layout))
         hbox_layout_shuttle_name.addWidget(delete_btn)
 
@@ -76,7 +75,7 @@ class ShuttlesWidget(QWidget):
         stop_btn = QPushButton('Stop')
 
         start_btn.clicked.connect(
-            lambda: self._start(shuttle_name, url_lineedit, period_lineedit, target_classes_lineedit, shuttle_name,
+            lambda: self._start(shuttle_name, url_lineedit, period_lineedit, target_classes_lineedit, log_edittext,
                                 start_btn, stop_btn))
         hbox_layout_shuttle.addWidget(start_btn)
 
@@ -84,8 +83,8 @@ class ShuttlesWidget(QWidget):
         stop_btn.clicked.connect(lambda: self._stop(period_lineedit, start_btn, stop_btn))
         hbox_layout_shuttle.addWidget(stop_btn)
 
-        vbox_wrap_layout.addLayout(hbox_layout_shuttle)
         vbox_wrap_layout.addLayout(hbox_layout_shuttle_name)
+        vbox_wrap_layout.addLayout(hbox_layout_shuttle)
 
         self.shuttles_vbox_layout.addLayout(vbox_wrap_layout)
 
@@ -110,7 +109,7 @@ class ShuttlesWidget(QWidget):
                 shuttle_inner_layout = shuttle_wrap_layout.itemAt(j)
                 for k in range(shuttle_inner_layout.count()):
                     widget = shuttle_inner_layout.itemAt(k).widget()
-                    if type(widget) is QLineEdit:
+                    if type(widget) is QLineEdit or type(widget) is QSpinBox:
                         shuttle_data_list.append(widget.text())
             result.append((shuttle_id, shuttle_data_list))
         return result
@@ -121,11 +120,6 @@ class ShuttlesWidget(QWidget):
         start_btn.setDisabled(False)
 
     def _start(self, shuttle_name, url, period, target_classes, log_edittext, start_btn, stop_btn):
-        if not period.text().isdigit():
-            QMessageBox.information(self, 'Please input a number',
-                                    "You have to input a number at field of 'check period'.",
-                                    QMessageBox.Yes, QMessageBox.NoButton)
-            return
         period.setReadOnly(True)
         start_btn.setDisabled(True)
         stop_btn.setDisabled(False)

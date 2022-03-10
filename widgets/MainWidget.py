@@ -2,7 +2,7 @@ import threading
 import time
 
 from PyQt5.QtWidgets import QWidget, QPushButton, QVBoxLayout, QTextEdit, QLineEdit, \
-    QHBoxLayout, QLabel
+    QHBoxLayout, QLabel, QSpinBox
 from selenium import webdriver
 from selenium.webdriver.remote.webelement import WebElement
 
@@ -33,7 +33,7 @@ class MainWidget(QWidget):
         self.textedit_log = QTextEdit()
         self.lineedit_shuttle_name = QLineEdit()
         self.lineedit = QLineEdit()
-        self.lineedit_period = QLineEdit()
+        self.lineedit_period = QSpinBox()
         self.thread_auto_check = None
         self.contents = None
         self.element_x = None
@@ -53,9 +53,9 @@ class MainWidget(QWidget):
         result = QVBoxLayout()
 
         hbox_layout_shuttle_name_layout = QHBoxLayout()
-        hbox_layout_shuttle_name_layout.addWidget(QLabel('name : '))
+        hbox_layout_shuttle_name_layout.addWidget(QLabel('Shuttle Name : '))
         shuttle_name = self.shuttle_name()
-        shuttle_name.setPlaceholderText('Set name...')
+        shuttle_name.setPlaceholderText('set name...')
         hbox_layout_shuttle_name_layout.addWidget(shuttle_name)
         result.addLayout(hbox_layout_shuttle_name_layout)
 
@@ -68,7 +68,7 @@ class MainWidget(QWidget):
         result.addLayout(hbox_layout_url)
 
         hbox_layout_check_period = QHBoxLayout()
-        hbox_layout_check_period.addWidget(QLabel("Check Period : "))
+        hbox_layout_check_period.addWidget(QLabel("Check Period(sec) : "))
         hbox_layout_check_period.addWidget(self._lineedit_period())
         hbox_layout_check_period.addWidget(self._button_check())
         result.addLayout(hbox_layout_check_period)
@@ -78,7 +78,6 @@ class MainWidget(QWidget):
         return result
 
     def _lineedit_period(self):
-        self.lineedit_period.setPlaceholderText('Check Period (sec)')
         return self.lineedit_period
 
     def _button_check(self):
