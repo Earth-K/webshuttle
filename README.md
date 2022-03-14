@@ -10,4 +10,4 @@
 ![webshuttle-6.jpg](resource/readme/webshuttle-6.jpg)
 ![webshuttle-7.jpg](resource/readme/webshuttle-7.jpg)
 ![webshuttle-8.jpg](resource/readme/webshuttle-8.jpg)
-webshuttle.exe 와 같은 경로에 있는 
+저장되는 설정 파일 : webshuttle.exe와 같은 경로에 있는 shuttlesConfig.ini
