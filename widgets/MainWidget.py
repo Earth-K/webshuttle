@@ -1,13 +1,11 @@
-import threading
 import time
 
 from PyQt5.QtWidgets import QWidget, QPushButton, QVBoxLayout, QTextEdit, QLineEdit, \
-    QHBoxLayout, QLabel, QSpinBox
-from selenium import webdriver
+    QHBoxLayout, QLabel, QMessageBox
 from selenium.webdriver.remote.webelement import WebElement
 
-from EventListenerInjector import EventListenerInjector
-from WebCrawler import WebCrawler
+from domain.EventListenerInjector import EventListenerInjector
+from domain.WebScraper import WebScraper
 
 
 def local_time_now():
@@ -16,8 +14,8 @@ def local_time_now():
         now.tm_year, now.tm_mon, now.tm_mday, now.tm_hour, now.tm_min, now.tm_sec)
 
 
-def init_event_listener(web_crawler):
-    injector = EventListenerInjector(web_crawler)
+def init_event_listener(web_scraper):
+    injector = EventListenerInjector(web_scraper)
     injector.add_mouseover()
     injector.add_mouseleave()
     injector.add_mousedown_right()
@@ -25,24 +23,16 @@ def init_event_listener(web_crawler):
 
 
 class MainWidget(QWidget):
-    textedit_log: QTextEdit
-    _webCrawler: WebCrawler
-
     def __init__(self, parent, chrome_service):
         super(MainWidget, self).__init__(parent)
-        self.textedit_log = QTextEdit()
+        self.log_textedit = QTextEdit()
         self.lineedit_shuttle_name = QLineEdit()
-        self.lineedit = QLineEdit()
-        self.lineedit_period = QSpinBox()
-        self.thread_auto_check = None
+        self.lineedit_url = QLineEdit()
         self.contents = None
-        self.element_x = None
-        self.element_y = None
-        self.scroll_x = None
-        self.scroll_y = None
         self.element_class_names = None
         self._init_ui()
         self.chrome_service = chrome_service
+        self._webScraper = None
 
     def _init_ui(self):
         vbox_layout = self._vbox_layout()
@@ -55,35 +45,21 @@ class MainWidget(QWidget):
         hbox_layout_shuttle_name_layout = QHBoxLayout()
         hbox_layout_shuttle_name_layout.addWidget(QLabel('Shuttle Name : '))
         shuttle_name = self.shuttle_name()
-        shuttle_name.setPlaceholderText('set name...')
+        shuttle_name.setPlaceholderText('shuttle name...')
         hbox_layout_shuttle_name_layout.addWidget(shuttle_name)
         result.addLayout(hbox_layout_shuttle_name_layout)
 
-        lineedit = self.lineedit_url()
         hbox_layout_url = QHBoxLayout()
         label_url = QLabel("URL : ")
         hbox_layout_url.addWidget(label_url)
-        hbox_layout_url.addWidget(lineedit)
-        hbox_layout_url.addWidget(self._button_open_browser(lineedit))
+        self.lineedit_url.setPlaceholderText('url that you want to scrap... ')
+        hbox_layout_url.addWidget(self.lineedit_url)
+        hbox_layout_url.addWidget(self._button_open_browser(self.lineedit_url))
         result.addLayout(hbox_layout_url)
-
-        hbox_layout_check_period = QHBoxLayout()
-        hbox_layout_check_period.addWidget(QLabel("Check Period(sec) : "))
-        hbox_layout_check_period.addWidget(self._lineedit_period())
-        hbox_layout_check_period.addWidget(self._button_check())
-        result.addLayout(hbox_layout_check_period)
 
         result.addWidget(self._button_get_element_data())
         result.addWidget(self._textedit_log())
         return result
-
-    def _lineedit_period(self):
-        return self.lineedit_period
-
-    def _button_check(self):
-        button_check = QPushButton('Check')
-        button_check.clicked.connect(self._check)
-        return button_check
 
     def _button_get_element_data(self):
         button_get_element = QPushButton('Get target element data', self)
@@ -96,62 +72,41 @@ class MainWidget(QWidget):
         return button_open_browser
 
     def _textedit_log(self):
-        self.textedit_log.setReadOnly(True)
-        return self.textedit_log
+        self.log_textedit.setReadOnly(True)
+        return self.log_textedit
 
     def shuttle_name(self):
         self.lineedit_shuttle_name.setPlaceholderText('name of shuttle...')
         return self.lineedit_shuttle_name
 
     def lineedit_url(self):
-        self.lineedit.setPlaceholderText('https://example.com')
-        return self.lineedit
+        self.lineedit_url.setPlaceholderText('https://example.com')
+        return self.lineedit_url
 
     def _open_browser(self, lineedit):
-        self._webCrawler = WebCrawler(lineedit.text(), chrome_service=self.chrome_service)
-        init_event_listener(self._webCrawler)
+        self._webScraper = WebScraper(lineedit.text(), chrome_service=self.chrome_service)
+        init_event_listener(self._webScraper)
 
     def _get_target_element_data(self):
-        result: WebElement = self._webCrawler.get_target_element()
-        self.element_y = self._webCrawler.get_element_pos_y()
-        self.element_x = self._webCrawler.get_element_pos_x()
-        self.scroll_x = self._webCrawler.get_scroll_x()
-        self.scroll_y = self._webCrawler.get_scroll_y()
-        self.element_class_names = self._webCrawler.get_element_class_names()
+        if self._webScraper is None or self._webScraper.is_selected_elements() is False:
+            QMessageBox.information(self, 'Error',
+                                    'Please select elements in chrome browser first.\n'
+                                    '1. Write URL that you want to scrap.\n'
+                                    "2. Click the 'Open in chrome browser' button.\n"
+                                    "3. Select elements that you want to scrap.\n"
+                                    "See the README.md file for details.",
+                                    QMessageBox.Yes, QMessageBox.NoButton)
+            return
+
+        result: WebElement = self._webScraper.get_target_element()
+        self.element_class_names = self._webScraper.get_element_class_names()
         self.contents = result.text
-        self.textedit_log.setText('{0} - get target element data.\n'.format(local_time_now()))
-        self.textedit_log.append('scroll_y : {0}'.format(self.scroll_y))
-        self.textedit_log.append('scroll_x : {0}'.format(self.scroll_x))
-        self.textedit_log.append('element_y : {0}'.format(self.element_y))
-        self.textedit_log.append('element_x : {0}'.format(self.element_x))
-        self.textedit_log.append('class names : {0}'.format(self.element_class_names))
-        self.textedit_log.append('id : {0}'.format(self._webCrawler.get_element_id()))
-        elements = self._webCrawler.get_elements_by_classnames(self.element_class_names)
-        self.textedit_log.append('--- elements ---\n')
+        self.log_textedit.setText('{0} - get target element data.\n'.format(local_time_now()))
+        self.log_textedit.append('class names : {0}'.format(self.element_class_names))
+        self.log_textedit.append('id : {0}'.format(self._webScraper.get_element_id()))
+        elements = self._webScraper.get_elements_by_classnames(self.element_class_names)
+        self.log_textedit.append('--- elements with same class ---\n')
         for e in elements:
-            self.textedit_log.append('{0}\n'.format(e.text))
-        self.textedit_log.append('\n--- contents ---\n')
-        self.textedit_log.append(self.contents)
-
-    def _check(self):
-        self.thread_auto_check = threading.Thread(target=self.check_content, args=(
-            self.lineedit.text(), self.scroll_x, self.scroll_y))
-        self.thread_auto_check.daemon = True
-        self.thread_auto_check.start()
-
-    def check_content(self, lineedit_url, scroll_x, scroll_y):
-        url = lineedit_url
-        while True:
-            options = webdriver.ChromeOptions()
-            options.add_argument('headless')
-            options.add_argument("--start-maximized")
-            options.add_argument('window-size=1920x1080')
-            options.add_argument("disable-gpu")
-            tmp_web_crawler = WebCrawler(url, options, self.chrome_service)
-            time.sleep(1)
-            elements = tmp_web_crawler.get_elements_by_classnames(self.element_class_names)
-            self.textedit_log.append('--- element ---\n')
-            for e in elements:
-                self.textedit_log.append('{0}'.format(e.text+'\n'))
-            tmp_web_crawler.close_driver()
-            time.sleep(int(self._lineedit_period().text()))
+            self.log_textedit.append('{0}\n'.format(e.text))
+        self.log_textedit.append('\n--- selected element ---\n')
+        self.log_textedit.append(self.contents)

@@ -1,12 +1,12 @@
 import threading
 import time
-
-import pyglet
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit, QPushButton, QMessageBox, QSpinBox
+import pygame
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit, QPushButton, QSpinBox
 from selenium import webdriver
-
-from WebCrawler import WebCrawler
+from domain.WebScraper import WebScraper
 from domain.LogText import LogText
+
+pygame.init()
 
 
 def shuttle_setting_layout(hbox_layout):
@@ -28,11 +28,12 @@ class ShuttlesWidget(QWidget):
         self.shuttles = []
         self.chrome_service = chrome_service
         self._init_ui()
+        self.sound = pygame.mixer.Sound("resource/sounds/sound.wav")
 
     def _init_ui(self):
         self.title_vbox_layout = QVBoxLayout()
         title = QLabel()
-        title.setText("Saved Shuttles : ")
+        title.setText("Added Shuttles : ")
         self.shuttles_vbox_layout = QVBoxLayout()
         self.title_vbox_layout.addWidget(title)
         stretch_vbox_layout = QVBoxLayout()
@@ -46,10 +47,11 @@ class ShuttlesWidget(QWidget):
 
     def add_shuttle(self, url, period, target_classes, name, log_edittext):
         url_lineedit = QLineEdit()
+        url_lineedit.setPlaceholderText('url that you want to scrap... ')
         url_lineedit.setText(url)
-        period_lineedit = QSpinBox()
-        period_lineedit.setMaximum(86400)
-        period_lineedit.setValue(int(period))
+        period_spinbox = QSpinBox()
+        period_spinbox.setMaximum(86400)
+        period_spinbox.setValue(int(period))
         target_classes_lineedit = QLineEdit()
         target_classes_lineedit.setText(target_classes)
 
@@ -58,14 +60,14 @@ class ShuttlesWidget(QWidget):
         hbox_layout_shuttle.addWidget(QLabel('URL : '))
         hbox_layout_shuttle.addWidget(url_lineedit)
         hbox_layout_shuttle.addWidget(QLabel('Check Period(sec) : '))
-        hbox_layout_shuttle.addWidget(period_lineedit)
+        hbox_layout_shuttle.addWidget(period_spinbox)
         hbox_layout_shuttle.addWidget(QLabel('Target Classes : '))
         hbox_layout_shuttle.addWidget(target_classes_lineedit)
 
         hbox_layout_shuttle_name = QHBoxLayout()
         hbox_layout_shuttle_name.addWidget(QLabel('Shuttle Name : '))
         shuttle_name = QLineEdit(name)
-        shuttle_name.setPlaceholderText('set name...')
+        shuttle_name.setPlaceholderText('shuttle name...')
         hbox_layout_shuttle_name.addWidget(shuttle_name)
         delete_btn = QPushButton('Remove')
         delete_btn.clicked.connect(lambda: self.remove_shuttles(vbox_wrap_layout))
@@ -75,12 +77,12 @@ class ShuttlesWidget(QWidget):
         stop_btn = QPushButton('Stop')
 
         start_btn.clicked.connect(
-            lambda: self._start(shuttle_name, url_lineedit, period_lineedit, target_classes_lineedit, log_edittext,
+            lambda: self._start(shuttle_name, url_lineedit, period_spinbox, target_classes_lineedit, log_edittext,
                                 start_btn, stop_btn))
         hbox_layout_shuttle.addWidget(start_btn)
 
         stop_btn.setDisabled(True)
-        stop_btn.clicked.connect(lambda: self._stop(period_lineedit, start_btn, stop_btn))
+        stop_btn.clicked.connect(lambda: self._stop(period_spinbox, start_btn, stop_btn))
         hbox_layout_shuttle.addWidget(stop_btn)
 
         vbox_wrap_layout.addLayout(hbox_layout_shuttle_name)
@@ -136,7 +138,7 @@ class ShuttlesWidget(QWidget):
             options.add_argument("--start-maximized")
             options.add_argument('window-size=1920x1080')
             options.add_argument("disable-gpu")
-            tmp_web_crawler = WebCrawler(url.text(), options, self.chrome_service)
+            tmp_web_crawler = WebScraper(url.text(), options, self.chrome_service)
             time.sleep(1)
             elements = tmp_web_crawler.get_elements_by_classnames(target_classes.text())
 
@@ -149,25 +151,26 @@ class ShuttlesWidget(QWidget):
                 new_text_list = get_text_list(elements)
                 for new_text in new_text_list:
                     if new_text not in text_list:
-                        # 한 번에 보이는 정보의 양을 늘리기 위해 줄 바꿈 문자를 | 로 변경함
-                        no_newline_text += new_text.replace("\n", " | ") + "\n"
+                        if len(new_text) > 0:
+                            # 한 번에 보이는 정보의 양을 늘리기 위해 줄 바꿈 문자를 | 로 변경함
+                            no_newline_text += new_text.replace("\n", " | ") + "\n"
                 text_list = new_text_list
             else:
-
                 for e in elements:
-                    text_list.append(e.text)
-                    # 한 번에 보이는 정보의 양을 늘리기 위해 줄 바꿈 문자를 | 로 변경함
-                    no_newline_text += e.text.replace("\n", " | ") + "\n"
+                    if len(e.text) > 0:
+                        text_list.append(e.text)
+                        # 한 번에 보이는 정보의 양을 늘리기 위해 줄 바꿈 문자를 | 로 변경함
+                        no_newline_text += e.text.replace("\n", " | ") + "\n"
 
             if len(no_newline_text) > 0:
                 log_text = LogText()
                 log_edittext.append("[ " + shuttle_name_text + " ]" + log_text.local_time_now())
                 log_edittext.append(no_newline_text + "\n")
-                pyglet.resource.media('water.wav').play()
+                self.sound.play()
 
             tmp_web_crawler.close_driver()
 
             if start_btn.isEnabled() is True:
-                log_edittext.append("Stopped a shuttle." + "\n")
+                log_edittext.append("[{0}] shuttle was stopped.".format(shuttle_name.text()) + "\n")
                 break
             time.sleep(int(period.text()))

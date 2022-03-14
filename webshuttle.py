@@ -17,7 +17,8 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__(parent)
 
         chrome_service = Service(ChromeDriverManager().install())
-        self.main_widget = MainWidget(self, chrome_service)
+        chrome_service.creationflags = 0x08000000
+        self.main_widget = MainWidget(self, chrome_service, )
         self.shuttles_widget = ShuttlesWidget(self, chrome_service)
         self.log_widget = LogWidget(self)
         self.widgets = QtWidgets.QStackedWidget()
@@ -35,10 +36,9 @@ class MainWindow(QMainWindow):
         menu_move.addAction(self._log_page_action())
         menu_save = menubar.addMenu('&Save')
         menu_save.addAction(self._export_saved_shuttles_action())
-        menu_save.addAction(self._import_external_shuttles_config_action())
 
         self.toolBar = self.addToolBar('Save this shuttle')
-        self.toolBar.addAction(self._save_action())
+        self.toolBar.addAction(self._added_shuttle_action())
 
         self._import_external_shuttles_config()
 
@@ -66,13 +66,6 @@ class MainWindow(QMainWindow):
         result.triggered.connect(self._export_saved_shuttles)
         return result
 
-    def _import_external_shuttles_config_action(self):
-        result = QAction('Import external shuttles', self)
-        result.setShortcut('Ctrl+5')
-        result.setStatusTip('Import external shuttles. (file name : shuttlesConfig.ini)')
-        result.triggered.connect(self._import_external_shuttles_config)
-        return result
-
     def _log_page_action(self):
         result = QAction('Log', self)
         result.setShortcut('Ctrl+3')
@@ -83,7 +76,7 @@ class MainWindow(QMainWindow):
     def _shuttle_page_action(self):
         result = QAction('Shuttles', self)
         result.setShortcut('Ctrl+2')
-        result.setStatusTip('Show the saved shuttles')
+        result.setStatusTip('Show added shuttles')
         result.triggered.connect(lambda: self._go_setting_widget(self.widgets))
         return result
 
@@ -94,11 +87,11 @@ class MainWindow(QMainWindow):
         result.triggered.connect(lambda: self._go_main_widget(self.widgets))
         return result
 
-    def _save_action(self):
-        result = QAction(QIcon('save.png'), 'Save this shuttle', self)
+    def _added_shuttle_action(self):
+        result = QAction(QIcon('resource/images/save.png'), 'Add this shuttle', self)
         result.setShortcut('Ctrl+S')
-        result.setStatusTip('Save this shuttle')
-        result.triggered.connect(self._save_shuttle)
+        result.setStatusTip('Add this shuttle')
+        result.triggered.connect(self._add_shuttle)
         return result
 
     def _move_to_center(self):
@@ -109,23 +102,23 @@ class MainWindow(QMainWindow):
 
     def _button_save(self):
         button_save = QPushButton('Save this shuttle')
-        button_save.clicked.connect(self._save_shuttle)
+        button_save.clicked.connect(self._add_shuttle)
         return button_save
 
-    def _save_shuttle(self):
+    def _add_shuttle(self):
         main_widget = self.widgets.widget(0)
         shuttles_widget = self.widgets.widget(1)
         log_widget = self.widgets.widget(2)
         shuttle_name = main_widget.lineedit_shuttle_name.text()
-        url = main_widget.lineedit.text()
-        check_period = main_widget.lineedit_period.text()
+        url = main_widget.lineedit_url.text()
+
         target_classes = main_widget.element_class_names
-        if url is None or check_period is None or target_classes is None:
-            QMessageBox.information(self, 'Failure',
+        if url is None or target_classes is None:
+            QMessageBox.information(self, 'Error',
                                     'Some setting values are blank.',
                                     QMessageBox.Yes, QMessageBox.NoButton)
             return
-        shuttles_widget.add_shuttle(url, check_period, target_classes, shuttle_name, log_widget.get_edittext())
+        shuttles_widget.add_shuttle(url, 300, target_classes, shuttle_name, log_widget.get_edittext())
         QMessageBox.information(self, 'Success', 'Current settings saved in Shuttles menu.\n(Shortcut keys : Ctrl+2)',
                                 QMessageBox.Yes, QMessageBox.NoButton)
 
@@ -144,7 +137,7 @@ class MainWindow(QMainWindow):
 
     def _import_external_shuttles_config(self):
         config = configparser.ConfigParser()
-        config.read('shuttlesConfig.ini')
+        config.read('shuttlesConfig.ini', encoding='utf-8')
         for shuttle_id in config.sections():
             shuttle_name = config[shuttle_id]['name']
             url = config[shuttle_id]['url']

@@ -1,7 +1,7 @@
 from selenium import webdriver
 
 
-class WebCrawler:
+class WebScraper:
     def __init__(self, start_url, options=None, chrome_service=None):
         if start_url == '':
             start_url = 'http://google.com'
@@ -63,11 +63,19 @@ class WebCrawler:
         return self.execute_js(
             '''
             const ws_target_element = document.getElementsByClassName('ws-target-element')[0];
-            return ws_target_element.id 
+            return ws_target_element.id;
             '''
         )
 
     def get_elements_by_classnames(self, class_names):
         return self.execute_js(
             'return document.getElementsByClassName("' + class_names + '")'
+        )
+
+    def is_selected_elements(self):
+        return self.execute_js(
+            '''
+            const len = document.getElementsByClassName('ws-target-element').length;
+            return len > 0 ? true : false;
+            '''
         )

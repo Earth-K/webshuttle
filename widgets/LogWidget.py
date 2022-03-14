@@ -10,18 +10,18 @@ class LogWidget(QWidget):
         self._vbox_layout = QVBoxLayout()
         title = QLabel()
         title.setText("Log : ")
-        self._edit_text = QTextEdit()
-        self._edit_text.setReadOnly(True)
+        self._log_textedit = QTextEdit()
+        self._log_textedit.setReadOnly(True)
         self._vbox_layout.addWidget(title)
         clear_btn = QPushButton('clear')
         clear_btn.clicked.connect(self.clear_text)
         self._vbox_layout.addWidget(clear_btn)
-        self._vbox_layout.addWidget(self._edit_text)
+        self._vbox_layout.addWidget(self._log_textedit)
         self.setLayout(self._vbox_layout)
         self.show()
 
     def get_edittext(self):
-        return self._edit_text
+        return self._log_textedit
 
     def clear_text(self):
-        self._edit_text.clear()
+        self._log_textedit.clear()
