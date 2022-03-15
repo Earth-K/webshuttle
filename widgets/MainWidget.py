@@ -64,6 +64,7 @@ class MainWidget(QWidget):
         self.save_btn.setIcon(QIcon('resource/images/plus.png'))
         self.save_btn.setText("셔틀 추가")
         self.save_btn.setStatusTip('Add this shuttle')
+        self.save_btn.setDisabled(True)
         self.save_btn.clicked.connect(self.parent_widget.add_shuttle)
 
         hbox_layout_execution = QHBoxLayout()
@@ -99,6 +100,7 @@ class MainWidget(QWidget):
     def _open_browser(self, lineedit):
         self._webScraper = WebScraper(lineedit.text(), chrome_service=self.chrome_service)
         init_event_listener(self._webScraper)
+        self.save_btn.setDisabled(True)
 
     def _get_target_element_data(self):
         if self._webScraper is None or self._webScraper.is_selected_elements() is False:
@@ -123,3 +125,4 @@ class MainWidget(QWidget):
             self.log_textedit.append('{0}\n'.format(e.text))
         self.log_textedit.append('\n--- selected element ---\n')
         self.log_textedit.append(self.contents)
+        self.save_btn.setDisabled(False)
