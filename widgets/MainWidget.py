@@ -46,16 +46,15 @@ class MainWidget(QWidget):
         result = QVBoxLayout()
 
         hbox_layout_shuttle_name_layout = QHBoxLayout()
-        hbox_layout_shuttle_name_layout.addWidget(QLabel('Shuttle Name : '))
+        hbox_layout_shuttle_name_layout.addWidget(QLabel('셔틀 이름: '))
         shuttle_name = self.shuttle_name()
-        shuttle_name.setPlaceholderText('shuttle name...')
         hbox_layout_shuttle_name_layout.addWidget(shuttle_name)
         result.addLayout(hbox_layout_shuttle_name_layout)
 
         hbox_layout_url = QHBoxLayout()
         label_url = QLabel("URL : ")
         hbox_layout_url.addWidget(label_url)
-        self.lineedit_url.setPlaceholderText('url that you want to scrap... ')
+        self.lineedit_url.setPlaceholderText('스크랩 하고 싶은 웹 페이지의 URL ')
         hbox_layout_url.addWidget(self.lineedit_url)
         hbox_layout_url.addWidget(self._button_open_browser(self.lineedit_url))
         result.addLayout(hbox_layout_url)
@@ -76,12 +75,12 @@ class MainWidget(QWidget):
         return result
 
     def _button_get_element_data(self):
-        button_get_element = QPushButton('Get target element data', self)
+        button_get_element = QPushButton('선택 영역 데이터 불러오기', self)
         button_get_element.clicked.connect(self._get_target_element_data)
         return button_get_element
 
     def _button_open_browser(self, lineedit):
-        button_open_browser = QPushButton('Open in chrome browser', self)
+        button_open_browser = QPushButton('영역 선택하러 가기', self)
         button_open_browser.clicked.connect(lambda: self._open_browser(lineedit))
         return button_open_browser
 
@@ -90,7 +89,7 @@ class MainWidget(QWidget):
         return self.log_textedit
 
     def shuttle_name(self):
-        self.lineedit_shuttle_name.setPlaceholderText('name of shuttle...')
+        self.lineedit_shuttle_name.setPlaceholderText('셔틀의 이름')
         return self.lineedit_shuttle_name
 
     def lineedit_url(self):
@@ -105,11 +104,12 @@ class MainWidget(QWidget):
     def _get_target_element_data(self):
         if self._webScraper is None or self._webScraper.is_selected_elements() is False:
             QMessageBox.information(self, 'Error',
-                                    'Please select elements in chrome browser first.\n'
-                                    '1. Write URL that you want to scrap.\n'
-                                    "2. Click the 'Open in chrome browser' button.\n"
-                                    "3. Select elements that you want to scrap.\n"
-                                    "See the README.md file for details.",
+                                    '먼저 선택 영역을 선택하고 데이터를 불러오세요.\n'
+                                    '1. 스크랩 하고 싶은 데이터가 있는 웹 페이지의 URL을 입력하세요.\n'
+                                    "2. '영역 선택하러 가기' 버튼을 클릭하세요.\n"
+                                    "3. 새로 열린 브라우저에서 마우스 우클릭으로 영역을 선택하세요.\n"
+                                    "4. 웹셔틀의 '선택 영역 데이터 불러오기' 버튼을 클릭하세요.\n"
+                                    "자세한 내용은 '사용방법.pdf'에 있습니다.",
                                     QMessageBox.Yes, QMessageBox.NoButton)
             return
 

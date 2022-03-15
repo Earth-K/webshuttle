@@ -38,8 +38,8 @@ class MainWindow(QMainWindow):
         self.show()
 
     def _export_saved_shuttles_action(self):
-        result = QAction('Save added shuttles', self)
-        result.setShortcut('Ctrl+4')
+        result = QAction('셔틀 목록 저장하기', self)
+        result.setShortcut('Ctrl+S')
         result.setStatusTip('Save added shuttles.')
         result.triggered.connect(self._export_saved_shuttles)
         return result
@@ -59,12 +59,12 @@ class MainWindow(QMainWindow):
 
         target_classes = main_widget.element_class_names
         if url is None or target_classes is None:
-            QMessageBox.information(self, 'Error',
-                                    'Some setting values are blank.',
+            QMessageBox.information(self, '에러',
+                                    "먼저 선택 영역 데이터를 불러와주세요.",
                                     QMessageBox.Yes, QMessageBox.NoButton)
             return
         shuttles_widget.add_shuttle(url, 300, target_classes, shuttle_name, log_widget.get_edittext())
-        QMessageBox.information(self, 'Success', 'Current settings saved in Shuttles menu.\n(Shortcut keys : Ctrl+2)',
+        QMessageBox.information(self, '성공', '셔틀이 셔틀 목록에 저장되었습니다.',
                                 QMessageBox.Yes, QMessageBox.NoButton)
 
     def _export_saved_shuttles(self):
@@ -77,12 +77,12 @@ class MainWindow(QMainWindow):
             attributes = ['name', 'url', 'period', 'element_classes']
             for i in range(0, len(shuttle_config_list)):
                 config[shuttle_id][attributes[i]] = shuttle_config_list[i]
-        with open('shuttlesConfig.ini', 'w') as configfile:
+        with open('shuttlesConfig.ini', 'w', encoding="utf-8") as configfile:
             config.write(configfile)
 
     def _import_external_shuttles_config(self):
         config = configparser.ConfigParser()
-        config.read('shuttlesConfig.ini', encoding='cp949')
+        config.read('shuttlesConfig.ini', encoding='utf-8')
         for shuttle_id in config.sections():
             shuttle_name = config[shuttle_id]['name']
             url = config[shuttle_id]['url']

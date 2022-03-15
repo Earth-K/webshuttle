@@ -9,11 +9,11 @@ class LogWidget(QWidget):
     def _init_ui(self):
         self._vbox_layout = QVBoxLayout()
         title = QLabel()
-        title.setText("Log : ")
+        title.setText("스크랩 목록")
         self._log_textedit = QTextEdit()
         self._log_textedit.setReadOnly(True)
         self._vbox_layout.addWidget(title)
-        clear_btn = QPushButton('clear')
+        clear_btn = QPushButton('지우기')
         clear_btn.clicked.connect(self.clear_text)
         self._vbox_layout.addWidget(clear_btn)
         self._vbox_layout.addWidget(self._log_textedit)
