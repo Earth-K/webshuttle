@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.webdriver.common.by import By
 
 
 class WebScraper:
@@ -23,7 +24,7 @@ class WebScraper:
         self.driver.execute_script("window.scrollBy({0}, {1});".format(x, y))
 
     def get_target_element(self):
-        return self.driver.find_elements_by_class_name("ws-target-element")[0]
+        return self.driver.find_elements(By.CSS_SELECTOR, ".ws-target-element")[0]
 
     def get_scroll_y(self):
         return self.execute_js("return window.scrollY;")
@@ -36,7 +37,8 @@ class WebScraper:
             '''
             let targetElement = document.getElementById('ws-tooltip');
             return targetElement.getBoundingClientRect().left-3;
-            ''')
+            '''
+        )
 
     def get_element_pos_y(self):
         return self.execute_js(

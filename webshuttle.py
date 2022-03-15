@@ -1,12 +1,12 @@
 import configparser
 import sys
 
-from PyQt5 import QtWidgets
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QDesktopWidget, QAction, QMainWindow, QPushButton, QMessageBox
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
+from widgets.BaseWidget import BaseWidget
 from widgets.LogWidget import LogWidget
 from widgets.MainWidget import MainWidget
 from widgets.ShuttlesWidget import ShuttlesWidget
@@ -18,27 +18,20 @@ class MainWindow(QMainWindow):
 
         chrome_service = Service(ChromeDriverManager().install())
         chrome_service.creationflags = 0x08000000
-        self.main_widget = MainWidget(self, chrome_service, )
-        self.shuttles_widget = ShuttlesWidget(self, chrome_service)
-        self.log_widget = LogWidget(self)
-        self.widgets = QtWidgets.QStackedWidget()
-        self.widgets.addWidget(self.main_widget)
-        self.widgets.addWidget(self.shuttles_widget)
-        self.widgets.addWidget(self.log_widget)
-        self.setCentralWidget(self.widgets)
-        self.statusBar()
 
         menubar = self.menuBar()
         menubar.setNativeMenuBar(True)
-        menu_move = menubar.addMenu('&View')
-        menu_move.addAction(self._main_page_action())
-        menu_move.addAction(self._shuttle_page_action())
-        menu_move.addAction(self._log_page_action())
         menu_save = menubar.addMenu('&Save')
         menu_save.addAction(self._export_saved_shuttles_action())
-
         self.toolBar = self.addToolBar('Save this shuttle')
         self.toolBar.addAction(self._added_shuttle_action())
+        self.statusBar()
+
+        self.main_widget = MainWidget(self, chrome_service)
+        self.shuttles_widget = ShuttlesWidget(self, chrome_service)
+        self.log_widget = LogWidget(self)
+        self.base_widget = BaseWidget(self, self.main_widget, self.shuttles_widget, self.log_widget)
+        self.setCentralWidget(self.base_widget)
 
         self._import_external_shuttles_config()
 
@@ -47,44 +40,11 @@ class MainWindow(QMainWindow):
         self.setWindowTitle('WebShuttle')
         self.show()
 
-    def _go_log_widget(self, widgets):
-        widgets.setCurrentIndex(2)
-        self.toolBar.setVisible(False)
-
-    def _go_setting_widget(self, widgets):
-        widgets.setCurrentIndex(1)
-        self.toolBar.setVisible(False)
-
-    def _go_main_widget(self, widgets):
-        widgets.setCurrentIndex(0)
-        self.toolBar.setVisible(True)
-
     def _export_saved_shuttles_action(self):
         result = QAction('Save added shuttles', self)
         result.setShortcut('Ctrl+4')
         result.setStatusTip('Save added shuttles.')
         result.triggered.connect(self._export_saved_shuttles)
-        return result
-
-    def _log_page_action(self):
-        result = QAction('Log', self)
-        result.setShortcut('Ctrl+3')
-        result.setStatusTip('Show the log page.')
-        result.triggered.connect(lambda: self._go_log_widget(self.widgets))
-        return result
-
-    def _shuttle_page_action(self):
-        result = QAction('Shuttles', self)
-        result.setShortcut('Ctrl+2')
-        result.setStatusTip('Show added shuttles')
-        result.triggered.connect(lambda: self._go_setting_widget(self.widgets))
-        return result
-
-    def _main_page_action(self):
-        result = QAction('Main', self)
-        result.setShortcut('Ctrl+1')
-        result.setStatusTip('Show the main page.')
-        result.triggered.connect(lambda: self._go_main_widget(self.widgets))
         return result
 
     def _added_shuttle_action(self):
@@ -106,9 +66,9 @@ class MainWindow(QMainWindow):
         return button_save
 
     def _add_shuttle(self):
-        main_widget = self.widgets.widget(0)
-        shuttles_widget = self.widgets.widget(1)
-        log_widget = self.widgets.widget(2)
+        main_widget = self.main_widget
+        shuttles_widget = self.shuttles_widget
+        log_widget = self.log_widget
         shuttle_name = main_widget.lineedit_shuttle_name.text()
         url = main_widget.lineedit_url.text()
 
@@ -137,7 +97,7 @@ class MainWindow(QMainWindow):
 
     def _import_external_shuttles_config(self):
         config = configparser.ConfigParser()
-        config.read('shuttlesConfig.ini', encoding='utf-8')
+        config.read('shuttlesConfig.ini', encoding='cp949')
         for shuttle_id in config.sections():
             shuttle_name = config[shuttle_id]['name']
             url = config[shuttle_id]['url']

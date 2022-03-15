@@ -19,6 +19,6 @@ class EventListenerInjector:
         self._execute_js("./resource/js/add_originBackgroundColor.js")
 
     def _execute_js(self, file_path):
-        jsFile = open(file_path, "r", encoding='utf-8')
+        jsFile = open(file_path, "r", encoding='cp949')
         self._web_crawler.execute_js(jsFile.read())
         jsFile.close()
