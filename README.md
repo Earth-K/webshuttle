@@ -1,13 +1,33 @@
-# 실행 방법
+# Web Shuttle
+
+웹셔틀이란 **웹 페이지의 특정 영역을 주기적으로 확인해주는 심부름꾼**입니다.
+
+사용자는 직접 웹 사이트의 특정 영역을 선택할 수 있습니다.   
+선택된 영역의 내용이 업데이트 되었을 때 셔틀이 소리와 함께 새로 추가된 내용을 보여줍니다.   
+사용자는 셔틀을 여러 대 만들 수 있고 동시에 일을 시킬 수 있습니다.
+
+여러분의 시간은 소중합니다. 웹 페이지를 일일이 직접 확인해야 하는 일에 더이상 시간을 들이지 않아도 됩니다.    
+여러분의 셔틀을 생성하고 귀찮았던 일을 떠넘기세요. 😉
+
+## 개발 및 테스트 환경
+
+| 구분  |   종류    |    버전    |
+|:---:|:-------:|:--------:|
+| OS  | Windows |    10    |
+| 언어  | Python  |  3.9.7   |
+| IDE | PyCharm | 2021.3.1 |
+
+## 웹셔틀 실행 방법
+
+- 가장 최근에 릴리즈된 zip 파일을 다운로드 받는다.
+- 압축을 해제한다.
 - webshuttle.exe 파일을 실행한다.
 
-#사용 방법
-![webshuttle-1.jpg](resource/readme/webshuttle-1.jpg)
-![webshuttle-2.jpg](resource/readme/webshuttle-2.jpg)
-![webshuttle-3.jpg](resource/readme/webshuttle-3.jpg)
-![webshuttle-4.jpg](resource/readme/webshuttle-4.jpg)
-![webshuttle-5.jpg](resource/readme/webshuttle-5.jpg)
-![webshuttle-6.jpg](resource/readme/webshuttle-6.jpg)
-![webshuttle-7.jpg](resource/readme/webshuttle-7.jpg)
-![webshuttle-8.jpg](resource/readme/webshuttle-8.jpg)
-저장되는 설정 파일 : webshuttle.exe와 같은 경로에 있는 shuttlesConfig.ini
+## 패키지 설치 방법
+
+1. pip install -r requirements.txt
+
+## 실행 파일 생성 방법
+
+1. pip install pyinstaller
+2. pyinstaller -w -F webshuttle.py
