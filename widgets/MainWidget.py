@@ -1,5 +1,6 @@
 import time
 
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QPushButton, QVBoxLayout, QTextEdit, QLineEdit, \
     QHBoxLayout, QLabel, QMessageBox
 from selenium.webdriver.remote.webelement import WebElement
@@ -25,14 +26,16 @@ def init_event_listener(web_scraper):
 class MainWidget(QWidget):
     def __init__(self, parent, chrome_service):
         super(MainWidget, self).__init__(parent)
+        self.parent_widget = parent
         self.log_textedit = QTextEdit()
         self.lineedit_shuttle_name = QLineEdit()
         self.lineedit_url = QLineEdit()
         self.contents = None
         self.element_class_names = None
-        self._init_ui()
         self.chrome_service = chrome_service
         self._webScraper = None
+        self.save_btn = None
+        self._init_ui()
 
     def _init_ui(self):
         vbox_layout = self._vbox_layout()
@@ -57,7 +60,17 @@ class MainWidget(QWidget):
         hbox_layout_url.addWidget(self._button_open_browser(self.lineedit_url))
         result.addLayout(hbox_layout_url)
 
-        result.addWidget(self._button_get_element_data())
+        self.save_btn = QPushButton()
+        self.save_btn.setIcon(QIcon('resource/images/plus.png'))
+        self.save_btn.setText("셔틀 추가")
+        self.save_btn.setStatusTip('Add this shuttle')
+        self.save_btn.clicked.connect(self.parent_widget.add_shuttle)
+
+        hbox_layout_execution = QHBoxLayout()
+        hbox_layout_execution.addWidget(self._button_get_element_data())
+        hbox_layout_execution.addWidget(self.save_btn)
+        result.addLayout(hbox_layout_execution)
+
         result.addWidget(self._textedit_log())
         return result
 

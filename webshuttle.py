@@ -1,8 +1,7 @@
 import configparser
 import sys
 
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QApplication, QDesktopWidget, QAction, QMainWindow, QPushButton, QMessageBox
+from PyQt5.QtWidgets import QApplication, QDesktopWidget, QAction, QMainWindow, QMessageBox
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
@@ -23,8 +22,6 @@ class MainWindow(QMainWindow):
         menubar.setNativeMenuBar(True)
         menu_save = menubar.addMenu('&Save')
         menu_save.addAction(self._export_saved_shuttles_action())
-        self.toolBar = self.addToolBar('Save this shuttle')
-        self.toolBar.addAction(self._added_shuttle_action())
         self.statusBar()
 
         self.main_widget = MainWidget(self, chrome_service)
@@ -47,25 +44,13 @@ class MainWindow(QMainWindow):
         result.triggered.connect(self._export_saved_shuttles)
         return result
 
-    def _added_shuttle_action(self):
-        result = QAction(QIcon('resource/images/save.png'), 'Add this shuttle', self)
-        result.setShortcut('Ctrl+S')
-        result.setStatusTip('Add this shuttle')
-        result.triggered.connect(self._add_shuttle)
-        return result
-
     def _move_to_center(self):
         qRect = self.frameGeometry()
         centerPos = QDesktopWidget().availableGeometry().center()
         qRect.moveCenter(centerPos)
         self.move(qRect.topLeft())
 
-    def _button_save(self):
-        button_save = QPushButton('Save this shuttle')
-        button_save.clicked.connect(self._add_shuttle)
-        return button_save
-
-    def _add_shuttle(self):
+    def add_shuttle(self):
         main_widget = self.main_widget
         shuttles_widget = self.shuttles_widget
         log_widget = self.log_widget
