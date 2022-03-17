@@ -7,11 +7,12 @@ wsTooltip.style.display = "none";
 wsTooltip.style.justifyContent = "center";
 wsTooltip.style.alignItems = "center";
 wsTooltip.style.border = "1px solid";
+wsTooltip.style.zIndex = "10004";
 wsTooltip.setAttribute('data-click-log', '');
 
 let selectBtn = document.createElement('div');
 selectBtn.id = "ws-select-btn";
-selectBtn.innerText = "Select";
+selectBtn.innerText = "영역\n선택";
 selectBtn.style.color = "white";
 selectBtn.style.flexGrow = "1";
 selectBtn.style.height = "100%";
@@ -32,7 +33,7 @@ const selectClass = (className) => {
     const wsTargetElements = document.getElementsByClassName(className);
     for (let i = 0; i < wsTargetElements.length; i++) {
         wsTargetElements[i].style.backgroundColor = "rgba(217,217,243,0.5)";
-        if(wsTargetElements[i].className.indexOf("ws-target-element") === -1) {
+        if (wsTargetElements[i].className.indexOf("ws-target-element") === -1) {
             wsTargetElements[i].className += " ws-target-element";
         }
         wsTargetElements[i].setAttribute("selected", "true");
@@ -43,7 +44,7 @@ selectBtn.addEventListener("click", () => selectClass("ws-target-element"));
 
 let clickBtn = document.createElement('div');
 clickBtn.id = "ws-click-btn";
-clickBtn.innerText = "Click";
+clickBtn.innerText = "클릭";
 clickBtn.style.color = "white";
 clickBtn.style.flexGrow = "1";
 clickBtn.style.height = "100%";
@@ -68,7 +69,7 @@ clickBtn.addEventListener("click", () => {
 
 let parentSelectBtn = document.createElement('div')
 parentSelectBtn.id = "ws-parent-select-btn";
-parentSelectBtn.innerText = "Parent\nSelect";
+parentSelectBtn.innerText = "상위영역\n선택";
 parentSelectBtn.style.color = "white";
 parentSelectBtn.style.flexGrow = "1";
 parentSelectBtn.style.height = "100%";
@@ -89,6 +90,6 @@ parentSelectBtn.addEventListener('click', parentSelect);
 
 
 wsTooltip.appendChild(selectBtn);
-wsTooltip.appendChild(clickBtn);
 wsTooltip.appendChild(parentSelectBtn);
+//wsTooltip.appendChild(clickBtn);
 document.body.appendChild(wsTooltip);
