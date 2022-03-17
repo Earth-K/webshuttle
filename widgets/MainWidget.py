@@ -21,6 +21,7 @@ def init_event_listener(web_scraper):
     injector.add_mouseleave()
     injector.add_mousedown_right()
     injector.add_tooltip()
+    injector.add_startpopup()
 
 
 class MainWidget(QWidget):

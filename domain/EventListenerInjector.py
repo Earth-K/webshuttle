@@ -3,6 +3,9 @@ class EventListenerInjector:
     def __init__(self, web_crawler):
         self._web_crawler = web_crawler
 
+    def add_startpopup(self):
+        self._execute_js("./resource/js/add_startpopup.js")
+
     def add_mouseover(self):
         self._execute_js("./resource/js/add_mouseover.js")
 

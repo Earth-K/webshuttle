@@ -1,0 +1,16 @@
+const bodyElement = document.getElementsByTagName('html')[0];
+const toastDiv = document.createElement('div');
+toastDiv.style.position = "fixed";
+toastDiv.id = "ws-toast";
+toastDiv.style.left = "0";
+toastDiv.style.top = "0";
+toastDiv.style.width = "100%";
+toastDiv.style.height = "30px";
+toastDiv.style.background = "rgba(0, 174, 157, .9)";
+toastDiv.style.color = "black";
+toastDiv.style.zIndex = "10005";
+toastDiv.style.textAlign = "center";
+toastDiv.style.fontSize = "18px";
+toastDiv.style.padding = "2px";
+toastDiv.innerHTML="선택할 영역 위에서 우클릭하면 영역을 선택할 수 있습니다.";
+bodyElement.appendChild(toastDiv);
