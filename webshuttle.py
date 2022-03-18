@@ -1,10 +1,10 @@
-import configparser
 import sys
 
 from PyQt5.QtWidgets import QApplication, QDesktopWidget, QAction, QMainWindow, QMessageBox
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
+from domain.opensource import configparser
 from widgets.BaseWidget import BaseWidget
 from widgets.LogWidget import LogWidget
 from widgets.MainWidget import MainWidget
