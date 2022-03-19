@@ -1,4 +1,4 @@
-const bodyElement = document.getElementsByTagName('html')[0];
+const bodyElement = document.getElementsByTagName('body')[0];
 const toastDiv = document.createElement('div');
 toastDiv.style.position = "fixed";
 toastDiv.id = "ws-toast";
