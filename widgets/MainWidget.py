@@ -35,55 +35,60 @@ class MainWidget(QWidget):
         self.element_class_names = None
         self.chrome_service = chrome_service
         self._webScraper = None
-        self.save_btn = None
+        self.addshuttle_button = None
         self._init_ui()
 
     def _init_ui(self):
-        vbox_layout = self._vbox_layout()
+        vbox_layout = self.main_layout()
         self.setLayout(vbox_layout)
         self.show()
 
-    def _vbox_layout(self):
-        result = QVBoxLayout()
+    def main_layout(self) -> QVBoxLayout:
+        main_layout = QVBoxLayout()
+        self.set_shuttlename_layout(main_layout)
+        self.set_url_layout(main_layout)
+        self.set_addshuttle_button()
+        self.set_execution_layout(main_layout)
+        main_layout.addWidget(self._textedit_log())
+        return main_layout
 
-        hbox_layout_shuttle_name_layout = QHBoxLayout()
-        hbox_layout_shuttle_name_layout.addWidget(QLabel('셔틀 이름: '))
-        shuttle_name = self.shuttle_name()
-        hbox_layout_shuttle_name_layout.addWidget(shuttle_name)
-        result.addLayout(hbox_layout_shuttle_name_layout)
+    def set_execution_layout(self, main_layout):
+        execution_layout = QHBoxLayout()
+        execution_layout.addWidget(self._get_element_data_button())
+        execution_layout.addWidget(self.addshuttle_button)
+        main_layout.addLayout(execution_layout)
 
-        hbox_layout_url = QHBoxLayout()
-        label_url = QLabel("URL : ")
-        hbox_layout_url.addWidget(label_url)
+    def set_addshuttle_button(self):
+        self.addshuttle_button = QPushButton()
+        self.addshuttle_button.setIcon(QIcon('resource/images/plus.png'))
+        self.addshuttle_button.setText("셔틀 추가")
+        self.addshuttle_button.setStatusTip('Add this shuttle')
+        self.addshuttle_button.setDisabled(True)
+        self.addshuttle_button.clicked.connect(self.parent_widget.add_shuttle)
+
+    def set_shuttlename_layout(self, result: QVBoxLayout) -> None:
+        shuttlename_layout = QHBoxLayout()
+        shuttlename_layout.addWidget(QLabel('셔틀 이름: '))
+        shuttlename_layout.addWidget(self.shuttle_name())
+        result.addLayout(shuttlename_layout)
+
+    def set_url_layout(self, result: QVBoxLayout) -> None:
+        url_layout = QHBoxLayout()
+        url_layout.addWidget(QLabel("URL : "))
         self.lineedit_url.setPlaceholderText('스크랩 하고 싶은 웹 페이지의 URL ')
-        hbox_layout_url.addWidget(self.lineedit_url)
-        hbox_layout_url.addWidget(self._button_open_browser(self.lineedit_url))
-        result.addLayout(hbox_layout_url)
+        url_layout.addWidget(self.lineedit_url)
+        url_layout.addWidget(self._open_browser_button(self.lineedit_url))
+        result.addLayout(url_layout)
 
-        self.save_btn = QPushButton()
-        self.save_btn.setIcon(QIcon('resource/images/plus.png'))
-        self.save_btn.setText("셔틀 추가")
-        self.save_btn.setStatusTip('Add this shuttle')
-        self.save_btn.setDisabled(True)
-        self.save_btn.clicked.connect(self.parent_widget.add_shuttle)
+    def _get_element_data_button(self):
+        get_element_data_button = QPushButton('선택 영역 데이터 불러오기', self)
+        get_element_data_button.clicked.connect(self._get_target_element_data)
+        return get_element_data_button
 
-        hbox_layout_execution = QHBoxLayout()
-        hbox_layout_execution.addWidget(self._button_get_element_data())
-        hbox_layout_execution.addWidget(self.save_btn)
-        result.addLayout(hbox_layout_execution)
-
-        result.addWidget(self._textedit_log())
-        return result
-
-    def _button_get_element_data(self):
-        button_get_element = QPushButton('선택 영역 데이터 불러오기', self)
-        button_get_element.clicked.connect(self._get_target_element_data)
-        return button_get_element
-
-    def _button_open_browser(self, lineedit):
-        button_open_browser = QPushButton('영역 선택하러 가기', self)
-        button_open_browser.clicked.connect(lambda: self._open_browser(lineedit))
-        return button_open_browser
+    def _open_browser_button(self, lineedit):
+        open_browser_button = QPushButton('영역 선택하러 가기', self)
+        open_browser_button.clicked.connect(lambda: self._open_browser(lineedit))
+        return open_browser_button
 
     def _textedit_log(self):
         self.log_textedit.setReadOnly(True)
@@ -100,7 +105,7 @@ class MainWidget(QWidget):
     def _open_browser(self, lineedit):
         self._webScraper = WebScraper(lineedit.text(), chrome_service=self.chrome_service)
         init_event_listener(self._webScraper)
-        self.save_btn.setDisabled(True)
+        self.addshuttle_button.setDisabled(True)
 
     def _get_target_element_data(self):
         if self._webScraper is None or self._webScraper.is_selected_elements() is False:
@@ -126,4 +131,4 @@ class MainWidget(QWidget):
             self.log_textedit.append('{0}\n'.format(e.text))
         self.log_textedit.append('\n--- selected element ---\n')
         self.log_textedit.append(self.contents)
-        self.save_btn.setDisabled(False)
+        self.addshuttle_button.setDisabled(False)
