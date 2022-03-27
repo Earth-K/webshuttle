@@ -3,6 +3,7 @@ import time
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QPushButton, QVBoxLayout, QTextEdit, QLineEdit, \
     QHBoxLayout, QLabel, QMessageBox
+from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.remote.webelement import WebElement
 
 from domain.EventListenerInjector import EventListenerInjector
@@ -103,7 +104,10 @@ class MainWidget(QWidget):
         return self.lineedit_url
 
     def _open_browser(self, lineedit):
-        self._webScraper = WebScraper(lineedit.text(), chrome_service=self.chrome_service)
+        try:
+            self._webScraper = WebScraper(lineedit.text(), chrome_service=self.chrome_service)
+        except WebDriverException:
+            return
         init_event_listener(self._webScraper)
         self.addshuttle_button.setDisabled(True)
 
