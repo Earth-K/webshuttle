@@ -1,11 +1,35 @@
+const WS_TARGET_ELEMENT = "ws-target-element";
+
 window.oncontextmenu = function (event) {
     event.preventDefault();
 }
 const childNodes = document.getElementsByTagName('body')[0].childNodes;
+addMousedownEventAll(childNodes);
 
-const WS_TARGET_ELEMENT = "ws-target-element";
 
-function addEventRight(event) {
+function addMousedownEventAll(children) {
+    if (children === undefined) return;
+    for (let i = 0; i < children.length; i++) {
+        children[i].addEventListener("mousedown", function (event) {
+            switch (event.which) {
+                case 1:
+                    addEventLeft(event);
+                    break;
+                case 3:
+                    showTooltip();
+                    deselectArea();
+                    addEventRight(event);
+                    break;
+            }
+        });
+        addMousedownEventAll(children[i].childNodes);
+    }
+}
+function addEventLeft(event) {
+    const tooltip = document.getElementById('ws-tooltip');
+    tooltip.style.display = "none";
+}
+function showTooltip() {
     const posTop = window.scrollY + event.clientY + 3;
     const posLeft = window.scrollX + event.clientX + 3;
     const wsTooltip = document.getElementById("ws-tooltip");
@@ -15,7 +39,8 @@ function addEventRight(event) {
     wsTooltip.style.display = "flex";
     wsTooltip.style.justifyContent = "center";
     wsTooltip.style.alignItems = "center";
-
+}
+function deselectArea() {
     while (true) { // 한 번만 수행하면 일부 엘리먼트 선택이 해제되지 않음
         const wsTargetElements = document.getElementsByClassName(WS_TARGET_ELEMENT);
         console.log(wsTargetElements)
@@ -30,7 +55,8 @@ function addEventRight(event) {
             }
         }
     }
-
+}
+function addEventRight(event) {
     const wsTargetClassElements = document.getElementsByClassName(event.target.className);
     if (wsTargetClassElements.length === 0) {
         document.elementFromPoint(posTop - 3, posLeft - 3).classList.add(WS_TARGET_ELEMENT);
@@ -42,25 +68,3 @@ function addEventRight(event) {
     event.stopPropagation();
 }
 
-function addEventLeft(event) {
-    const tooltip = document.getElementById('ws-tooltip');
-    tooltip.style.display = "none";
-}
-
-const func = (c) => {
-    if (c === undefined) return;
-    for (let i = 0; i < c.length; i++) {
-        c[i].addEventListener("mousedown", function (event) {
-            switch (event.which) {
-                case 1:
-                    addEventLeft(event);
-                    break;
-                case 3:
-                    addEventRight(event);
-                    break;
-            }
-        });
-        func(c[i].childNodes);
-    }
-}
-func(childNodes);
