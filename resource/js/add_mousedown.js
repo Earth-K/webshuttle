@@ -3,6 +3,8 @@ window.oncontextmenu = function (event) {
 }
 const childNodes = document.getElementsByTagName('body')[0].childNodes;
 
+const WS_TARGET_ELEMENT = "ws-target-element";
+
 function addEventRight(event) {
     const posTop = window.scrollY + event.clientY + 3;
     const posLeft = window.scrollX + event.clientX + 3;
@@ -14,8 +16,8 @@ function addEventRight(event) {
     wsTooltip.style.justifyContent = "center";
     wsTooltip.style.alignItems = "center";
 
-    while (true) {
-        const wsTargetElements = document.getElementsByClassName("ws-target-element");
+    while (true) { // 한 번만 수행하면 일부 엘리먼트 선택이 해제되지 않음
+        const wsTargetElements = document.getElementsByClassName(WS_TARGET_ELEMENT);
         console.log(wsTargetElements)
         if (wsTargetElements.length === 0) {
             break;
@@ -23,17 +25,18 @@ function addEventRight(event) {
         for (let i = 0; i < wsTargetElements.length; i++) {
             wsTargetElements[i].style.backgroundColor = wsTargetElements[i].getAttribute("data-originBackgroundColor");
             wsTargetElements[i].setAttribute("selected", "false");
-            const startIdx = wsTargetElements[i].className.indexOf(" ws-target-element");
-            wsTargetElements[i].className = wsTargetElements[i].className.substring(0, startIdx);
+            if (wsTargetElements[i].classList.contains(WS_TARGET_ELEMENT)) {
+                wsTargetElements[i].classList.remove(WS_TARGET_ELEMENT);
+            }
         }
     }
 
     const wsTargetClassElements = document.getElementsByClassName(event.target.className);
     if (wsTargetClassElements.length === 0) {
-        document.elementFromPoint(posTop - 3, posLeft - 3).className = " ws-target-element";
+        document.elementFromPoint(posTop - 3, posLeft - 3).classList.add(WS_TARGET_ELEMENT);
     } else {
         for (let i = 0; i < wsTargetClassElements.length; i++) {
-            wsTargetClassElements[i].className += " ws-target-element";
+            wsTargetClassElements[i].classList.add(WS_TARGET_ELEMENT);
         }
     }
     event.stopPropagation();
