@@ -20,7 +20,7 @@ class MainWindow(QMainWindow):
 
         menubar = self.menuBar()
         menubar.setNativeMenuBar(True)
-        menu_save = menubar.addMenu('&Save')
+        menu_save = menubar.addMenu('&저장')
         menu_save.addAction(self._export_saved_shuttles_action())
         self.statusBar()
 

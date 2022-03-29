@@ -9,7 +9,7 @@ class LogWidget(QWidget):
     def _init_ui(self):
         self._vbox_layout = QVBoxLayout()
         title = QLabel()
-        title.setText("스크랩 목록")
+        title.setText("업데이트 리스트")
         self._log_textedit = QTextEdit()
         self._log_textedit.setReadOnly(True)
         self._vbox_layout.addWidget(title)
