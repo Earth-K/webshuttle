@@ -10,7 +10,7 @@ class EventListenerInjector:
         self._execute_js("./resource/js/add_mouseover.js")
 
     def add_mouseleave(self):
-        self._execute_js("./resource/js/add_mouseleave.js")
+        self._execute_js("./resource/js/add_mouseout.js")
 
     def add_tooltip(self):
         self._execute_js("./resource/js/add_tooltip.js")
