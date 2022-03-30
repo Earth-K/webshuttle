@@ -1,0 +1,26 @@
+{
+  "shuttle0": {
+    "name": "▶ 매일경제 인기 뉴스 TEST ◀",
+    "url": "https://www.mk.co.kr/news/",
+    "period": "300",
+    "element_classes": "bestclick_art"
+  },
+  "shuttle1": {
+    "name": "▶ 다음 전체 뉴스 ◀",
+    "url": "https://news.daum.net/",
+    "period": "300",
+    "element_classes": "item_issue"
+  },
+  "shuttle2": {
+    "name": "슈프라이즈!!",
+    "url": "shoeprize.com",
+    "period": "300",
+    "element_classes": "info_area"
+  },
+  "shuttle3": {
+    "name": "▶ 미국 달러 환율 ◀",
+    "url": "https://www.google.com/search?q=%EB%AF%B8%EA%B5%AD%EB%8B%AC%EB%9F%AC&oq=%EB%AF%B8%EA%B5%AD%EB%8B%AC%EB%9F%AC&aqs=chrome..69i57.1708j0j4&sourceid=chrome&ie=UTF-8",
+    "period": "300",
+    "element_classes": "DFlfde SwHCTb"
+  }
+}

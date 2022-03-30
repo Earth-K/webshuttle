@@ -1,10 +1,10 @@
+import json
 import sys
 
 from PyQt5.QtWidgets import QApplication, QDesktopWidget, QAction, QMainWindow, QMessageBox
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
-from domain.opensource import configparser
 from widgets.BaseWidget import BaseWidget
 from widgets.LogWidget import LogWidget
 from widgets.MainWidget import MainWidget
@@ -68,27 +68,27 @@ class MainWindow(QMainWindow):
                                 QMessageBox.Yes, QMessageBox.NoButton)
 
     def _export_saved_shuttles(self):
-        config = configparser.ConfigParser()
         saved_shuttles_tuple_list = self.shuttles_widget.get_saved_shuttles_array()
+        shuttles_json = {}
         for saved_shuttle in saved_shuttles_tuple_list:
             shuttle_id = saved_shuttle[0]
-            shuttle_config_list = saved_shuttle[1]
-            config[shuttle_id] = {}
-            attributes = ['name', 'url', 'period', 'element_classes']
-            for i in range(0, len(shuttle_config_list)):
-                config[shuttle_id][attributes[i]] = shuttle_config_list[i]
-        with open('shuttlesConfig.ini', 'w', encoding="utf-8") as configfile:
-            config.write(configfile)
+            attribute_names = ['name', 'url', 'period', 'element_classes']
+            attributes = {}
+            for index, name in enumerate(attribute_names):
+                attributes[name] = saved_shuttle[1][index]
+            shuttles_json[shuttle_id] = attributes
+
+        with open('shuttles.json', 'w', encoding="utf-8") as json_file:
+            json_file.write(json.dumps(shuttles_json, ensure_ascii=False, indent=2))
 
     def _import_external_shuttles_config(self):
-        config = configparser.ConfigParser()
-        config.read('shuttlesConfig.ini', encoding='utf-8')
-        for shuttle_id in config.sections():
-            shuttle_name = config[shuttle_id]['name']
-            url = config[shuttle_id]['url']
-            period = config[shuttle_id]['period']
-            element_classes = config[shuttle_id]['element_classes']
-            self.shuttles_widget.add_shuttle(name=shuttle_name, url=url, period=period, target_classes=element_classes,
+        with open('shuttles.json', 'r', encoding="utf-8") as shuttles_file:
+            shuttles: dict = json.load(shuttles_file)
+        for index in range(len(shuttles.keys())):
+            shuttle_attributes = shuttles[f'shuttle{index}']
+            self.shuttles_widget.add_shuttle(name=shuttle_attributes["name"], url=shuttle_attributes["url"],
+                                             period=shuttle_attributes["period"],
+                                             target_classes=shuttle_attributes["element_classes"],
                                              log_edittext=self.log_widget.get_edittext())
 
 
