@@ -1,8 +1,8 @@
 import threading
-import time
 import pygame
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit, QPushButton, QSpinBox
 from selenium import webdriver
+from domain.DefaultTime import DefaultTime
 from domain.WebScraper import WebScraper
 from domain.LogText import LogText
 
@@ -23,10 +23,11 @@ def get_text_list(elements):
 
 
 class ShuttlesWidget(QWidget):
-    def __init__(self, parent, chrome_service):
+    def __init__(self, parent, chrome_service, time=DefaultTime()):
         super(ShuttlesWidget, self).__init__(parent)
         self.shuttles = []
         self.chrome_service = chrome_service
+        self.time = time
         self._init_ui()
         self.sound = pygame.mixer.Sound("resource/sounds/sound.wav")
 
@@ -139,7 +140,7 @@ class ShuttlesWidget(QWidget):
             options.add_argument('window-size=1920x1080')
             options.add_argument("disable-gpu")
             tmp_web_crawler = WebScraper(url.text(), options, self.chrome_service)
-            time.sleep(1)
+            self.time.sleep(1)
             elements = tmp_web_crawler.get_elements_by_classnames(target_classes.text())
 
             shuttle_name_text = "이름 없음"
@@ -161,16 +162,15 @@ class ShuttlesWidget(QWidget):
                         text_list.append(e.text)
                         # 한 번에 보이는 정보의 양을 늘리기 위해 줄 바꿈 문자를 | 로 변경함
                         no_newline_text += e.text.replace("\n", " | ") + "\n"
-
+            log_text = LogText(self.time.localtime())
             if len(no_newline_text) > 0:
-                log_text = LogText()
-                log_edittext.append("[ " + shuttle_name_text + " ]" + log_text.local_time_now())
-                log_edittext.append(no_newline_text + "\n")
+                log_edittext.append(log_text.updated_shuttle_name(shuttle_name_text))
+                log_edittext.append(f"{no_newline_text}\n")
                 self.sound.play()
 
             tmp_web_crawler.close_driver()
 
             if start_btn.isEnabled() is True:
-                log_edittext.append("[{0}] 셔틀이 멈췄습니다.".format(shuttle_name.text()) + "\n")
+                log_edittext.append(log_text.stopped_shuttle(shuttle_name_text))
                 break
-            time.sleep(int(period.text()))
+            self.time.sleep(int(period.text()))
