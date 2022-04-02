@@ -22,6 +22,38 @@ def get_text_list(elements):
     return result
 
 
+def url_lineedit(url):
+    result = QLineEdit()
+    result.setPlaceholderText('스크랩 하고 싶은 웹 페이지의 URL')
+    result.setText(url)
+    return result
+
+
+def period_spinbox(period):
+    result = QSpinBox()
+    result.setMaximum(86400)
+    result.setValue(int(period))
+    return result
+
+
+def target_classes_lineedit(target_classes):
+    result = QLineEdit()
+    result.setText(target_classes)
+    return result
+
+
+def shuttle_name_lineedit(name):
+    result = QLineEdit(name)
+    result.setPlaceholderText('셔틀의 이름')
+    return result
+
+
+def _stop(period, start_btn, stop_btn):
+    period.setReadOnly(False)
+    stop_btn.setDisabled(True)
+    start_btn.setDisabled(False)
+
+
 class ShuttlesWidget(QWidget):
     def __init__(self, parent, chrome_service, time=DefaultTime()):
         super(ShuttlesWidget, self).__init__(parent)
@@ -47,58 +79,38 @@ class ShuttlesWidget(QWidget):
         self.show()
 
     def add_shuttle(self, url, period, target_classes, name, log_edittext):
-        url_lineedit = QLineEdit()
-        url_lineedit.setPlaceholderText('스크랩 하고 싶은 웹 페이지의 URL')
-        url_lineedit.setText(url)
-        period_spinbox = QSpinBox()
-        period_spinbox.setMaximum(86400)
-        period_spinbox.setValue(int(period))
-        target_classes_lineedit = QLineEdit()
-        target_classes_lineedit.setText(target_classes)
+        wrap_layout: QVBoxLayout = QVBoxLayout()
 
-        vbox_wrap_layout = QVBoxLayout()
-        hbox_layout_shuttle = QHBoxLayout()
-        hbox_layout_shuttle.addWidget(QLabel('URL : '))
-        hbox_layout_shuttle.addWidget(url_lineedit)
-        hbox_layout_shuttle.addWidget(QLabel('확인 주기(초) : '))
-        hbox_layout_shuttle.addWidget(period_spinbox)
-        hbox_layout_shuttle.addWidget(QLabel('타깃 클래스 : '))
-        hbox_layout_shuttle.addWidget(target_classes_lineedit)
+        shuttle_layout1: QHBoxLayout = QHBoxLayout()
+        shuttle_layout1.addWidget(QLabel('셔틀 이름 : '))
+        shuttle_name_widget = shuttle_name_lineedit(name)
+        shuttle_layout1.addWidget(shuttle_name_widget)
+        shuttle_layout1.addWidget(self._delete_button(wrap_layout))
 
-        hbox_layout_shuttle_name = QHBoxLayout()
-        hbox_layout_shuttle_name.addWidget(QLabel('셔틀 이름 : '))
-        shuttle_name = QLineEdit(name)
-        shuttle_name.setPlaceholderText('셔틀의 이름')
-        hbox_layout_shuttle_name.addWidget(shuttle_name)
-        delete_btn = QPushButton('삭제')
-        delete_btn.clicked.connect(lambda: self.remove_shuttles(vbox_wrap_layout))
-        hbox_layout_shuttle_name.addWidget(delete_btn)
-
+        shuttle_layout2: QHBoxLayout = QHBoxLayout()
+        shuttle_layout2.addWidget(QLabel('URL : '))
+        url_widget = url_lineedit(url)
+        shuttle_layout2.addWidget(url_widget)
+        shuttle_layout2.addWidget(QLabel('확인 주기(초) : '))
+        period_widget = period_spinbox(period)
+        shuttle_layout2.addWidget(period_widget)
+        shuttle_layout2.addWidget(QLabel('타깃 클래스 : '))
+        target_classes_widget = target_classes_lineedit(target_classes)
+        shuttle_layout2.addWidget(target_classes_widget)
         start_btn = QPushButton('시작')
-        stop_btn = QPushButton('중지')
-
         start_btn.clicked.connect(
-            lambda: self._start(shuttle_name, url_lineedit, period_spinbox, target_classes_lineedit, log_edittext,
+            lambda: self._start(shuttle_name_widget, url_widget, period_widget, target_classes_widget, log_edittext,
                                 start_btn, stop_btn))
-        hbox_layout_shuttle.addWidget(start_btn)
-
+        shuttle_layout2.addWidget(start_btn)
+        stop_btn = QPushButton('중지')
         stop_btn.setDisabled(True)
-        stop_btn.clicked.connect(lambda: self._stop(period_spinbox, start_btn, stop_btn))
-        hbox_layout_shuttle.addWidget(stop_btn)
+        stop_btn.clicked.connect(lambda: _stop(period_widget, start_btn, stop_btn))
+        shuttle_layout2.addWidget(stop_btn)
 
-        vbox_wrap_layout.addLayout(hbox_layout_shuttle_name)
-        vbox_wrap_layout.addLayout(hbox_layout_shuttle)
+        wrap_layout.addLayout(shuttle_layout1)
+        wrap_layout.addLayout(shuttle_layout2)
 
-        self.shuttles_vbox_layout.addLayout(vbox_wrap_layout)
-
-    def remove_shuttles(self, vbox_wrap_layout: QVBoxLayout):
-        while vbox_wrap_layout.count():
-            child = vbox_wrap_layout.takeAt(0)
-            if child.widget() is not None:
-                child.widget().deleteLater()
-            else:
-                self.remove_shuttles(child.layout())
-        vbox_wrap_layout.deleteLater()
+        self.shuttles_vbox_layout.addLayout(wrap_layout)
 
     def get_saved_shuttles_array(self):
         if self.shuttles_vbox_layout is None:
@@ -117,21 +129,30 @@ class ShuttlesWidget(QWidget):
             result.append((shuttle_id, shuttle_data_list))
         return result
 
-    def _stop(self, period, start_btn, stop_btn):
-        period.setReadOnly(False)
-        stop_btn.setDisabled(True)
-        start_btn.setDisabled(False)
+    def _delete_button(self, vbox_wrap_layout):
+        delete_btn = QPushButton('삭제')
+        delete_btn.clicked.connect(lambda: self._remove_shuttle(vbox_wrap_layout))
+        return delete_btn
 
-    def _start(self, shuttle_name, url, period, target_classes, log_edittext, start_btn, stop_btn):
+    def _remove_shuttle(self, vbox_wrap_layout: QVBoxLayout):
+        while vbox_wrap_layout.count():
+            child = vbox_wrap_layout.takeAt(0)
+            if child.widget() is not None:
+                child.widget().deleteLater()
+            else:
+                self._remove_shuttle(child.layout())
+        vbox_wrap_layout.deleteLater()
+
+    def _start(self, shuttle_name, url_widget, period, target_classes, log_edittext, start_btn, stop_btn):
         period.setReadOnly(True)
         start_btn.setDisabled(True)
         stop_btn.setDisabled(False)
         thread = threading.Thread(target=self._check_content,
-                                  args=(shuttle_name, url, period, target_classes, log_edittext, start_btn))
+                                  args=(shuttle_name, url_widget, period, target_classes, log_edittext, start_btn))
         thread.daemon = True
         thread.start()
 
-    def _check_content(self, shuttle_name, url, period, target_classes, log_edittext, start_btn: QPushButton):
+    def _check_content(self, shuttle_name, url_widget, period, target_classes, log_edittext, start_btn: QPushButton):
         text_list = []
         while True:
             options = webdriver.ChromeOptions()
@@ -139,7 +160,7 @@ class ShuttlesWidget(QWidget):
             options.add_argument("--start-maximized")
             options.add_argument('window-size=1920x1080')
             options.add_argument("disable-gpu")
-            tmp_web_crawler = WebScraper(url.text(), options, self.chrome_service)
+            tmp_web_crawler = WebScraper(url_widget.text(), options, self.chrome_service)
             self.time.sleep(1)
             elements = tmp_web_crawler.get_elements_by_classnames(target_classes.text())
 
