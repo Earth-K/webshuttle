@@ -100,12 +100,8 @@ class ShuttlesWidget(QWidget):
         start_btn = QPushButton('시작')
         start_btn.clicked.connect(
             lambda: self._start(shuttle_name_widget, url_widget, period_widget, target_classes_widget, log_edittext,
-                                start_btn, stop_btn))
+                                start_btn))
         shuttle_layout2.addWidget(start_btn)
-        stop_btn = QPushButton('중지')
-        stop_btn.setDisabled(True)
-        stop_btn.clicked.connect(lambda: _stop(period_widget, start_btn, stop_btn))
-        shuttle_layout2.addWidget(stop_btn)
 
         wrap_layout.addLayout(shuttle_layout1)
         wrap_layout.addLayout(shuttle_layout2)
@@ -143,14 +139,17 @@ class ShuttlesWidget(QWidget):
                 self._remove_shuttle(child.layout())
         vbox_wrap_layout.deleteLater()
 
-    def _start(self, shuttle_name, url_widget, period, target_classes, log_edittext, start_btn, stop_btn):
-        period.setReadOnly(True)
-        start_btn.setDisabled(True)
-        stop_btn.setDisabled(False)
-        thread = threading.Thread(target=self._check_content,
-                                  args=(shuttle_name, url_widget, period, target_classes, log_edittext, start_btn))
-        thread.daemon = True
-        thread.start()
+    def _start(self, shuttle_name, url_widget, period, target_classes, log_edittext, start_btn):
+        if start_btn.text() == '시작':
+            period.setReadOnly(True)
+            start_btn.setText('중지')
+            thread = threading.Thread(target=self._check_content,
+                                      args=(shuttle_name, url_widget, period, target_classes, log_edittext, start_btn))
+            thread.daemon = True
+            thread.start()
+        else:
+            period.setReadOnly(False)
+            start_btn.setText('시작')
 
     def _check_content(self, shuttle_name, url_widget, period, target_classes, log_edittext, start_btn: QPushButton):
         text_list = []
