@@ -143,6 +143,8 @@ class ShuttlesWidget(QWidget):
 
     def _start(self, shuttle_name, url_widget, period, target_classes, log_edittext, start_btn):
         if start_btn.text() == '시작':
+            message = LogText(self.time.localtime()).started_shuttle(shuttle_name.text())
+            log_edittext.append(message)
             period.setReadOnly(True)
             start_btn.setText('중지')
             self.shuttles[shuttle_name.text()] = threading.Thread(target=self._start_scrap, daemon=True, args=(

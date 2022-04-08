@@ -11,5 +11,8 @@ class LogText:
     def updated_shuttle_name(self, shuttle_name):
         return f"[{shuttle_name}] {self._formatted_localtime()}"
 
+    def started_shuttle(self, shuttle_name):
+        return f"[{shuttle_name}] 셔틀이 스크랩을 시작합니다. {self._formatted_localtime()}\n"
+
     def stopped_shuttle(self, shuttle_name):
-        return f"[{shuttle_name}] 셔틀이 멈췄습니다. {self._formatted_localtime()}\n"
+        return f"[{shuttle_name}] 셔틀이 스크랩을 멈춥니다. {self._formatted_localtime()}\n"
