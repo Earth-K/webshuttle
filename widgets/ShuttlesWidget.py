@@ -59,28 +59,27 @@ def _stop(period, start_btn, stop_btn):
 class ShuttlesWidget(QWidget):
     def __init__(self, parent, chrome_service, time=DefaultTime()):
         super(ShuttlesWidget, self).__init__(parent)
+        self.shuttle_seq = 0
         self.shuttles = {}
         self.chrome_service = chrome_service
         self.time = time
-        self._init_ui()
         self.sound = pygame.mixer.Sound("resource/sounds/sound.wav")
+        self._init_ui()
 
     def _init_ui(self):
         self.title_vbox_layout = QVBoxLayout()
-        title = QLabel()
-        title.setText("셔틀 목록")
         self.shuttles_vbox_layout = QVBoxLayout()
-        self.title_vbox_layout.addWidget(title)
-        stretch_vbox_layout = QVBoxLayout()
-        stretch_vbox_layout.addStretch(4)
+        self.title_vbox_layout.addWidget(QLabel('셔틀 목록'))
         wrap_vbox_layout = QVBoxLayout()
         wrap_vbox_layout.addLayout(self.title_vbox_layout)
         wrap_vbox_layout.addLayout(self.shuttles_vbox_layout)
+        stretch_vbox_layout = QVBoxLayout()
+        stretch_vbox_layout.addStretch(4)
         wrap_vbox_layout.addLayout(stretch_vbox_layout)
         self.setLayout(wrap_vbox_layout)
         self.show()
 
-    def add_shuttle(self, url, period, target_classes, name, log_edittext):
+    def add_shuttle(self, url, period, target_classes, name, log_edittext_widget):
         wrap_layout: QVBoxLayout = QVBoxLayout()
 
         shuttle_layout1: QHBoxLayout = QHBoxLayout()
@@ -88,6 +87,7 @@ class ShuttlesWidget(QWidget):
         shuttle_name_widget = shuttle_name_lineedit(name)
         shuttle_layout1.addWidget(shuttle_name_widget)
         shuttle_layout1.addWidget(self._delete_button(wrap_layout))
+        wrap_layout.addLayout(shuttle_layout1)
 
         shuttle_layout2: QHBoxLayout = QHBoxLayout()
         shuttle_layout2.addWidget(QLabel('URL : '))
@@ -101,14 +101,13 @@ class ShuttlesWidget(QWidget):
         shuttle_layout2.addWidget(target_classes_widget)
         start_btn = QPushButton('시작')
         start_btn.clicked.connect(
-            lambda: self._start(shuttle_name_widget, url_widget, period_widget, target_classes_widget, log_edittext,
-                                start_btn))
+            lambda: self._start(self.shuttle_seq, shuttle_name_widget, url_widget, period_widget, target_classes_widget,
+                                log_edittext_widget, start_btn))
         shuttle_layout2.addWidget(start_btn)
-
-        wrap_layout.addLayout(shuttle_layout1)
         wrap_layout.addLayout(shuttle_layout2)
 
         self.shuttles_vbox_layout.addLayout(wrap_layout)
+        self.shuttle_seq += 1
 
     def get_saved_shuttles_array(self):
         if self.shuttles_vbox_layout is None:
@@ -141,44 +140,51 @@ class ShuttlesWidget(QWidget):
                 self._remove_shuttle(child.layout())
         vbox_wrap_layout.deleteLater()
 
-    def _start(self, shuttle_name, url_widget, period, target_classes, log_edittext, start_btn):
-        if start_btn.text() == '시작':
-            message = LogText(self.time.localtime()).started_shuttle(shuttle_name.text())
-            log_edittext.append(message)
-            period.setReadOnly(True)
-            start_btn.setText('중지')
-            self.shuttles[shuttle_name.text()] = threading.Thread(target=self._start_scrap, daemon=True, args=(
-                shuttle_name, url_widget, period, target_classes, log_edittext, start_btn))
-            self.shuttles[shuttle_name.text()].start()
+    def _start(self, shuttle_seq, shuttle_name_widget, url_widget, period_widget, target_classes_widget,
+               log_edittext_widget,
+               start_btn_widget):
+        if start_btn_widget.text() == '시작':
+            shuttle_name = shuttle_name_widget.text()
+            if shuttle_name == "":
+                shuttle_name = "이름 없음"
+            message = LogText(self.time.localtime()).started_shuttle(shuttle_name)
+            log_edittext_widget.append(message)
+            period_widget.setReadOnly(True)
+            start_btn_widget.setText('중지')
+            self.shuttles[shuttle_seq] = threading.Thread(target=self._start_scrap_thread, daemon=True,
+                                                          args=(
+                                                              shuttle_seq, shuttle_name_widget,
+                                                              url_widget,
+                                                              period_widget,
+                                                              target_classes_widget,
+                                                              log_edittext_widget))
+            self.shuttles[shuttle_seq].start()
         else:
-            message = LogText(self.time.localtime()).stopped_shuttle(shuttle_name.text())
-            log_edittext.append(message)
-            period.setReadOnly(False)
-            self.shuttles[shuttle_name.text()] = None
-            start_btn.setText('시작')
+            message = LogText(self.time.localtime()).stopped_shuttle(shuttle_name_widget.text())
+            log_edittext_widget.append(message)
+            period_widget.setReadOnly(False)
+            self.shuttles[shuttle_name_widget.text()] = None
+            start_btn_widget.setText('시작')
 
-    def _start_scrap(self, shuttle_name, url_widget, period, target_classes, log_edittext, start_btn):
-        threading.Thread(target=self._check_content, daemon=False, args=(
-            shuttle_name, url_widget, period, target_classes, log_edittext, start_btn)).start()
+    def _start_scrap_thread(self, shuttle_seq, shuttle_name, url_widget, period, target_classes, log_edittext_widget):
+        threading.Thread(target=self._run_scrap, daemon=False, args=(
+            shuttle_seq, shuttle_name.text(), url_widget.text(), int(period.text()), target_classes.text(),
+            log_edittext_widget)).start()
 
-    def _check_content(self, shuttle_name, url_widget, period, target_classes, log_edittext, start_btn: QPushButton):
-        shuttle_name_text = "이름 없음"
-        if shuttle_name.text() != "":
-            shuttle_name_text = shuttle_name.text()
-
-        pre_shuttle_thread = self.shuttles[shuttle_name_text]
+    def _run_scrap(self, shuttle_seq, shuttle_name, url, period, target_classes, log_edittext_widget):
+        pre_shuttle_thread = self.shuttles[shuttle_seq]
         text_list = []
         while True:
-            if pre_shuttle_thread != self.shuttles[shuttle_name_text]:
+            if pre_shuttle_thread != self.shuttles[shuttle_seq]:
                 break
             options = webdriver.ChromeOptions()
             options.add_argument('headless')
             options.add_argument("--start-maximized")
             options.add_argument('window-size=1920x1080')
             options.add_argument("disable-gpu")
-            tmp_web_crawler = WebScraper(url_widget.text(), options, self.chrome_service)
+            tmp_web_crawler = WebScraper(url, options, self.chrome_service)
             self.time.sleep(1)
-            elements = tmp_web_crawler.get_elements_by_classnames(target_classes.text())
+            elements = tmp_web_crawler.get_elements_by_classnames(target_classes)
             no_newline_text = ""
             if len(text_list) > 0:
                 new_text_list = get_text_list(elements)
@@ -196,9 +202,9 @@ class ShuttlesWidget(QWidget):
                         no_newline_text += e.text.replace("\n", " | ") + "\n"
             if len(no_newline_text) > 0:
                 log_text = LogText(self.time.localtime())
-                log_edittext.append(log_text.updated_shuttle_name(shuttle_name_text))
-                log_edittext.append(f"{no_newline_text}\n")
+                log_edittext_widget.append(log_text.updated_shuttle_name(shuttle_name))
+                log_edittext_widget.append(f"{no_newline_text}\n")
                 self.sound.play()
 
             tmp_web_crawler.close_driver()
-            self.time.sleep(int(period.text()))
+            self.time.sleep(period)

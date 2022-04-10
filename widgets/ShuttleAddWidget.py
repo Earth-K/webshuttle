@@ -25,9 +25,9 @@ def init_event_listener(web_scraper):
     injector.add_startpopup()
 
 
-class MainWidget(QWidget):
+class ShuttleAddWidget(QWidget):
     def __init__(self, parent, chrome_service):
-        super(MainWidget, self).__init__(parent)
+        super(ShuttleAddWidget, self).__init__(parent)
         self.parent_widget = parent
         self.log_textedit = QTextEdit()
         self.lineedit_shuttle_name = QLineEdit()
