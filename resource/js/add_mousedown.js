@@ -26,8 +26,8 @@ function addMousedownEventAll(children) {
     }
 }
 function addEventLeft(event) {
-    const tooltip = document.getElementById('ws-tooltip');
-    tooltip.style.display = "none";
+    document.getElementById('ws-tooltip').style.display = "none";
+    document.getElementById('ws-toast').style.display = "none";
 }
 function showTooltip() {
     const posTop = window.scrollY + event.clientY + 3;
@@ -57,6 +57,7 @@ function deselectArea() {
     }
 }
 function addEventRight(event) {
+    document.getElementById('ws-toast').style.display = "none";
     const wsTargetClassElements = document.getElementsByClassName(event.target.className);
     if (wsTargetClassElements.length === 0) {
         document.elementFromPoint(posTop - 3, posLeft - 3).classList.add(WS_TARGET_ELEMENT);
