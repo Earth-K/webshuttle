@@ -38,7 +38,7 @@ class Shuttle:
         self.shuttles[self.shuttle_seq] = None
 
     def _create_thread(self):
-        return threading.Thread(target=self._start_scrap_thread, daemon=True, args=(
+        return threading.Thread(target=self._start_scrap_thread, daemon=False, args=(
             self.shuttle_seq, self.shuttle_name_widget, self.url_widget, self.period_widget, self.target_classes_widget,
             self.log_edittext_widget))
 

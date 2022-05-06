@@ -73,13 +73,15 @@ class ShuttlesWidget(QWidget):
         self.show()
 
     def add_shuttle(self, url, period, target_classes, name, log_edittext_widget):
+        self.shuttle_seq += 1
         wrap_layout: QVBoxLayout = QVBoxLayout()
 
         shuttle_layout1: QHBoxLayout = QHBoxLayout()
         shuttle_layout1.addWidget(QLabel('셔틀 이름 : '))
         shuttle_name_widget = shuttle_name_lineedit(name)
         shuttle_layout1.addWidget(shuttle_name_widget)
-        shuttle_layout1.addWidget(self._delete_button(wrap_layout, shuttle_name_widget, log_edittext_widget))
+        shuttle_layout1.addWidget(
+            self._delete_button(wrap_layout, shuttle_name_widget, log_edittext_widget, self.shuttle_seq))
         wrap_layout.addLayout(shuttle_layout1)
 
         shuttle_layout2: QHBoxLayout = QHBoxLayout()
@@ -92,15 +94,18 @@ class ShuttlesWidget(QWidget):
         shuttle_layout2.addWidget(QLabel('타깃 클래스 : '))
         target_classes_widget = target_classes_lineedit(target_classes)
         shuttle_layout2.addWidget(target_classes_widget)
+        shuttle_layout2.addWidget(
+            self.start_button(self.shuttle_seq, shuttle_name_widget, url_widget, period_widget, target_classes_widget,
+                              log_edittext_widget))
+        wrap_layout.addLayout(shuttle_layout2)
+        self.shuttles_vbox_layout.addLayout(wrap_layout)
+
+    def start_button(self, shuttle_seq, shuttle_name_widget, url_widget, period_widget, target_classes_widget, log_edittext_widget):
         start_btn = QPushButton('시작')
         start_btn.clicked.connect(
-            lambda: self._start(self.shuttle_seq, shuttle_name_widget, url_widget, period_widget, target_classes_widget,
+            lambda: self._start(shuttle_seq, shuttle_name_widget, url_widget, period_widget, target_classes_widget,
                                 log_edittext_widget, start_btn))
-        shuttle_layout2.addWidget(start_btn)
-        wrap_layout.addLayout(shuttle_layout2)
-
-        self.shuttles_vbox_layout.addLayout(wrap_layout)
-        self.shuttle_seq += 1
+        return start_btn
 
     def get_saved_shuttles_array(self):
         if self.shuttles_vbox_layout is None:
@@ -119,15 +124,16 @@ class ShuttlesWidget(QWidget):
             result.append((shuttle_id, shuttle_data_list))
         return result
 
-    def _delete_button(self, vbox_wrap_layout, shuttle_name_widget, log_edittext_widget):
+    def _delete_button(self, vbox_wrap_layout, shuttle_name_widget, log_edittext_widget, shuttle_seq):
         delete_btn = QPushButton('삭제')
         delete_btn.clicked.connect(
-            lambda: self._remove_shuttle(vbox_wrap_layout, shuttle_name_widget, log_edittext_widget))
+            lambda: self._remove_shuttle(vbox_wrap_layout, shuttle_name_widget, log_edittext_widget, shuttle_seq))
         return delete_btn
 
-    def _remove_shuttle(self, vbox_wrap_layout: QVBoxLayout, shuttle_name_widget, log_edittext_widget):
-        self.shuttles[self.shuttle_seq].stop()
-        log_edittext_widget.append(LogText(self.time.localtime()).stopped_shuttle(shuttle_name_widget.text()))
+    def _remove_shuttle(self, vbox_wrap_layout: QVBoxLayout, shuttle_name_widget, log_edittext_widget, shuttle_seq):
+        if self.shuttles.get(shuttle_seq) is not None:
+            log_edittext_widget.append(LogText(self.time.localtime()).stopped_shuttle(shuttle_name_widget.text()))
+            self.shuttles[shuttle_seq] = None
         log_edittext_widget.append(LogText(self.time.localtime()).removed_shuttle(shuttle_name_widget.text()))
         self._remove_shuttle_layout(vbox_wrap_layout)
 
@@ -158,5 +164,5 @@ class ShuttlesWidget(QWidget):
             message = LogText(self.time.localtime()).stopped_shuttle(shuttle_name_widget.text())
             log_edittext_widget.append(message)
             period_widget.setReadOnly(False)
-            self.shuttles[shuttle_name_widget.text()] = None
+            self.shuttles[shuttle_seq] = None
             start_btn_widget.setText('시작')
