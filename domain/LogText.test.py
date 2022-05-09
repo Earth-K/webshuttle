@@ -1,26 +1,30 @@
 import time
 import unittest
-from unittest.mock import Mock
 
 from domain.LogText import LogText
 
-TIME_20200913_212640 = 1600000000
-TEXT_20200913_212640 = '2020/09/13 21:26:40'
-SHUTTLE_NAME = "Shuttle Name"
-
-default_time = Mock()
-default_time.localtime.return_value = time.localtime(TIME_20200913_212640)
-
 
 class LogTextTest(unittest.TestCase):
+    def setUp(self) -> None:
+        self.TIME_20200913_212640 = 1600000000
+        self.TEXT_20200913_212640 = '2020/09/13 21:26:40'
+        self.SHUTTLE_NAME = "Shuttle Name"
 
     def test_updated_shuttle_name(self):
-        self.assertEqual(LogText(default_time.localtime()).updated_shuttle_name(SHUTTLE_NAME),
-                         f'[{SHUTTLE_NAME}] {TEXT_20200913_212640}')
+        self.assertEqual(LogText(time.localtime(self.TIME_20200913_212640)).updated_shuttle_name(self.SHUTTLE_NAME),
+                         f'[{self.SHUTTLE_NAME}] {self.TEXT_20200913_212640}')
+
+    def test_started_shuttle(self):
+        self.assertEqual(LogText(time.localtime(self.TIME_20200913_212640)).started_shuttle(self.SHUTTLE_NAME),
+                         f'[{self.SHUTTLE_NAME}] 셔틀이 스크랩을 시작합니다. {self.TEXT_20200913_212640}\n')
 
     def test_stopped_shuttle(self):
-        self.assertEqual(LogText(default_time.localtime()).stopped_shuttle(SHUTTLE_NAME),
-                         f'[{SHUTTLE_NAME}] 셔틀이 멈췄습니다. {TEXT_20200913_212640}\n')
+        self.assertEqual(LogText(time.localtime(self.TIME_20200913_212640)).stopped_shuttle(self.SHUTTLE_NAME),
+                         f'[{self.SHUTTLE_NAME}] 셔틀이 스크랩을 멈춥니다. {self.TEXT_20200913_212640}\n')
+
+    def test_removed_shuttle(self):
+        self.assertEqual(LogText(time.localtime(self.TIME_20200913_212640)).removed_shuttle(self.SHUTTLE_NAME),
+                         f'[{self.SHUTTLE_NAME}] 셔틀이 삭제되었습니다. {self.TEXT_20200913_212640}\n')
 
 
 if __name__ == '__main__':
