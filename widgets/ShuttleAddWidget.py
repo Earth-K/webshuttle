@@ -7,13 +7,8 @@ from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.remote.webelement import WebElement
 
 from domain.EventListenerInjector import EventListenerInjector
+from domain.LogText import LogText
 from domain.WebScraper import WebScraper
-
-
-def local_time_now():
-    now = time.localtime()
-    return "%04d/%02d/%02d %02d:%02d:%02d" % (
-        now.tm_year, now.tm_mon, now.tm_mday, now.tm_hour, now.tm_min, now.tm_sec)
 
 
 def init_event_listener(web_scraper):
@@ -125,7 +120,8 @@ class ShuttleAddWidget(QWidget):
         result: WebElement = self._webScraper.get_target_element()
         self.element_class_names = self._webScraper.get_element_class_names()
         self.contents = result.text
-        self.log_textedit.setText('{0} - get target element data.\n'.format(local_time_now()))
+        self.log_textedit.setText(
+            '{0} - get target element data.\n'.format(LogText(time.localtime()).formatted_localtime()))
         self.log_textedit.append('class names : {0}'.format(self.element_class_names))
         self.log_textedit.append('id : {0}'.format(self._webScraper.get_element_id()))
         elements = self._webScraper.get_elements_by_classnames(self.element_class_names)
