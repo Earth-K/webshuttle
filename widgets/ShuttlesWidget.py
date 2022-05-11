@@ -1,13 +1,10 @@
-import threading
-
 import pygame
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit, QPushButton, QSpinBox
-from selenium import webdriver
 
 from domain.DefaultTime import DefaultTime
 from domain.LogText import LogText
 from domain.Shuttle import Shuttle
-from domain.WebScraper import WebScraper
+from domain.ShuttleWidgetGroup import ShuttleWidgetGroup
 
 pygame.init()
 
@@ -156,9 +153,14 @@ class ShuttlesWidget(QWidget):
             log_edittext_widget.append(message)
             period_widget.setReadOnly(True)
             start_btn_widget.setText('중지')
-            self.shuttles[shuttle_seq] = Shuttle(self.shuttles, shuttle_seq, shuttle_name_widget, url_widget,
-                                                 period_widget, target_classes_widget, log_edittext_widget,
-                                                 start_btn_widget, self.chrome_service)
+            self.shuttles[shuttle_seq] = Shuttle(self.shuttles, shuttle_seq,
+                                                 ShuttleWidgetGroup(shuttle_name_widget=shuttle_name_widget,
+                                                                    url_widget=url_widget,
+                                                                    period_widget=period_widget,
+                                                                    target_classes_widget=target_classes_widget,
+                                                                    update_list_widget=log_edittext_widget,
+                                                                    start_btn_widget=start_btn_widget),
+                                                 self.chrome_service, pygame.mixer.Sound("resource/sounds/sound.wav"))
             self.shuttles[shuttle_seq].start()
         else:
             message = LogText(self.time.localtime()).stopped_shuttle(shuttle_name_widget.text())
