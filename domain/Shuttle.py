@@ -19,14 +19,13 @@ class Shuttle:
     def __init__(self, shuttles, shuttle_seq, shuttle_name_widget, url_widget, period_widget, target_classes_widget,
                  log_edittext_widget, start_btn_widget, chrome_service, time=DefaultTime()):
         self.shuttles = shuttles
-        self.shuttle_seq = shuttle_seq
+        self.id = shuttle_seq
         self.start_btn_widget = start_btn_widget
         self.log_edittext_widget = log_edittext_widget
         self.target_classes_widget = target_classes_widget
         self.period_widget = period_widget
         self.url_widget = url_widget
         self.shuttle_name_widget = shuttle_name_widget
-        self.id = shuttle_seq
         self.chrome_service = chrome_service
         self.time = time
         self.sound = pygame.mixer.Sound("resource/sounds/sound.wav")
@@ -35,11 +34,11 @@ class Shuttle:
         self._create_thread().start()
 
     def stop(self):
-        self.shuttles[self.shuttle_seq] = None
+        self.shuttles[self.id] = None
 
     def _create_thread(self):
         return threading.Thread(target=self._start_scrap_thread, daemon=False, args=(
-            self.shuttle_seq, self.shuttle_name_widget, self.url_widget, self.period_widget, self.target_classes_widget,
+            self.id, self.shuttle_name_widget, self.url_widget, self.period_widget, self.target_classes_widget,
             self.log_edittext_widget))
 
     def _start_scrap_thread(self, shuttle_seq, shuttle_name, url_widget, period, target_classes, log_edittext_widget):

@@ -6,7 +6,7 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
 from widgets.BaseWidget import BaseWidget
-from widgets.UpdateListWidget import UpdateListWidget
+from widgets.StateWidget import UpdateListWidget
 from widgets.ShuttleAddWidget import ShuttleAddWidget
 from widgets.ShuttlesWidget import ShuttlesWidget
 

@@ -24,7 +24,7 @@ class ShuttleAddWidget(QWidget):
     def __init__(self, parent, chrome_service):
         super(ShuttleAddWidget, self).__init__(parent)
         self.parent_widget = parent
-        self.log_textedit = QTextEdit()
+        self.textedit_state_widget = QTextEdit()
         self.lineedit_shuttle_name = QLineEdit()
         self.lineedit_url = QLineEdit()
         self.contents = None
@@ -45,7 +45,7 @@ class ShuttleAddWidget(QWidget):
         self.set_url_layout(main_layout)
         self.set_addshuttle_button()
         self.set_execution_layout(main_layout)
-        main_layout.addWidget(self._textedit_log())
+        main_layout.addWidget(self._textedit_state_widget())
         return main_layout
 
     def set_execution_layout(self, main_layout):
@@ -86,9 +86,9 @@ class ShuttleAddWidget(QWidget):
         open_browser_button.clicked.connect(lambda: self._open_browser(lineedit))
         return open_browser_button
 
-    def _textedit_log(self):
-        self.log_textedit.setReadOnly(True)
-        return self.log_textedit
+    def _textedit_state_widget(self):
+        self.textedit_state_widget.setReadOnly(True)
+        return self.textedit_state_widget
 
     def shuttle_name(self):
         self.lineedit_shuttle_name.setPlaceholderText('셔틀의 이름')
@@ -120,14 +120,14 @@ class ShuttleAddWidget(QWidget):
         result: WebElement = self._webScraper.get_target_element()
         self.element_class_names = self._webScraper.get_element_class_names()
         self.contents = result.text
-        self.log_textedit.setText(
+        self.textedit_state_widget.setText(
             '{0} - get target element data.\n'.format(LogText(time.localtime()).formatted_localtime()))
-        self.log_textedit.append('class names : {0}'.format(self.element_class_names))
-        self.log_textedit.append('id : {0}'.format(self._webScraper.get_element_id()))
+        self.textedit_state_widget.append('class names : {0}'.format(self.element_class_names))
+        self.textedit_state_widget.append('id : {0}'.format(self._webScraper.get_element_id()))
         elements = self._webScraper.get_elements_by_classnames(self.element_class_names)
-        self.log_textedit.append('--- elements with same class ---\n')
+        self.textedit_state_widget.append('--- elements with same class ---\n')
         for e in elements:
-            self.log_textedit.append('{0}\n'.format(e.text))
-        self.log_textedit.append('\n--- selected element ---\n')
-        self.log_textedit.append(self.contents)
+            self.textedit_state_widget.append('{0}\n'.format(e.text))
+        self.textedit_state_widget.append('\n--- selected element ---\n')
+        self.textedit_state_widget.append(self.contents)
         self.addshuttle_button.setDisabled(False)

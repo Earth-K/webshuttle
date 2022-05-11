@@ -7,7 +7,7 @@ class BaseWidget(QWidget):
         self.tabs = QTabWidget()
         self.tabs.addTab(main_widget, '셔틀 추가')
         self.tabs.addTab(shuttles_widget, '셔틀 목록')
-        self.tabs.addTab(log_widget, '업데이트 리스트')
+        self.tabs.addTab(log_widget, '현황')
         main_layout = QVBoxLayout()
         main_layout.addWidget(self.tabs)
         self.setLayout(main_layout)
