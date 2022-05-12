@@ -15,7 +15,7 @@ class ShuttleTest(unittest.TestCase):
                                                     url_widget=QLineEdit(), period_widget=QLineEdit(),
                                                     target_classes_widget=QLineEdit(), update_list_widget=QTextEdit()),
             shuttle_seq=0, shuttles=[], chrome_service=None, time=DefaultTime(), mixer_sound=None)
-        assert True
+        assert shuttle is not None
 
 
 if __name__ == '__main__':
