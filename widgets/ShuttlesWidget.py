@@ -153,7 +153,7 @@ class ShuttlesWidget(QWidget):
             log_edittext_widget.append(message)
             period_widget.setReadOnly(True)
             start_btn_widget.setText('중지')
-            self.shuttles[shuttle_seq] = Shuttle(self.shuttles, shuttle_seq,
+            self.shuttles[shuttle_seq] = Shuttle(self, self.shuttles, shuttle_seq,
                                                  ShuttleWidgetGroup(shuttle_name_widget=shuttle_name_widget,
                                                                     url_widget=url_widget,
                                                                     period_widget=period_widget,
