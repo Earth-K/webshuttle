@@ -16,8 +16,23 @@ class ShuttleTest(unittest.TestCase):
                                                                   url_widget=QLineEdit(), period_widget=QLineEdit(),
                                                                   target_classes_widget=QLineEdit(),
                                                                   update_list_widget=QTextEdit()),
-                          shuttle_seq=0, shuttles=[], chrome_service=None, time=DefaultTime(), mixer_sound=None)
-        assert shuttle is not None
+                          shuttle_id=0, shuttles=[], chrome_service=None, time=DefaultTime(), mixer_sound=None)
+
+        self.assertIsNotNone(shuttle)
+
+    def test_shuttle_is_become_None_when_stopped(self):
+        shuttle = Shuttle(parent_widget=QWidget(),
+                          shuttle_widget_group=ShuttleWidgetGroup(start_btn_widget=QPushButton(),
+                                                                  shuttle_name_widget=QLineEdit(),
+                                                                  url_widget=QLineEdit(), period_widget=QLineEdit(),
+                                                                  target_classes_widget=QLineEdit(),
+                                                                  update_list_widget=QTextEdit()),
+                          shuttle_id=0, shuttles=[], chrome_service=None, time=DefaultTime(), mixer_sound=None)
+        shuttle.shuttle_list.append(shuttle)
+
+        shuttle.stop()
+
+        self.assertEqual(shuttle.shuttle_list[shuttle.id], None)
 
 
 if __name__ == '__main__':
