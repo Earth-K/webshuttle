@@ -23,5 +23,5 @@ class EventListenerInjector:
 
     def _execute_js(self, file_path):
         jsFile = open(file_path, "r", encoding='utf-8')
-        self._web_crawler.execute_js(jsFile.read())
+        self._web_crawler.execute_script(jsFile.read())
         jsFile.close()

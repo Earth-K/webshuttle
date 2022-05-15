@@ -25,15 +25,17 @@ class ScrapThread(QThread):
     def run(self) -> None:
         pre_shuttle_thread = self.shuttle_list[self.id]
         text_list = []
+        options = webdriver.ChromeOptions()
+        options.add_argument('headless')
+        options.add_argument("--start-maximized")
+        options.add_argument('window-size=1920x1080')
+        options.add_argument("disable-gpu")
+        tmp_web_crawler = WebScraper(start_url=self.shuttle_widget_group.url_widget.text(),
+                                     driver=webdriver.Chrome(service=self.chrome_service, options=options))
         while True:
             if pre_shuttle_thread != self.shuttle_list[self.id]:
                 break
-            options = webdriver.ChromeOptions()
-            options.add_argument('headless')
-            options.add_argument("--start-maximized")
-            options.add_argument('window-size=1920x1080')
-            options.add_argument("disable-gpu")
-            tmp_web_crawler = WebScraper(self.shuttle_widget_group.url_widget.text(), options, self.chrome_service)
+            tmp_web_crawler.driver.refresh()
             self.time.sleep(1)
             elements = tmp_web_crawler.get_elements_by_classnames(self.shuttle_widget_group.target_classes_widget.text())
             no_newline_text = ""
@@ -58,5 +60,5 @@ class ScrapThread(QThread):
                 self.shuttle_widget_group.update_list_widget.append(f"{no_newline_text}\n")
                 self.sound.play()
 
-            tmp_web_crawler.close_driver()
             self.time.sleep(int(self.shuttle_widget_group.period_widget.text()))
+        tmp_web_crawler.quit_driver()
