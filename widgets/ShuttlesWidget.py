@@ -1,5 +1,5 @@
 import pygame
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit, QPushButton, QSpinBox
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit, QPushButton, QSpinBox, QFrame
 
 from domain.DefaultTime import DefaultTime
 from domain.LogText import LogText
@@ -73,12 +73,18 @@ class ShuttlesWidget(QWidget):
         self.shuttle_seq += 1
         wrap_layout: QVBoxLayout = QVBoxLayout()
 
+        shuttle_frame = QFrame()
+        shuttle_frame.setFrameShape(QFrame.Box)
+        shuttle_frame.setFrameShadow(QFrame.Sunken)
+        shuttle_frame.setLayout(wrap_layout)
+
+        # TODO: 박스 안에 셔틀 이름, 편집 버튼, 시작/종료 버튼 넣고 편집 버튼 누르면 내용 수정 및 삭제 가능 하게 만들어 보기
         shuttle_layout1: QHBoxLayout = QHBoxLayout()
         shuttle_layout1.addWidget(QLabel('셔틀 이름 : '))
         shuttle_name_widget = shuttle_name_lineedit(name)
         shuttle_layout1.addWidget(shuttle_name_widget)
         shuttle_layout1.addWidget(
-            self._delete_button(wrap_layout, shuttle_name_widget, log_edittext_widget, self.shuttle_seq))
+            self._delete_button(shuttle_frame, shuttle_name_widget, log_edittext_widget, self.shuttle_seq))
         wrap_layout.addLayout(shuttle_layout1)
 
         shuttle_layout2: QHBoxLayout = QHBoxLayout()
@@ -95,7 +101,7 @@ class ShuttlesWidget(QWidget):
             self.start_button(self.shuttle_seq, shuttle_name_widget, url_widget, period_widget, target_classes_widget,
                               log_edittext_widget))
         wrap_layout.addLayout(shuttle_layout2)
-        self.shuttles_vbox_layout.addLayout(wrap_layout)
+        self.shuttles_vbox_layout.addWidget(shuttle_frame)
 
     def start_button(self, shuttle_seq, shuttle_name_widget, url_widget, period_widget, target_classes_widget, log_edittext_widget):
         start_btn = QPushButton('시작')
@@ -106,14 +112,14 @@ class ShuttlesWidget(QWidget):
 
     def get_saved_shuttles_array(self):
         if self.shuttles_vbox_layout is None:
-            return
+            return []
         result = []
         for i in range(self.shuttles_vbox_layout.count()):
             shuttle_id = "shuttle" + str(i)
-            shuttle_wrap_layout = self.shuttles_vbox_layout.itemAt(i)
+            shuttle_wrap_layout = self.shuttles_vbox_layout.itemAt(i).widget().layout()
             shuttle_data_list = []
             for j in range(shuttle_wrap_layout.count()):
-                shuttle_inner_layout = shuttle_wrap_layout.itemAt(j)
+                shuttle_inner_layout = shuttle_wrap_layout.itemAt(j).layout()
                 for k in range(shuttle_inner_layout.count()):
                     widget = shuttle_inner_layout.itemAt(k).widget()
                     if type(widget) is QLineEdit or type(widget) is QSpinBox:
@@ -127,21 +133,12 @@ class ShuttlesWidget(QWidget):
             lambda: self._remove_shuttle(vbox_wrap_layout, shuttle_name_widget, log_edittext_widget, shuttle_seq))
         return delete_btn
 
-    def _remove_shuttle(self, vbox_wrap_layout: QVBoxLayout, shuttle_name_widget, log_edittext_widget, shuttle_seq):
+    def _remove_shuttle(self, shuttle_frame: QFrame, shuttle_name_widget, log_edittext_widget, shuttle_seq):
         if self.shuttles.get(shuttle_seq) is not None:
             log_edittext_widget.append(LogText(self.time.localtime()).stopped_shuttle(shuttle_name_widget.text()))
             self.shuttles[shuttle_seq] = None
         log_edittext_widget.append(LogText(self.time.localtime()).removed_shuttle(shuttle_name_widget.text()))
-        self._remove_shuttle_layout(vbox_wrap_layout)
-
-    def _remove_shuttle_layout(self, vbox_wrap_layout):
-        while vbox_wrap_layout.count():
-            child = vbox_wrap_layout.takeAt(0)
-            if child.widget() is not None:
-                child.widget().deleteLater()
-            else:
-                self._remove_shuttle_layout(child.layout())
-        vbox_wrap_layout.deleteLater()
+        shuttle_frame.deleteLater()
 
     def _start(self, shuttle_seq, shuttle_name_widget, url_widget, period_widget, target_classes_widget,
                log_edittext_widget, start_btn_widget):
