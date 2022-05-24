@@ -5,6 +5,7 @@ from domain.DefaultTime import DefaultTime
 from domain.LogText import LogText
 from domain.Shuttle import Shuttle
 from domain.ShuttleWidgetGroup import ShuttleWidgetGroup
+from widgets.ShuttleFrame import ShuttleFrame
 
 pygame.init()
 
@@ -51,6 +52,7 @@ class ShuttlesWidget(QWidget):
     def __init__(self, parent, chrome_service, time=DefaultTime()):
         super(ShuttlesWidget, self).__init__(parent)
         self.shuttle_seq = 0
+        self.shuttle_frames = {}
         self.shuttles = {}
         self.chrome_service = chrome_service
         self.time = time
@@ -71,59 +73,37 @@ class ShuttlesWidget(QWidget):
 
     def add_shuttle(self, url, period, target_classes, name, log_edittext_widget):
         self.shuttle_seq += 1
-        wrap_layout: QVBoxLayout = QVBoxLayout()
 
-        shuttle_frame = QFrame()
-        shuttle_frame.setFrameShape(QFrame.Box)
-        shuttle_frame.setFrameShadow(QFrame.Sunken)
-        shuttle_frame.setLayout(wrap_layout)
-
-        # TODO: 박스 안에 셔틀 이름, 편집 버튼, 시작/종료 버튼 넣고 편집 버튼 누르면 내용 수정 및 삭제 가능 하게 만들어 보기
-        shuttle_layout1: QHBoxLayout = QHBoxLayout()
-        shuttle_layout1.addWidget(QLabel('셔틀 이름 : '))
         shuttle_name_widget = shuttle_name_lineedit(name)
-        shuttle_layout1.addWidget(shuttle_name_widget)
-        shuttle_layout1.addWidget(
-            self._delete_button(shuttle_frame, shuttle_name_widget, log_edittext_widget, self.shuttle_seq))
-        wrap_layout.addLayout(shuttle_layout1)
-
-        shuttle_layout2: QHBoxLayout = QHBoxLayout()
-        shuttle_layout2.addWidget(QLabel('URL : '))
-        url_widget = url_lineedit(url)
-        shuttle_layout2.addWidget(url_widget)
-        shuttle_layout2.addWidget(QLabel('확인 주기(초) : '))
-        period_widget = period_spinbox(period)
-        shuttle_layout2.addWidget(period_widget)
-        shuttle_layout2.addWidget(QLabel('타깃 클래스 : '))
         target_classes_widget = target_classes_lineedit(target_classes)
-        shuttle_layout2.addWidget(target_classes_widget)
-        shuttle_layout2.addWidget(
-            self.start_button(self.shuttle_seq, shuttle_name_widget, url_widget, period_widget, target_classes_widget,
-                              log_edittext_widget))
-        wrap_layout.addLayout(shuttle_layout2)
-        self.shuttles_vbox_layout.addWidget(shuttle_frame)
+        url_widget = url_lineedit(url)
+        period_widget = period_spinbox(period)
 
-    def start_button(self, shuttle_seq, shuttle_name_widget, url_widget, period_widget, target_classes_widget, log_edittext_widget):
-        start_btn = QPushButton('시작')
-        start_btn.clicked.connect(
-            lambda: self._start(shuttle_seq, shuttle_name_widget, url_widget, period_widget, target_classes_widget,
-                                log_edittext_widget, start_btn))
-        return start_btn
+        shuttle_frame = ShuttleFrame(shuttles=self.shuttles,
+                                     shuttle_seq=self.shuttle_seq,
+                                     chrome_service=self.chrome_service,
+                                     shuttleWidgetGroup=ShuttleWidgetGroup(
+                                         shuttle_name_widget=shuttle_name_widget,
+                                         url_widget=url_widget,
+                                         target_classes_widget=target_classes_widget,
+                                         period_widget=period_widget,
+                                         update_list_widget=log_edittext_widget,
+                                         parent=None
+                                     ), parent=self, time=self.time)
+
+        self.shuttle_frames[self.shuttle_seq] = shuttle_frame
+        self.shuttles_vbox_layout.addWidget(shuttle_frame.getFrame())
 
     def get_saved_shuttles_array(self):
         if self.shuttles_vbox_layout is None:
             return []
         result = []
-        for i in range(self.shuttles_vbox_layout.count()):
+        for i in self.shuttle_frames:
+            frame: ShuttleFrame = self.shuttle_frames[i]
             shuttle_id = "shuttle" + str(i)
-            shuttle_wrap_layout = self.shuttles_vbox_layout.itemAt(i).widget().layout()
-            shuttle_data_list = []
-            for j in range(shuttle_wrap_layout.count()):
-                shuttle_inner_layout = shuttle_wrap_layout.itemAt(j).layout()
-                for k in range(shuttle_inner_layout.count()):
-                    widget = shuttle_inner_layout.itemAt(k).widget()
-                    if type(widget) is QLineEdit or type(widget) is QSpinBox:
-                        shuttle_data_list.append(widget.text())
+            shuttle_data_list = [frame.shuttleWidgets.shuttle_name_widget.text(),
+                                 frame.shuttleWidgets.url_widget.text(), frame.shuttleWidgets.period_widget.text(),
+                                 frame.shuttleWidgets.target_classes_widget.text()]
             result.append((shuttle_id, shuttle_data_list))
         return result
 
@@ -137,31 +117,6 @@ class ShuttlesWidget(QWidget):
         if self.shuttles.get(shuttle_seq) is not None:
             log_edittext_widget.append(LogText(self.time.localtime()).stopped_shuttle(shuttle_name_widget.text()))
             self.shuttles[shuttle_seq] = None
+            self.shuttle_frames.pop(shuttle_seq)
         log_edittext_widget.append(LogText(self.time.localtime()).removed_shuttle(shuttle_name_widget.text()))
         shuttle_frame.deleteLater()
-
-    def _start(self, shuttle_seq, shuttle_name_widget, url_widget, period_widget, target_classes_widget,
-               log_edittext_widget, start_btn_widget):
-        if start_btn_widget.text() == '시작':
-            shuttle_name = shuttle_name_widget.text()
-            if shuttle_name == "":
-                shuttle_name = "이름 없음"
-            message = LogText(self.time.localtime()).started_shuttle(shuttle_name)
-            log_edittext_widget.append(message)
-            period_widget.setReadOnly(True)
-            start_btn_widget.setText('중지')
-            self.shuttles[shuttle_seq] = Shuttle(self, self.shuttles, shuttle_seq,
-                                                 ShuttleWidgetGroup(shuttle_name_widget=shuttle_name_widget,
-                                                                    url_widget=url_widget,
-                                                                    period_widget=period_widget,
-                                                                    target_classes_widget=target_classes_widget,
-                                                                    update_list_widget=log_edittext_widget,
-                                                                    start_btn_widget=start_btn_widget),
-                                                 self.chrome_service, pygame.mixer.Sound("resource/sounds/sound.wav"))
-            self.shuttles[shuttle_seq].start()
-        else:
-            message = LogText(self.time.localtime()).stopped_shuttle(shuttle_name_widget.text())
-            log_edittext_widget.append(message)
-            period_widget.setReadOnly(False)
-            self.shuttles[shuttle_seq] = None
-            start_btn_widget.setText('시작')

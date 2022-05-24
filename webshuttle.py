@@ -81,7 +81,7 @@ class MainWindow(QMainWindow):
         with open('shuttles.json', 'r', encoding="utf-8") as shuttles_file:
             shuttles: dict = json.load(shuttles_file)
         for index in range(len(shuttles.keys())):
-            shuttle_attributes = shuttles[f'shuttle{index}']
+            shuttle_attributes = shuttles[f'shuttle{index+1}']
             self.shuttles_widget.add_shuttle(name=shuttle_attributes["name"],
                                              url=shuttle_attributes["url"],
                                              period=shuttle_attributes["period"],
