@@ -45,19 +45,23 @@ class ShuttleFrame(QWidget):
         self.frame.setLayout(shuttle_layout)
 
     def showSettings(self):
+        widget = self.createSettingDialog()
+        widget.show()
+
+    def createSettingDialog(self):
         widget = QDialog(self.parent)
         widget.setWindowModality(Qt.ApplicationModal)
         widget.resize(300, 200)
-        self.settingLayout()
+        self.setSettingsLayout()
         widget.setLayout(self.vBoxLayout)
         self.cancel.clicked.connect(widget.close)
         self.ok.clicked.connect(lambda: self.applyDraft(widget))
-        widget.show()
+        return widget
 
     def getFrame(self):
         return self.frame
 
-    def settingLayout(self):
+    def setSettingsLayout(self):
         if self.vBoxLayout is not None:
             return
         self.vBoxLayout = QVBoxLayout()
