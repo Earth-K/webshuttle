@@ -14,11 +14,13 @@ def qapp():
 
 def test_settings_are_applied_when_clicked_ok(qapp):
     parent = QWidget()
+    spinbox = QSpinBox()
+    spinbox.setMaximum(38000)
     shuttleFrame = ShuttleFrame(shuttles={}, shuttle_seq=0, chrome_service=None,
                                 shuttleWidgetGroup=ShuttleWidgetGroup(url_widget=QLineEdit(),
                                                                       update_list_widget=QTextEdit(),
                                                                       shuttle_name_widget=QLineEdit(),
-                                                                      period_widget=QSpinBox(),
+                                                                      period_widget=spinbox,
                                                                       target_classes_widget=QLineEdit(),
                                                                       parent=None
                                                                       ),
@@ -26,15 +28,16 @@ def test_settings_are_applied_when_clicked_ok(qapp):
 
     shuttleFrame.showSettings()
     shuttleFrame.draft_shuttleWidgets.url.setText("testUrl")
-    shuttleFrame.draft_shuttleWidgets.period.setValue(60)
+    shuttleFrame.draft_shuttleWidgets.period.setValue(3600)
     shuttleFrame.draft_shuttleWidgets.name.setText("No Name")
     shuttleFrame.draft_shuttleWidgets.target_classes.setText("class1 class2")
     shuttleFrame.ok.click()
 
     assert shuttleFrame.shuttleWidgets.url_widget.text() == "testUrl"
-    assert shuttleFrame.shuttleWidgets.period_widget.value() == 60
+    assert shuttleFrame.shuttleWidgets.period_widget.value() == 3600
     assert shuttleFrame.shuttleWidgets.shuttle_name_widget.text() == "No Name"
     assert shuttleFrame.shuttleWidgets.target_classes_widget.text() == "class1 class2"
+    assert shuttleFrame.frame_name.text() == "No Name"
 
 
 def test_apply_draft_shuttle(qapp):
