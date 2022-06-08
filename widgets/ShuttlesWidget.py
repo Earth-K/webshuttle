@@ -1,4 +1,5 @@
 import pygame
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit, QPushButton, QSpinBox, QFrame
 
 from domain.DefaultTime import DefaultTime
@@ -92,7 +93,12 @@ class ShuttlesWidget(QWidget):
                                      ), parent=self, time=self.time)
 
         self.shuttle_frames[self.shuttle_seq] = shuttle_frame
-        self.shuttles_vbox_layout.addWidget(shuttle_frame.getFrame())
+        shuttleLayout = QHBoxLayout()
+        shuttleLayout.addWidget(shuttle_frame.getFrame())
+        shuttleLayout.addWidget(
+            self._delete_button(vbox_wrap_layout=shuttle_frame.getFrame(), shuttle_name_widget=shuttle_name_widget,
+                                log_edittext_widget=log_edittext_widget, shuttle_seq=self.shuttle_seq))
+        self.shuttles_vbox_layout.addLayout(shuttleLayout)
 
     def get_saved_shuttles_array(self):
         if self.shuttles_vbox_layout is None:
@@ -108,15 +114,20 @@ class ShuttlesWidget(QWidget):
         return result
 
     def _delete_button(self, vbox_wrap_layout, shuttle_name_widget, log_edittext_widget, shuttle_seq):
-        delete_btn = QPushButton('삭제')
+        delete_btn = QPushButton()
+        delete_btn.setStyleSheet("background-color: rgba(255,255,255,0);")
+        delete_btn.setIcon(QIcon('resource/images/remove-48.png'))
+        delete_btn.setFixedWidth(30)
+        delete_btn.setFixedHeight(30)
         delete_btn.clicked.connect(
-            lambda: self._remove_shuttle(vbox_wrap_layout, shuttle_name_widget, log_edittext_widget, shuttle_seq))
+            lambda: self._remove_shuttle(vbox_wrap_layout, shuttle_name_widget, log_edittext_widget, shuttle_seq, delete_btn))
         return delete_btn
 
-    def _remove_shuttle(self, shuttle_frame: QFrame, shuttle_name_widget, log_edittext_widget, shuttle_seq):
+    def _remove_shuttle(self, shuttle_frame: QFrame, shuttle_name_widget, log_edittext_widget, shuttle_seq, delete_btn):
         if self.shuttles.get(shuttle_seq) is not None:
             log_edittext_widget.append(LogText(self.time.localtime()).stopped_shuttle(shuttle_name_widget.text()))
             self.shuttles[shuttle_seq] = None
             self.shuttle_frames.pop(shuttle_seq)
         log_edittext_widget.append(LogText(self.time.localtime()).removed_shuttle(shuttle_name_widget.text()))
         shuttle_frame.deleteLater()
+        delete_btn.deleteLater()

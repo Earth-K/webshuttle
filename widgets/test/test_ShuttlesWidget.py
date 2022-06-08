@@ -1,7 +1,7 @@
 import sys
 
 import pytest
-from PyQt5.QtWidgets import QMainWindow, QApplication, QVBoxLayout, QFrame, QHBoxLayout, QLineEdit, QSpinBox, QTextEdit
+from PyQt5.QtWidgets import QMainWindow, QApplication, QVBoxLayout, QLineEdit, QTextEdit
 
 from widgets.ShuttleFrame import ShuttleFrame
 from widgets.ShuttlesWidget import ShuttlesWidget
@@ -44,8 +44,9 @@ def test_Shuttle_is_added_with_data_and_GUI(qapp):
     assert frame.shuttleWidgets.period_widget.value() == 500
     assert frame.shuttleWidgets.target_classes_widget.text() == "class1 class2"
     # Check GUI
-    shuttle_layout = shuttleWidget.shuttles_vbox_layout.itemAt(0).widget().layout()
-    assert shuttle_layout.count() == 3
-    assert shuttle_layout.itemAt(0).widget().text() == "Shuttle Name"
-    assert shuttle_layout.itemAt(1).widget().text() == "설정"
-    assert shuttle_layout.itemAt(2).widget().text() == "시작"
+    shuttle_layout = shuttleWidget.shuttles_vbox_layout.itemAt(0).layout()
+    assert shuttle_layout.count() == 2
+    assert shuttle_layout.itemAt(0).widget().layout().itemAt(0).widget().text() == "Shuttle Name"
+    assert shuttle_layout.itemAt(0).widget().layout().itemAt(1).widget().text() == "설정"
+    assert shuttle_layout.itemAt(0).widget().layout().itemAt(2).widget().text() == "시작"
+    assert shuttle_layout.itemAt(1).widget().icon() is not None
