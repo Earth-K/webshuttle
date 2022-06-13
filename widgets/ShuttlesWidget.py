@@ -5,7 +5,6 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit
 
 from domain.DefaultTime import DefaultTime
 from domain.LogText import LogText
-from domain.Shuttle import Shuttle
 from domain.ShuttleWidgetGroup import ShuttleWidgetGroup
 from widgets.ShuttleFrame import ShuttleFrame
 
@@ -133,11 +132,12 @@ class ShuttlesWidget(QWidget):
         if self.shuttles.get(shuttle_seq) is not None:
             log_edittext_widget.append(LogText(self.time.localtime()).stopped_shuttle(shuttle_name_widget.text()))
             self.shuttles[shuttle_seq] = None
-            self.shuttle_frames.pop(shuttle_seq)
+
         log_edittext_widget.append(LogText(self.time.localtime()).removed_shuttle(shuttle_name_widget.text()))
         shuttle_frame.deleteLater()
         delete_btn.deleteLater()
         self.shuttles_vbox_layout.takeAt(shuttle_seq - 1)
+        self.shuttle_frames.pop(shuttle_seq)
 
     def _confirm(self, shuttle_name_widget):
         return QMessageBox.question(self, '삭제 확인', f'\'{shuttle_name_widget.text()}\' 셔틀이 삭제됩니다.',
