@@ -1,6 +1,7 @@
 import pygame
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit, QPushButton, QSpinBox, QFrame
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit, QPushButton, QSpinBox, QFrame, \
+    QMessageBox
 
 from domain.DefaultTime import DefaultTime
 from domain.LogText import LogText
@@ -96,7 +97,7 @@ class ShuttlesWidget(QWidget):
         shuttleLayout = QHBoxLayout()
         shuttleLayout.addWidget(shuttle_frame.getFrame())
         shuttleLayout.addWidget(
-            self._delete_button(vbox_wrap_layout=shuttle_frame.getFrame(), shuttle_name_widget=shuttle_name_widget,
+            self._delete_button(shuttle_frame=shuttle_frame.getFrame(), shuttle_name_widget=shuttle_name_widget,
                                 log_edittext_widget=log_edittext_widget, shuttle_seq=self.shuttle_seq))
         self.shuttles_vbox_layout.addLayout(shuttleLayout)
 
@@ -113,17 +114,22 @@ class ShuttlesWidget(QWidget):
             result.append((shuttle_id, shuttle_data_list))
         return result
 
-    def _delete_button(self, vbox_wrap_layout, shuttle_name_widget, log_edittext_widget, shuttle_seq):
+    def _delete_button(self, shuttle_frame, shuttle_name_widget, log_edittext_widget, shuttle_seq):
         delete_btn = QPushButton()
         delete_btn.setStyleSheet("background-color: rgba(255,255,255,0);")
         delete_btn.setIcon(QIcon('resource/images/remove-48.png'))
         delete_btn.setFixedWidth(30)
         delete_btn.setFixedHeight(30)
         delete_btn.clicked.connect(
-            lambda: self._remove_shuttle(vbox_wrap_layout, shuttle_name_widget, log_edittext_widget, shuttle_seq, delete_btn))
+            lambda: self._remove_shuttle(shuttle_frame, shuttle_name_widget, log_edittext_widget, shuttle_seq,
+                                         delete_btn))
         return delete_btn
 
     def _remove_shuttle(self, shuttle_frame: QFrame, shuttle_name_widget, log_edittext_widget, shuttle_seq, delete_btn):
+        reply = self._confirm(shuttle_name_widget)
+        if reply == QMessageBox.No:
+            return
+
         if self.shuttles.get(shuttle_seq) is not None:
             log_edittext_widget.append(LogText(self.time.localtime()).stopped_shuttle(shuttle_name_widget.text()))
             self.shuttles[shuttle_seq] = None
@@ -131,3 +137,8 @@ class ShuttlesWidget(QWidget):
         log_edittext_widget.append(LogText(self.time.localtime()).removed_shuttle(shuttle_name_widget.text()))
         shuttle_frame.deleteLater()
         delete_btn.deleteLater()
+        self.shuttles_vbox_layout.takeAt(shuttle_seq - 1)
+
+    def _confirm(self, shuttle_name_widget):
+        return QMessageBox.question(self, '삭제 확인', f'\'{shuttle_name_widget.text()}\' 셔틀이 삭제됩니다.',
+                                    QMessageBox.Yes | QMessageBox.No, QMessageBox.No)

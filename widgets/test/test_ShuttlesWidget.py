@@ -1,7 +1,7 @@
 import sys
 
 import pytest
-from PyQt5.QtWidgets import QMainWindow, QApplication, QVBoxLayout, QLineEdit, QTextEdit
+from PyQt5.QtWidgets import QMainWindow, QApplication, QVBoxLayout, QLineEdit, QTextEdit, QPushButton, QMessageBox
 
 from widgets.ShuttleFrame import ShuttleFrame
 from widgets.ShuttlesWidget import ShuttlesWidget
@@ -50,3 +50,23 @@ def test_Shuttle_is_added_with_data_and_GUI(qapp):
     assert shuttle_layout.itemAt(0).widget().layout().itemAt(1).widget().text() == "설정"
     assert shuttle_layout.itemAt(0).widget().layout().itemAt(2).widget().text() == "시작"
     assert shuttle_layout.itemAt(1).widget().icon() is not None
+
+
+def test_remove_shuttle(qapp):
+    parent = QMainWindow()
+    shuttleWidget = ShuttlesWidget(parent=parent, chrome_service=None)
+    shuttleWidget.shuttles_vbox_layout = QVBoxLayout()
+
+    shuttleWidget.add_shuttle(name="Shuttle Name",
+                              url="https://targetcoders.com",
+                              target_classes="class1 class2",
+                              period=500,
+                              log_edittext_widget=QTextEdit())
+    layout = shuttleWidget.shuttles_vbox_layout.itemAt(0).layout()
+    delete_button = layout.itemAt(1).widget()
+
+    assert shuttleWidget.shuttles_vbox_layout.count() == 1
+    shuttleWidget._confirm = lambda shuttle_name_widget: QMessageBox.Yes
+    delete_button.click()
+    assert shuttleWidget.shuttles_vbox_layout.count() == 0
+
