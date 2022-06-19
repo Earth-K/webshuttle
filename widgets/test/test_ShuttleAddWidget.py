@@ -2,6 +2,8 @@ import pytest
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTextEdit
 
 from widgets.ShuttleAddWidget import ShuttleAddWidget
+from widgets.ShuttlesWidget import ShuttlesWidget
+from widgets.StateWidget import StateWidget
 
 
 @pytest.fixture
@@ -12,11 +14,12 @@ def qapp():
 
 def test_shuttle_add_widget_ui(qapp):
     main_window = QMainWindow()
-    main_window.add_shuttle = lambda: None
+    shuttles_widget = ShuttlesWidget(main_window, None)
+    state_widget = StateWidget(main_window)
 
-    shuttleadd_widget = ShuttleAddWidget(main_window, None)
-    main_layout = shuttleadd_widget.layout()
+    shuttle_add_widget = ShuttleAddWidget(main_window, shuttles_widget, state_widget, None)
 
+    main_layout = shuttle_add_widget.layout()
     assert main_layout.itemAt(0).layout().itemAt(0).widget().text() == "셔틀 이름: "
     assert main_layout.itemAt(1).layout().itemAt(0).widget().text() == "URL : "
     assert main_layout.itemAt(1).layout().itemAt(2).widget().text() == "영역 선택하러 가기"

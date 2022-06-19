@@ -6,7 +6,7 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
 from widgets.BaseWidget import BaseWidget
-from widgets.StateWidget import UpdateListWidget
+from widgets.StateWidget import StateWidget
 from widgets.ShuttleAddWidget import ShuttleAddWidget
 from widgets.ShuttlesWidget import ShuttlesWidget
 
@@ -24,10 +24,10 @@ class MainWindow(QMainWindow):
         menu_save.addAction(self._export_saved_shuttles_action())
         self.statusBar()
 
-        self.shuttle_add_widget = ShuttleAddWidget(self, chrome_service)
         self.shuttles_widget = ShuttlesWidget(self, chrome_service)
-        self.update_widget = UpdateListWidget(self)
-        self.base_widget = BaseWidget(self, self.shuttle_add_widget, self.shuttles_widget, self.update_widget)
+        self.state_widget = StateWidget(self)
+        self.shuttle_add_widget = ShuttleAddWidget(self, self.shuttles_widget, self.state_widget, chrome_service)
+        self.base_widget = BaseWidget(self, self.shuttle_add_widget, self.shuttles_widget, self.state_widget)
         self.setCentralWidget(self.base_widget)
 
         self._import_external_shuttles_config()
@@ -49,20 +49,6 @@ class MainWindow(QMainWindow):
         centerPos = QDesktopWidget().availableGeometry().center()
         qRect.moveCenter(centerPos)
         self.move(qRect.topLeft())
-
-    def add_shuttle(self):
-        if self.shuttle_add_widget.lineedit_url.text() is None or self.shuttle_add_widget.element_class_names is None:
-            QMessageBox.information(self, '에러',
-                                    "먼저 선택 영역 데이터를 불러와주세요.",
-                                    QMessageBox.Yes, QMessageBox.NoButton)
-            return
-        self.shuttles_widget.add_shuttle(name=self.shuttle_add_widget.lineedit_shuttle_name.text(),
-                                         url=self.shuttle_add_widget.lineedit_url.text(),
-                                         period=300,
-                                         target_classes=self.shuttle_add_widget.element_class_names,
-                                         log_edittext_widget=self.update_widget.get_edittext())
-        QMessageBox.information(self, '성공', '셔틀이 셔틀 목록에 저장되었습니다.',
-                                QMessageBox.Yes, QMessageBox.NoButton)
 
     def _export_saved_shuttles(self):
         saved_shuttles_tuple_list = self.shuttles_widget.get_saved_shuttles_array()
@@ -86,7 +72,7 @@ class MainWindow(QMainWindow):
                                              url=shuttle_attributes["url"],
                                              period=shuttle_attributes["period"],
                                              target_classes=shuttle_attributes["element_classes"],
-                                             log_edittext_widget=self.update_widget.get_edittext())
+                                             log_edittext_widget=self.state_widget.get_edittext())
 
 
 if __name__ == '__main__':

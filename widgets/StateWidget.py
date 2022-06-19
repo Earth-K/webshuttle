@@ -1,9 +1,9 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QTextEdit, QLabel
 
 
-class UpdateListWidget(QWidget):
+class StateWidget(QWidget):
     def __init__(self, parent):
-        super(UpdateListWidget, self).__init__(parent)
+        super(StateWidget, self).__init__(parent)
         self._init_ui()
 
     def _init_ui(self):
