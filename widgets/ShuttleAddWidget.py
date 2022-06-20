@@ -34,67 +34,40 @@ class ShuttleAddWidget(QWidget):
         self._init_ui(shuttles_widget, state_widget, chrome_service)
 
     def _init_ui(self, shuttles_widget, state_widget, chrome_service):
-        vbox_layout = self.main_layout(shuttles_widget, state_widget, chrome_service)
-        self.setLayout(vbox_layout)
-        self.show()
-
-    def main_layout(self, shuttles_widget, state_widget, chrome_service) -> QVBoxLayout:
         main_layout = QVBoxLayout()
-        self.set_shuttlename_layout(main_layout)
-        self.set_url_layout(main_layout, chrome_service)
-        self.set_addshuttle_button(shuttles_widget, state_widget)
-        self.set_execution_layout(main_layout)
-        main_layout.addWidget(self._textedit_state_widget())
-        return main_layout
 
-    def set_execution_layout(self, main_layout):
+        shuttlename_layout = QHBoxLayout()
+        shuttlename_layout.addWidget(QLabel('셔틀 이름: '))
+        self.shuttle_name_line_edit.setPlaceholderText('셔틀의 이름')
+        shuttlename_layout.addWidget(self.shuttle_name_line_edit)
+        main_layout.addLayout(shuttlename_layout)
+
+        url_layout = QHBoxLayout()
+        url_layout.addWidget(QLabel("URL : "))
+        self.url_line_edit.setPlaceholderText('스크랩 하고 싶은 웹 페이지의 URL ')
+        url_layout.addWidget(self.url_line_edit)
+        open_browser_button = QPushButton('영역 선택하러 가기', self)
+        open_browser_button.clicked.connect(lambda: self._open_browser(self.url_line_edit, chrome_service))
+        url_layout.addWidget(open_browser_button)
+        main_layout.addLayout(url_layout)
+
         execution_layout = QHBoxLayout()
-        execution_layout.addWidget(self._get_element_data_button())
-        execution_layout.addWidget(self.addshuttle_button)
-        main_layout.addLayout(execution_layout)
-
-    def set_addshuttle_button(self, shuttles_widget, state_widget):
+        get_element_data_button = QPushButton('선택 영역 데이터 불러오기', self)
+        get_element_data_button.clicked.connect(self._get_target_element_data)
+        execution_layout.addWidget(get_element_data_button)
         self.addshuttle_button.setIcon(QIcon('resource/images/plus.png'))
         self.addshuttle_button.setText("셔틀 추가")
         self.addshuttle_button.setStatusTip('Add this shuttle')
         self.addshuttle_button.setDisabled(True)
         self.addshuttle_button.clicked.connect(lambda: self.add_shuttle(shuttles_widget, state_widget))
+        execution_layout.addWidget(self.addshuttle_button)
+        main_layout.addLayout(execution_layout)
 
-    def set_shuttlename_layout(self, result: QVBoxLayout) -> None:
-        shuttlename_layout = QHBoxLayout()
-        shuttlename_layout.addWidget(QLabel('셔틀 이름: '))
-        shuttlename_layout.addWidget(self.shuttle_name())
-        result.addLayout(shuttlename_layout)
-
-    def set_url_layout(self, result: QVBoxLayout, chrome_service) -> None:
-        url_layout = QHBoxLayout()
-        url_layout.addWidget(QLabel("URL : "))
-        self.url_line_edit.setPlaceholderText('스크랩 하고 싶은 웹 페이지의 URL ')
-        url_layout.addWidget(self.url_line_edit)
-        url_layout.addWidget(self._open_browser_button(self.url_line_edit, chrome_service))
-        result.addLayout(url_layout)
-
-    def _get_element_data_button(self):
-        get_element_data_button = QPushButton('선택 영역 데이터 불러오기', self)
-        get_element_data_button.clicked.connect(self._get_target_element_data)
-        return get_element_data_button
-
-    def _open_browser_button(self, url_line_edit, chrome_service):
-        open_browser_button = QPushButton('영역 선택하러 가기', self)
-        open_browser_button.clicked.connect(lambda: self._open_browser(url_line_edit, chrome_service))
-        return open_browser_button
-
-    def _textedit_state_widget(self):
         self.text_edit.setReadOnly(True)
-        return self.text_edit
+        main_layout.addWidget(self.text_edit)
 
-    def shuttle_name(self):
-        self.shuttle_name_line_edit.setPlaceholderText('셔틀의 이름')
-        return self.shuttle_name_line_edit
-
-    def lineedit_url(self):
-        self.url_line_edit.setPlaceholderText('https://example.com')
-        return self.url_line_edit
+        self.setLayout(main_layout)
+        self.show()
 
     def _open_browser(self, lineedit, chrome_service):
         try:
