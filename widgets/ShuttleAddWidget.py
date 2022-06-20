@@ -103,7 +103,7 @@ class ShuttleAddWidget(QWidget):
         self.text_edit.append(result.text)
         self.addshuttle_button.setDisabled(False)
 
-    def add_shuttle(self, shuttles_widget, state_widget):
+    def push_shuttle(self, shuttles_widget, state_widget):
         if self.url_line_edit.text() is None or self.element_class_names is None:
             QMessageBox.information(self, '에러',
                                     "먼저 선택 영역 데이터를 불러와주세요.",

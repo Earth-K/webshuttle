@@ -30,7 +30,7 @@ class MainWindow(QMainWindow):
         self.base_widget = BaseWidget(self, self.shuttle_add_widget, self.shuttles_widget, self.state_widget)
         self.setCentralWidget(self.base_widget)
 
-        self._import_external_shuttles_config()
+        self.shuttles_widget.import_external_shuttles(self.state_widget)
 
         self.resize(750, 500)
         self._move_to_center()
@@ -62,17 +62,6 @@ class MainWindow(QMainWindow):
             shuttles_json[shuttle_id] = attributes
         with open('shuttles.json', 'w', encoding="utf-8") as json_file:
             json_file.write(json.dumps(shuttles_json, ensure_ascii=False, indent=2))
-
-    def _import_external_shuttles_config(self):
-        with open('shuttles.json', 'r', encoding="utf-8") as shuttles_file:
-            shuttles: dict = json.load(shuttles_file)
-        for index in range(len(shuttles.keys())):
-            shuttle_attributes = shuttles[f'shuttle{index}']
-            self.shuttles_widget.add_shuttle(name=shuttle_attributes["name"],
-                                             url=shuttle_attributes["url"],
-                                             period=shuttle_attributes["period"],
-                                             target_classes=shuttle_attributes["element_classes"],
-                                             log_edittext_widget=self.state_widget.get_edittext())
 
 
 if __name__ == '__main__':

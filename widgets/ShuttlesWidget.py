@@ -1,3 +1,5 @@
+import json
+
 import pygame
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit, QPushButton, QSpinBox, QFrame, \
@@ -6,6 +8,7 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit
 from domain.DefaultTime import DefaultTime
 from domain.LogText import LogText
 from domain.ShuttleWidgetGroup import ShuttleWidgetGroup
+from widgets import StateWidget
 from widgets.ShuttleFrame import ShuttleFrame
 
 pygame.init()
@@ -99,6 +102,17 @@ class ShuttlesWidget(QWidget):
             self._delete_button(shuttle_frame=shuttle_frame.getFrame(), shuttle_name_widget=shuttle_name_widget,
                                 log_edittext_widget=log_edittext_widget, shuttle_seq=self.shuttle_seq))
         self.shuttles_vbox_layout.addLayout(shuttleLayout)
+
+    def import_external_shuttles(self, state_widget: StateWidget):
+        with open('shuttles.json', 'r', encoding="utf-8") as shuttles_file:
+            shuttles: dict = json.load(shuttles_file)
+        for index in range(len(shuttles.keys())):
+            shuttle_attributes = shuttles[f'shuttle{index}']
+            self.add_shuttle(name=shuttle_attributes["name"],
+                             url=shuttle_attributes["url"],
+                             period=shuttle_attributes["period"],
+                             target_classes=shuttle_attributes["element_classes"],
+                             log_edittext_widget=state_widget.get_edittext())
 
     def get_saved_shuttles_array(self):
         if self.shuttles_vbox_layout is None:
