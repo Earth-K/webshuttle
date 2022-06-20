@@ -76,8 +76,6 @@ class ShuttlesWidget(QWidget):
         self.show()
 
     def add_shuttle(self, url, period, target_classes, name, log_edittext_widget):
-        self.shuttle_seq += 1
-
         shuttle_name_widget = shuttle_name_lineedit(name)
         target_classes_widget = target_classes_lineedit(target_classes)
         url_widget = url_lineedit(url)
@@ -102,6 +100,7 @@ class ShuttlesWidget(QWidget):
             self._delete_button(shuttle_frame=shuttle_frame.getFrame(), shuttle_name_widget=shuttle_name_widget,
                                 log_edittext_widget=log_edittext_widget, shuttle_seq=self.shuttle_seq))
         self.shuttles_vbox_layout.addLayout(shuttleLayout)
+        self.shuttle_seq += 1
 
     def import_external_shuttles(self, state_widget: StateWidget):
         with open('shuttles.json', 'r', encoding="utf-8") as shuttles_file:
@@ -113,6 +112,19 @@ class ShuttlesWidget(QWidget):
                              period=shuttle_attributes["period"],
                              target_classes=shuttle_attributes["element_classes"],
                              log_edittext_widget=state_widget.get_edittext())
+
+    def save_shuttles(self):
+        saved_shuttles_tuple_list = self.get_saved_shuttles_array()
+        shuttles_json = {}
+        for saved_shuttle in saved_shuttles_tuple_list:
+            shuttle_id = saved_shuttle[0]
+            attribute_names = ['name', 'url', 'period', 'element_classes']
+            attributes = {}
+            for index, name in enumerate(attribute_names):
+                attributes[name] = saved_shuttle[1][index]
+            shuttles_json[shuttle_id] = attributes
+        with open('shuttles.json', 'w', encoding="utf-8") as json_file:
+            json_file.write(json.dumps(shuttles_json, ensure_ascii=False, indent=2))
 
     def get_saved_shuttles_array(self):
         if self.shuttles_vbox_layout is None:
@@ -150,7 +162,7 @@ class ShuttlesWidget(QWidget):
         log_edittext_widget.append(LogText(self.time.localtime()).removed_shuttle(shuttle_name_widget.text()))
         shuttle_frame.deleteLater()
         delete_btn.deleteLater()
-        self.shuttles_vbox_layout.takeAt(shuttle_seq - 1)
+        self.shuttles_vbox_layout.takeAt(shuttle_seq)
         self.shuttle_frames.pop(shuttle_seq)
 
     def _confirm(self, shuttle_name_widget):

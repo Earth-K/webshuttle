@@ -18,13 +18,12 @@ class MainWindow(QMainWindow):
         chrome_service = Service(ChromeDriverManager().install())
         chrome_service.creationflags = 0x08000000
 
+        self.shuttles_widget = ShuttlesWidget(self, chrome_service)
         menubar = self.menuBar()
         menubar.setNativeMenuBar(True)
         menu_save = menubar.addMenu('&저장')
-        menu_save.addAction(self._export_saved_shuttles_action())
+        menu_save.addAction(self._export_saved_shuttles_action(self.shuttles_widget))
         self.statusBar()
-
-        self.shuttles_widget = ShuttlesWidget(self, chrome_service)
         self.state_widget = StateWidget(self)
         self.shuttle_add_widget = ShuttleAddWidget(self, self.shuttles_widget, self.state_widget, chrome_service)
         self.base_widget = BaseWidget(self, self.shuttle_add_widget, self.shuttles_widget, self.state_widget)
@@ -37,11 +36,11 @@ class MainWindow(QMainWindow):
         self.setWindowTitle('WebShuttle')
         self.show()
 
-    def _export_saved_shuttles_action(self):
+    def _export_saved_shuttles_action(self, shuttles_widget):
         result = QAction('셔틀 목록 저장하기', self)
         result.setShortcut('Ctrl+S')
         result.setStatusTip('Save added shuttles.')
-        result.triggered.connect(self._export_saved_shuttles)
+        result.triggered.connect(shuttles_widget.save_shuttles)
         return result
 
     def _move_to_center(self):
@@ -49,19 +48,6 @@ class MainWindow(QMainWindow):
         centerPos = QDesktopWidget().availableGeometry().center()
         qRect.moveCenter(centerPos)
         self.move(qRect.topLeft())
-
-    def _export_saved_shuttles(self):
-        saved_shuttles_tuple_list = self.shuttles_widget.get_saved_shuttles_array()
-        shuttles_json = {}
-        for saved_shuttle in saved_shuttles_tuple_list:
-            shuttle_id = saved_shuttle[0]
-            attribute_names = ['name', 'url', 'period', 'element_classes']
-            attributes = {}
-            for index, name in enumerate(attribute_names):
-                attributes[name] = saved_shuttle[1][index]
-            shuttles_json[shuttle_id] = attributes
-        with open('shuttles.json', 'w', encoding="utf-8") as json_file:
-            json_file.write(json.dumps(shuttles_json, ensure_ascii=False, indent=2))
 
 
 if __name__ == '__main__':

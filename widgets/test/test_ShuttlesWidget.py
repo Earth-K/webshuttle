@@ -23,7 +23,7 @@ def test_Saved_shuttle_frames_are_imported_to_list(qapp):
 
     result = shuttleWidget.get_saved_shuttles_array()
 
-    assert result == [('shuttle1', ["Shuttle Name", "https://google.com", "300", "Target Class Names"])]
+    assert result == [('shuttle0', ["Shuttle Name", "https://google.com", "300", "Target Class Names"])]
 
 
 def test_Shuttle_is_added_with_data_and_GUI(qapp):
@@ -38,7 +38,7 @@ def test_Shuttle_is_added_with_data_and_GUI(qapp):
                               log_edittext_widget=QTextEdit())
 
     # Check Data
-    frame: ShuttleFrame = shuttleWidget.shuttle_frames[1]
+    frame: ShuttleFrame = shuttleWidget.shuttle_frames[0]
     assert frame.shuttleWidgets.shuttle_name_widget.text() == "Shuttle Name"
     assert frame.shuttleWidgets.url_widget.text() == "https://targetcoders.com"
     assert frame.shuttleWidgets.period_widget.value() == 500
