@@ -10,8 +10,8 @@ from widgets.DraftShuttleWidgets import DraftShuttleWidgets
 
 
 class ShuttleFrame(QWidget):
-    def __init__(self, shuttles, shuttle_seq, chrome_service, shuttleWidgetGroup, parent: QWidget, time):
-        super().__init__(parent)
+    def __init__(self, shuttles, shuttle_seq, chrome_service, shuttleWidgetGroup, shuttles_widget, time):
+        super().__init__(shuttles_widget)
         self.shuttles = shuttles
         self.chrome_service = chrome_service
         self.time = time
@@ -27,7 +27,7 @@ class ShuttleFrame(QWidget):
                                                         target_classes=self.shuttleWidgets.target_classes_widget.text())
         self.settingsButton: QPushButton = QPushButton("설정")
         self.settingsButton.clicked.connect(self.showSettings)
-        self.parent = parent
+        self.shuttles_widget = shuttles_widget
 
         self.start_stop_button = self.start_button(self.shuttle_seq, self.draft_shuttleWidgets.name,
                                                    self.draft_shuttleWidgets.url, self.draft_shuttleWidgets.period,
@@ -49,7 +49,7 @@ class ShuttleFrame(QWidget):
         widget.show()
 
     def createSettingDialog(self):
-        widget = QDialog(self.parent)
+        widget = QDialog(self.shuttles_widget)
         widget.setWindowModality(Qt.ApplicationModal)
         widget.resize(300, 200)
         self.setSettingsLayout()
@@ -96,6 +96,7 @@ class ShuttleFrame(QWidget):
         self.shuttleWidgets.target_classes_widget.setText(self.draft_shuttleWidgets.target_classes.text())
         self.shuttleWidgets.period_widget.setValue(self.draft_shuttleWidgets.period.value())
         self.frame_name.setText(self.shuttleWidgets.shuttle_name_widget.text())
+        self.shuttles_widget.save_shuttles()
         widget.close()
 
     def start_button(self, shuttle_seq, shuttle_name_widget, url_widget, period_widget, target_classes_widget,

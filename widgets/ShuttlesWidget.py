@@ -91,7 +91,7 @@ class ShuttlesWidget(QWidget):
                                          period_widget=period_widget,
                                          update_list_widget=log_edittext_widget,
                                          parent=None
-                                     ), parent=self, time=self.time)
+                                     ), shuttles_widget=self, time=self.time)
 
         self.shuttle_frames[self.shuttle_seq] = shuttle_frame
         shuttleLayout = QHBoxLayout()
@@ -101,6 +101,7 @@ class ShuttlesWidget(QWidget):
                                 log_edittext_widget=log_edittext_widget, shuttle_seq=self.shuttle_seq))
         self.shuttles_vbox_layout.addLayout(shuttleLayout)
         self.shuttle_seq += 1
+        self.save_shuttles()
 
     def import_external_shuttles(self, state_widget: StateWidget):
         with open('shuttles.json', 'r', encoding="utf-8") as shuttles_file:
@@ -164,6 +165,7 @@ class ShuttlesWidget(QWidget):
         delete_btn.deleteLater()
         self.shuttles_vbox_layout.takeAt(shuttle_seq)
         self.shuttle_frames.pop(shuttle_seq)
+        self.save_shuttles()
 
     def _confirm(self, shuttle_name_widget):
         return QMessageBox.question(self, '삭제 확인', f'\'{shuttle_name_widget.text()}\' 셔틀이 삭제됩니다.',

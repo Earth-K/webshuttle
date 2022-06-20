@@ -59,7 +59,7 @@ class ShuttleAddWidget(QWidget):
         self.addshuttle_button.setText("셔틀 추가")
         self.addshuttle_button.setStatusTip('Add this shuttle')
         self.addshuttle_button.setDisabled(True)
-        self.addshuttle_button.clicked.connect(lambda: self.add_shuttle(shuttles_widget, state_widget))
+        self.addshuttle_button.clicked.connect(lambda: self._push_shuttle(shuttles_widget, state_widget))
         execution_layout.addWidget(self.addshuttle_button)
         main_layout.addLayout(execution_layout)
 
@@ -103,7 +103,7 @@ class ShuttleAddWidget(QWidget):
         self.text_edit.append(result.text)
         self.addshuttle_button.setDisabled(False)
 
-    def push_shuttle(self, shuttles_widget, state_widget):
+    def _push_shuttle(self, shuttles_widget, state_widget):
         if self.url_line_edit.text() is None or self.element_class_names is None:
             QMessageBox.information(self, '에러',
                                     "먼저 선택 영역 데이터를 불러와주세요.",

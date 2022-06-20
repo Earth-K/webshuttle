@@ -1,10 +1,12 @@
 import sys
+from unittest.mock import MagicMock
 
 import pytest
 from PyQt5.QtWidgets import QLineEdit, QTextEdit, QApplication, QSpinBox, QWidget, QVBoxLayout
 
 from domain.ShuttleWidgetGroup import ShuttleWidgetGroup
 from widgets.ShuttleFrame import ShuttleFrame
+from widgets.ShuttlesWidget import ShuttlesWidget
 
 
 @pytest.fixture
@@ -13,7 +15,9 @@ def qapp():
 
 
 def test_settings_are_applied_when_clicked_ok(qapp):
-    parent = QWidget()
+    shuttles_widget = ShuttlesWidget(None, None, None)
+    mock_save_shuttles = MagicMock()
+    shuttles_widget.save_shuttles = mock_save_shuttles
     spinbox = QSpinBox()
     spinbox.setMaximum(38000)
     shuttleFrame = ShuttleFrame(shuttles={}, shuttle_seq=0, chrome_service=None,
@@ -24,7 +28,7 @@ def test_settings_are_applied_when_clicked_ok(qapp):
                                                                       target_classes_widget=QLineEdit(),
                                                                       parent=None
                                                                       ),
-                                parent=parent, time=None)
+                                shuttles_widget=shuttles_widget, time=None)
 
     shuttleFrame.showSettings()
     shuttleFrame.draft_shuttleWidgets.url.setText("testUrl")
@@ -38,10 +42,13 @@ def test_settings_are_applied_when_clicked_ok(qapp):
     assert shuttleFrame.shuttleWidgets.shuttle_name_widget.text() == "No Name"
     assert shuttleFrame.shuttleWidgets.target_classes_widget.text() == "class1 class2"
     assert shuttleFrame.frame_name.text() == "No Name"
+    mock_save_shuttles.assert_called_once()
 
 
 def test_apply_draft_shuttle(qapp):
-    parent = QWidget()
+    shuttles_widget = ShuttlesWidget(None, None, None)
+    mock_save_shuttles = MagicMock()
+    shuttles_widget.save_shuttles = mock_save_shuttles
     spinbox = QSpinBox()
     spinbox.setMaximum(86000)
     shuttleFrame = ShuttleFrame(shuttles={}, shuttle_seq=0, chrome_service=None,
@@ -52,7 +59,7 @@ def test_apply_draft_shuttle(qapp):
                                                                       target_classes_widget=QLineEdit(),
                                                                       parent=None
                                                                       ),
-                                parent=parent, time=None)
+                                shuttles_widget=shuttles_widget, time=None)
     shuttleFrame.draft_shuttleWidgets.url.setText("url")
     shuttleFrame.draft_shuttleWidgets.name.setText("name")
     shuttleFrame.draft_shuttleWidgets.target_classes.setText("targetClasses")
@@ -65,6 +72,7 @@ def test_apply_draft_shuttle(qapp):
     assert shuttleFrame.shuttleWidgets.target_classes_widget.text() == shuttleFrame.draft_shuttleWidgets.target_classes.text()
     assert shuttleFrame.shuttleWidgets.period_widget.value() == shuttleFrame.draft_shuttleWidgets.period.value()
     assert shuttleFrame.frame_name.text() == "name"
+    mock_save_shuttles.assert_called_once()
 
 
 def test_UI_of_showSettings_QDialog(qapp):
@@ -79,7 +87,7 @@ def test_UI_of_showSettings_QDialog(qapp):
                                                                       target_classes_widget=QLineEdit(),
                                                                       parent=None
                                                                       ),
-                                parent=parent, time=None)
+                                shuttles_widget=parent, time=None)
 
     shuttleFrame.setSettingsLayout()
 
