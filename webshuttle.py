@@ -19,10 +19,6 @@ class MainWindow(QMainWindow):
         chrome_service.creationflags = 0x08000000
 
         self.shuttles_widget = ShuttlesWidget(self, chrome_service)
-        menubar = self.menuBar()
-        menubar.setNativeMenuBar(True)
-        menu_save = menubar.addMenu('&저장')
-        menu_save.addAction(self._export_saved_shuttles_action(self.shuttles_widget))
         self.statusBar()
         self.state_widget = StateWidget(self)
         self.shuttle_add_widget = ShuttleAddWidget(self, self.shuttles_widget, self.state_widget, chrome_service)
@@ -35,13 +31,6 @@ class MainWindow(QMainWindow):
         self._move_to_center()
         self.setWindowTitle('WebShuttle')
         self.show()
-
-    def _export_saved_shuttles_action(self, shuttles_widget):
-        result = QAction('셔틀 목록 저장하기', self)
-        result.setShortcut('Ctrl+S')
-        result.setStatusTip('Save added shuttles.')
-        result.triggered.connect(shuttles_widget.save_shuttles)
-        return result
 
     def _move_to_center(self):
         qRect = self.frameGeometry()
