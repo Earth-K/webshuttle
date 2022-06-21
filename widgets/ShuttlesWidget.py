@@ -115,7 +115,7 @@ class ShuttlesWidget(QWidget):
                              log_edittext_widget=state_widget.get_edittext(),
                              file_name="shuttles.json")
 
-    def save_shuttles(self, file_name):
+    def save_shuttles(self, file_name="shuttles.json"):
         shuttles_json = {}
         for saved_shuttle in self.get_saved_shuttles_array():
             shuttle_id = saved_shuttle[0]
