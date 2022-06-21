@@ -1,3 +1,4 @@
+import json
 import sys
 
 import pytest
@@ -19,11 +20,16 @@ def test_Saved_shuttle_frames_are_imported_to_list(qapp):
                               url="https://google.com",
                               target_classes="Target Class Names",
                               period=300,
-                              log_edittext_widget=QLineEdit())
+                              log_edittext_widget=QLineEdit(),
+                              file_name="shuttles_test.json")
 
     result = shuttleWidget.get_saved_shuttles_array()
 
     assert result == [('shuttle0', ["Shuttle Name", "https://google.com", "300", "Target Class Names"])]
+    with open('shuttles_test.json', 'r', encoding="utf-8") as shuttles_file:
+        shuttles = json.load(shuttles_file)
+        assert str(shuttles) \
+               == "{'shuttle0': {'name': 'Shuttle Name', 'url': 'https://google.com', 'period': '300', 'element_classes': 'Target Class Names'}}"
 
 
 def test_Shuttle_is_added_with_data_and_GUI(qapp):
@@ -35,7 +41,8 @@ def test_Shuttle_is_added_with_data_and_GUI(qapp):
                               url="https://targetcoders.com",
                               target_classes="class1 class2",
                               period=500,
-                              log_edittext_widget=QTextEdit())
+                              log_edittext_widget=QTextEdit(),
+                              file_name="shuttles_test.json")
 
     # Check Data
     frame: ShuttleFrame = shuttleWidget.shuttle_frames[0]
@@ -61,12 +68,17 @@ def test_remove_shuttle(qapp):
                               url="https://targetcoders.com",
                               target_classes="class1 class2",
                               period=500,
-                              log_edittext_widget=QTextEdit())
+                              log_edittext_widget=QTextEdit(),
+                              file_name="shuttles_test.json")
     layout = shuttleWidget.shuttles_vbox_layout.itemAt(0).layout()
     delete_button = layout.itemAt(1).widget()
 
     assert shuttleWidget.shuttles_vbox_layout.count() == 1
-    shuttleWidget._confirm = lambda shuttle_name_widget: QMessageBox.Yes
+    shuttleWidget._confirm = lambda x: QMessageBox.Yes
     delete_button.click()
+    assert shuttleWidget.shuttle_frames == {}
     assert shuttleWidget.shuttles_vbox_layout.count() == 0
+    with open('shuttles_test.json', 'r', encoding="utf-8") as shuttles_file:
+        shuttles = json.load(shuttles_file)
+        assert shuttles == {}
 

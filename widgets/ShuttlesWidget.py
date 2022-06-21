@@ -75,7 +75,7 @@ class ShuttlesWidget(QWidget):
         self.setLayout(wrap_vbox_layout)
         self.show()
 
-    def add_shuttle(self, url, period, target_classes, name, log_edittext_widget):
+    def add_shuttle(self, url, period, target_classes, name, log_edittext_widget, file_name="shuttles.json"):
         shuttle_name_widget = shuttle_name_lineedit(name)
         target_classes_widget = target_classes_lineedit(target_classes)
         url_widget = url_lineedit(url)
@@ -98,10 +98,10 @@ class ShuttlesWidget(QWidget):
         shuttleLayout.addWidget(shuttle_frame.getFrame())
         shuttleLayout.addWidget(
             self._delete_button(shuttle_frame=shuttle_frame.getFrame(), shuttle_name_widget=shuttle_name_widget,
-                                log_edittext_widget=log_edittext_widget, shuttle_seq=self.shuttle_seq))
+                                log_edittext_widget=log_edittext_widget, shuttle_seq=self.shuttle_seq, file_name=file_name))
         self.shuttles_vbox_layout.addLayout(shuttleLayout)
         self.shuttle_seq += 1
-        self.save_shuttles()
+        self.save_shuttles(file_name)
 
     def import_external_shuttles(self, state_widget: StateWidget):
         with open('shuttles.json', 'r', encoding="utf-8") as shuttles_file:
@@ -112,19 +112,19 @@ class ShuttlesWidget(QWidget):
                              url=shuttle_attributes["url"],
                              period=shuttle_attributes["period"],
                              target_classes=shuttle_attributes["element_classes"],
-                             log_edittext_widget=state_widget.get_edittext())
+                             log_edittext_widget=state_widget.get_edittext(),
+                             file_name="shuttles.json")
 
-    def save_shuttles(self):
-        saved_shuttles_tuple_list = self.get_saved_shuttles_array()
+    def save_shuttles(self, file_name):
         shuttles_json = {}
-        for saved_shuttle in saved_shuttles_tuple_list:
+        for saved_shuttle in self.get_saved_shuttles_array():
             shuttle_id = saved_shuttle[0]
             attribute_names = ['name', 'url', 'period', 'element_classes']
             attributes = {}
             for index, name in enumerate(attribute_names):
                 attributes[name] = saved_shuttle[1][index]
             shuttles_json[shuttle_id] = attributes
-        with open('shuttles.json', 'w', encoding="utf-8") as json_file:
+        with open(file_name, 'w', encoding="utf-8") as json_file:
             json_file.write(json.dumps(shuttles_json, ensure_ascii=False, indent=2))
 
     def get_saved_shuttles_array(self):
@@ -140,7 +140,7 @@ class ShuttlesWidget(QWidget):
             result.append((shuttle_id, shuttle_data_list))
         return result
 
-    def _delete_button(self, shuttle_frame, shuttle_name_widget, log_edittext_widget, shuttle_seq):
+    def _delete_button(self, shuttle_frame, shuttle_name_widget, log_edittext_widget, shuttle_seq, file_name):
         delete_btn = QPushButton()
         delete_btn.setStyleSheet("background-color: rgba(255,255,255,0);")
         delete_btn.setIcon(QIcon('resource/images/remove-48.png'))
@@ -148,10 +148,10 @@ class ShuttlesWidget(QWidget):
         delete_btn.setFixedHeight(30)
         delete_btn.clicked.connect(
             lambda: self._remove_shuttle(shuttle_frame, shuttle_name_widget, log_edittext_widget, shuttle_seq,
-                                         delete_btn))
+                                         delete_btn, file_name))
         return delete_btn
 
-    def _remove_shuttle(self, shuttle_frame: QFrame, shuttle_name_widget, log_edittext_widget, shuttle_seq, delete_btn):
+    def _remove_shuttle(self, shuttle_frame: QFrame, shuttle_name_widget, log_edittext_widget, shuttle_seq, delete_btn, file_name):
         reply = self._confirm(shuttle_name_widget)
         if reply == QMessageBox.No:
             return
@@ -165,7 +165,7 @@ class ShuttlesWidget(QWidget):
         delete_btn.deleteLater()
         self.shuttles_vbox_layout.takeAt(shuttle_seq)
         self.shuttle_frames.pop(shuttle_seq)
-        self.save_shuttles()
+        self.save_shuttles(self.get_saved_shuttles_array(), file_name)
 
     def _confirm(self, shuttle_name_widget):
         return QMessageBox.question(self, '삭제 확인', f'\'{shuttle_name_widget.text()}\' 셔틀이 삭제됩니다.',
