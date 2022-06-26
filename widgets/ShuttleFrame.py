@@ -1,7 +1,7 @@
 import pygame
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QFrame, QLineEdit, QTextEdit, QPushButton, QSpinBox, QHBoxLayout, QVBoxLayout, QLabel, \
-    QInputDialog, QWidget, QDialog
+from PyQt5.QtWidgets import QFrame, QPushButton, QHBoxLayout, QVBoxLayout, QLabel, \
+    QWidget, QDialog
 
 from domain.LogText import LogText
 from domain.Shuttle import Shuttle

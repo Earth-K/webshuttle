@@ -10,6 +10,7 @@ from domain.LogText import LogText
 from domain.ShuttleWidgetGroup import ShuttleWidgetGroup
 from widgets import StateWidget
 from widgets.ShuttleFrame import ShuttleFrame
+from widgets.ShuttlesWidgetService import ShuttlesWidgetService
 
 pygame.init()
 
@@ -60,6 +61,7 @@ class ShuttlesWidget(QWidget):
         self.shuttles = {}
         self.chrome_service = chrome_service
         self.time = time
+        self.shuttles_widget_service = ShuttlesWidgetService()
         self._init_ui()
 
     def _init_ui(self):
@@ -101,7 +103,7 @@ class ShuttlesWidget(QWidget):
                                 log_edittext_widget=log_edittext_widget, shuttle_seq=self.shuttle_seq, file_name=file_name))
         self.shuttles_vbox_layout.addLayout(shuttleLayout)
         self.shuttle_seq += 1
-        self.save_shuttles(file_name)
+        self.save_shuttles(file_name=file_name)
 
     def import_external_shuttles(self, state_widget: StateWidget):
         with open('shuttles.json', 'r', encoding="utf-8") as shuttles_file:
@@ -116,28 +118,20 @@ class ShuttlesWidget(QWidget):
                              file_name="shuttles.json")
 
     def save_shuttles(self, file_name="shuttles.json"):
-        shuttles_json = {}
-        for saved_shuttle in self.get_saved_shuttles_array():
-            shuttle_id = saved_shuttle[0]
-            attribute_names = ['name', 'url', 'period', 'element_classes']
-            attributes = {}
-            for index, name in enumerate(attribute_names):
-                attributes[name] = saved_shuttle[1][index]
-            shuttles_json[shuttle_id] = attributes
-        with open(file_name, 'w', encoding="utf-8") as json_file:
-            json_file.write(json.dumps(shuttles_json, ensure_ascii=False, indent=2))
+        self.shuttles_widget_service.save_shuttles_to_json(self.get_saved_shuttles_array(), file_name)
 
     def get_saved_shuttles_array(self):
         if self.shuttles_vbox_layout is None:
-            return []
-        result = []
+            return {}
+        result = {}
         for i in self.shuttle_frames:
             frame: ShuttleFrame = self.shuttle_frames[i]
             shuttle_id = "shuttle" + str(i)
-            shuttle_data_list = [frame.shuttleWidgets.shuttle_name_widget.text(),
-                                 frame.shuttleWidgets.url_widget.text(), frame.shuttleWidgets.period_widget.text(),
-                                 frame.shuttleWidgets.target_classes_widget.text()]
-            result.append((shuttle_id, shuttle_data_list))
+            shuttle_property = {"name": frame.shuttleWidgets.shuttle_name_widget.text(),
+                                "url": frame.shuttleWidgets.url_widget.text(),
+                                "period": frame.shuttleWidgets.period_widget.text(),
+                                "element_classes": frame.shuttleWidgets.target_classes_widget.text()}
+            result[shuttle_id] = shuttle_property
         return result
 
     def _delete_button(self, shuttle_frame, shuttle_name_widget, log_edittext_widget, shuttle_seq, file_name):
@@ -165,7 +159,7 @@ class ShuttlesWidget(QWidget):
         delete_btn.deleteLater()
         self.shuttles_vbox_layout.takeAt(shuttle_seq)
         self.shuttle_frames.pop(shuttle_seq)
-        self.save_shuttles(self.get_saved_shuttles_array(), file_name)
+        self.save_shuttles(file_name)
 
     def _confirm(self, shuttle_name_widget):
         return QMessageBox.question(self, '삭제 확인', f'\'{shuttle_name_widget.text()}\' 셔틀이 삭제됩니다.',

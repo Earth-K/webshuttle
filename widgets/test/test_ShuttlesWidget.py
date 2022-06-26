@@ -13,7 +13,7 @@ def qapp():
     return QApplication(sys.argv)
 
 
-def test_Saved_shuttle_frames_are_imported_to_list(qapp):
+def test_saved_shuttle_frames_are_imported_to_list(qapp):
     parent = QMainWindow()
     shuttleWidget = ShuttlesWidget(parent=parent, chrome_service=None)
     shuttleWidget.add_shuttle(name="Shuttle Name",
@@ -25,14 +25,14 @@ def test_Saved_shuttle_frames_are_imported_to_list(qapp):
 
     result = shuttleWidget.get_saved_shuttles_array()
 
-    assert result == [('shuttle0', ["Shuttle Name", "https://google.com", "300", "Target Class Names"])]
+    assert result == {'shuttle0': {'name': 'Shuttle Name', 'url': 'https://google.com', 'period': '300', 'element_classes': 'Target Class Names'}}
     with open('shuttles_test.json', 'r', encoding="utf-8") as shuttles_file:
         shuttles = json.load(shuttles_file)
         assert str(shuttles) \
                == "{'shuttle0': {'name': 'Shuttle Name', 'url': 'https://google.com', 'period': '300', 'element_classes': 'Target Class Names'}}"
 
 
-def test_Shuttle_is_added_with_data_and_GUI(qapp):
+def test_shuttle_is_added_with_data_and_gui(qapp):
     parent = QMainWindow()
     shuttleWidget = ShuttlesWidget(parent=parent, chrome_service=None)
     shuttleWidget.shuttles_vbox_layout = QVBoxLayout()
