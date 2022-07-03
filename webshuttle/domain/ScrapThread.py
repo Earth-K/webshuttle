@@ -1,8 +1,8 @@
 from PyQt5.QtCore import QThread
 from selenium import webdriver
 
-from domain.LogText import LogText
-from domain.WebScraper import WebScraper
+from webshuttle.domain.LogText import LogText
+from webshuttle.domain.WebScraper import WebScraper
 
 
 def get_text_list(elements):

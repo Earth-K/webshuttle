@@ -1,9 +1,9 @@
 import pytest
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTextEdit
 
-from widgets.ShuttleAddWidget import ShuttleAddWidget
-from widgets.ShuttlesWidget import ShuttlesWidget
-from widgets.StateWidget import StateWidget
+from webshuttle.adapter.incoming.ui.ShuttleAddWidget import ShuttleAddWidget
+from webshuttle.adapter.incoming.ui.ShuttlesWidget import ShuttlesWidget
+from webshuttle.adapter.incoming.ui.StateWidget import StateWidget
 
 
 @pytest.fixture

@@ -1,16 +1,21 @@
-import json
-
 import pygame
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit, QPushButton, QSpinBox, QFrame, \
     QMessageBox
 
-from domain.DefaultTime import DefaultTime
-from domain.LogText import LogText
-from domain.ShuttleWidgetGroup import ShuttleWidgetGroup
-from widgets import StateWidget
-from widgets.ShuttleFrame import ShuttleFrame
-from widgets.ShuttlesWidgetService import ShuttlesWidgetService
+from webshuttle.domain.DefaultTime import DefaultTime
+from webshuttle.domain.LogText import LogText
+from webshuttle.application.GetShuttlesService import GetShuttlesService
+from webshuttle.application.ImportShuttlesService import ImportShuttlesService
+from webshuttle.application.port.incoming.GetShuttlesUseCase import GetShuttlesUseCase
+from webshuttle.application.port.incoming.ExportShuttlesUseCase import ExportShuttlesUseCase
+from webshuttle.application.port.incoming.ImportShuttlesUseCase import ImportShuttlesUseCase
+from webshuttle.domain.ShuttleWidgetGroup import ShuttleWidgetGroup
+from webshuttle.application.AddShuttleService import AddShuttleService
+from webshuttle.application.port.incoming.AddShuttleUseCase import AddShuttleUseCase
+from webshuttle.adapter.incoming.ui import StateWidget
+from webshuttle.domain.ShuttleFrame import ShuttleFrame
+from webshuttle.application.ExportShuttlesService import ExportShuttlesService
 
 pygame.init()
 
@@ -61,7 +66,9 @@ class ShuttlesWidget(QWidget):
         self.shuttles = {}
         self.chrome_service = chrome_service
         self.time = time
-        self.shuttles_widget_service = ShuttlesWidgetService()
+        self.shuttles_widget_service: ExportShuttlesUseCase = ExportShuttlesService()
+        self.get_shuttles_service: GetShuttlesUseCase = GetShuttlesService()
+        self.import_shuttles_service: ImportShuttlesUseCase = ImportShuttlesService()
         self._init_ui()
 
     def _init_ui(self):
@@ -78,6 +85,9 @@ class ShuttlesWidget(QWidget):
         self.show()
 
     def add_shuttle(self, url, period, target_classes, name, log_edittext_widget, file_name="shuttles.json"):
+        add_shuttle_service: AddShuttleUseCase = AddShuttleService()
+        add_shuttle_service.add_shuttle()
+
         shuttle_name_widget = shuttle_name_lineedit(name)
         target_classes_widget = target_classes_lineedit(target_classes)
         url_widget = url_lineedit(url)
@@ -106,33 +116,13 @@ class ShuttlesWidget(QWidget):
         self.save_shuttles(file_name=file_name)
 
     def import_external_shuttles(self, state_widget: StateWidget):
-        with open('shuttles.json', 'r', encoding="utf-8") as shuttles_file:
-            shuttles: dict = json.load(shuttles_file)
-        for index in range(len(shuttles.keys())):
-            shuttle_attributes = shuttles[f'shuttle{index}']
-            self.add_shuttle(name=shuttle_attributes["name"],
-                             url=shuttle_attributes["url"],
-                             period=shuttle_attributes["period"],
-                             target_classes=shuttle_attributes["element_classes"],
-                             log_edittext_widget=state_widget.get_edittext(),
-                             file_name="shuttles.json")
+        self.import_shuttles_service.import_external_shuttles(shuttles_widget=self, state_widget=state_widget)
 
     def save_shuttles(self, file_name="shuttles.json"):
         self.shuttles_widget_service.save_shuttles_to_json(self.get_saved_shuttles_array(), file_name)
 
     def get_saved_shuttles_array(self):
-        if self.shuttles_vbox_layout is None:
-            return {}
-        result = {}
-        for i in self.shuttle_frames:
-            frame: ShuttleFrame = self.shuttle_frames[i]
-            shuttle_id = "shuttle" + str(i)
-            shuttle_property = {"name": frame.shuttleWidgets.shuttle_name_widget.text(),
-                                "url": frame.shuttleWidgets.url_widget.text(),
-                                "period": frame.shuttleWidgets.period_widget.text(),
-                                "element_classes": frame.shuttleWidgets.target_classes_widget.text()}
-            result[shuttle_id] = shuttle_property
-        return result
+        return self.get_shuttles_service.get_shuttles(self.shuttles_vbox_layout, self.shuttle_frames)
 
     def _delete_button(self, shuttle_frame, shuttle_name_widget, log_edittext_widget, shuttle_seq, file_name):
         delete_btn = QPushButton()

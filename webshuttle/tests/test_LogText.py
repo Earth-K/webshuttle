@@ -1,6 +1,6 @@
 import time
 
-from domain.LogText import LogText
+from webshuttle.domain.LogText import LogText
 
 TIME_20200913_212640 = 1600000000
 TEXT_20200913_212640 = '2020/09/13 21:26:40'

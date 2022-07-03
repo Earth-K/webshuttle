@@ -1,14 +1,13 @@
-import json
 import sys
 
-from PyQt5.QtWidgets import QApplication, QDesktopWidget, QAction, QMainWindow, QMessageBox
+from PyQt5.QtWidgets import QApplication, QDesktopWidget, QMainWindow
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
-from widgets.BaseWidget import BaseWidget
-from widgets.StateWidget import StateWidget
-from widgets.ShuttleAddWidget import ShuttleAddWidget
-from widgets.ShuttlesWidget import ShuttlesWidget
+from webshuttle.adapter.incoming.ui.BaseWidget import BaseWidget
+from webshuttle.adapter.incoming.ui.StateWidget import StateWidget
+from webshuttle.adapter.incoming.ui.ShuttleAddWidget import ShuttleAddWidget
+from webshuttle.adapter.incoming.ui.ShuttlesWidget import ShuttlesWidget
 
 
 class MainWindow(QMainWindow):
@@ -38,9 +37,3 @@ class MainWindow(QMainWindow):
         qRect.moveCenter(centerPos)
         self.move(qRect.topLeft())
 
-
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    main_window = MainWindow()
-    main_window.show()
-    sys.exit(app.exec_())

@@ -1,12 +1,11 @@
 import pygame
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QFrame, QPushButton, QHBoxLayout, QVBoxLayout, QLabel, \
-    QWidget, QDialog
+from PyQt5.QtWidgets import QFrame, QPushButton, QHBoxLayout, QVBoxLayout, QLabel, QWidget, QDialog
 
-from domain.LogText import LogText
-from domain.Shuttle import Shuttle
-from domain.ShuttleWidgetGroup import ShuttleWidgetGroup
-from widgets.DraftShuttleWidgets import DraftShuttleWidgets
+from webshuttle.domain.LogText import LogText
+from webshuttle.domain.Shuttle import Shuttle
+from webshuttle.domain.ShuttleWidgetGroup import ShuttleWidgetGroup
+from webshuttle.adapter.incoming.ui.DraftShuttleWidgets import DraftShuttleWidgets
 
 
 class ShuttleFrame(QWidget):

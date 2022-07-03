@@ -1,11 +1,11 @@
 import sys
 
 import pytest as pytest
-from PyQt5.QtWidgets import QApplication, QLineEdit, QTextEdit, QPushButton, QWidget, QSpinBox
+from PyQt5.QtWidgets import QApplication, QLineEdit, QTextEdit, QWidget, QSpinBox
 
-from domain.DefaultTime import DefaultTime
-from domain.Shuttle import Shuttle
-from domain.ShuttleWidgetGroup import ShuttleWidgetGroup
+from webshuttle.domain.DefaultTime import DefaultTime
+from webshuttle.domain.Shuttle import Shuttle
+from webshuttle.domain.ShuttleWidgetGroup import ShuttleWidgetGroup
 
 
 @pytest.fixture

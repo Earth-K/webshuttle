@@ -1,8 +1,8 @@
 import sys
 
-from PyQt5.QtWidgets import QPushButton, QLineEdit, QSpinBox, QTextEdit, QApplication
+from PyQt5.QtWidgets import QLineEdit, QSpinBox, QTextEdit, QApplication
 
-from domain.ShuttleWidgetGroup import ShuttleWidgetGroup
+from webshuttle.domain.ShuttleWidgetGroup import ShuttleWidgetGroup
 
 
 def test_update_list_is_read_only():

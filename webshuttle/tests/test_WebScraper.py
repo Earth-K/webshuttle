@@ -1,11 +1,10 @@
-import unittest
 from unittest.mock import Mock, MagicMock
 
 from selenium.webdriver.chrome import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 
-from domain.WebScraper import WebScraper
+from webshuttle.domain.WebScraper import WebScraper
 
 
 def _create_mock_webdriver():

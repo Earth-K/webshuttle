@@ -7,10 +7,10 @@ from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.remote.webelement import WebElement
 
-from domain.EventListenerInjector import EventListenerInjector
-from domain.LogText import LogText
-from domain.WebScraper import WebScraper
-from widgets import ShuttlesWidget, StateWidget
+from webshuttle.domain.EventListenerInjector import EventListenerInjector
+from webshuttle.domain.LogText import LogText
+from webshuttle.domain.WebScraper import WebScraper
+from webshuttle.adapter.incoming.ui import ShuttlesWidget, StateWidget
 
 
 def init_event_listener(web_scraper):
@@ -57,7 +57,7 @@ class ShuttleAddWidget(QWidget):
         execution_layout.addWidget(get_element_data_button)
         self.addshuttle_button.setIcon(QIcon('resource/images/plus.png'))
         self.addshuttle_button.setText("셔틀 추가")
-        self.addshuttle_button.setStatusTip('Add this shuttle')
+        self.addshuttle_button.setStatusTip('Add this webshuttle')
         self.addshuttle_button.setDisabled(True)
         self.addshuttle_button.clicked.connect(lambda: self._push_shuttle(shuttles_widget, state_widget))
         execution_layout.addWidget(self.addshuttle_button)

@@ -1,12 +1,12 @@
 import json
 
-from widgets.ShuttlesWidgetService import ShuttlesWidgetService
+from webshuttle.application.ExportShuttlesService import ExportShuttlesService
 
 JSON_FILE_NAME = "shuttles_test.json"
 
 
 def test_save_shuttles_to_json():
-    shuttles_widget_service = ShuttlesWidgetService()
+    shuttles_widget_service = ExportShuttlesService()
     shuttle_properties = {"shuttle0": {"name": "Shuttle Name", "url": "https://google.com", "period": "300", "element_classes": "Target Class Names"}}
     shuttles_widget_service.save_shuttles_to_json(shuttle_properties, JSON_FILE_NAME)
 

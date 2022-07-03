@@ -1,5 +1,5 @@
-from domain.DefaultTime import DefaultTime
-from domain.ScrapThread import ScrapThread
+from webshuttle.domain.DefaultTime import DefaultTime
+from webshuttle.domain.ScrapThread import ScrapThread
 
 
 class Shuttle:

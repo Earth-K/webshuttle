@@ -2,10 +2,10 @@ import json
 import sys
 
 import pytest
-from PyQt5.QtWidgets import QMainWindow, QApplication, QVBoxLayout, QLineEdit, QTextEdit, QPushButton, QMessageBox
+from PyQt5.QtWidgets import QMainWindow, QApplication, QVBoxLayout, QLineEdit, QTextEdit, QMessageBox
 
-from widgets.ShuttleFrame import ShuttleFrame
-from widgets.ShuttlesWidget import ShuttlesWidget
+from webshuttle.domain.ShuttleFrame import ShuttleFrame
+from webshuttle.adapter.incoming.ui.ShuttlesWidget import ShuttlesWidget
 
 
 @pytest.fixture

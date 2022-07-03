@@ -1,7 +1,9 @@
 import json
 
+from webshuttle.application.port.incoming.ExportShuttlesUseCase import ExportShuttlesUseCase
 
-class ShuttlesWidgetService:
+
+class ExportShuttlesService(ExportShuttlesUseCase):
 
     def __init__(self):
         pass
