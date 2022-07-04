@@ -21,16 +21,16 @@ def test_settings_are_applied_when_clicked_ok(qapp):
     spinbox = QSpinBox()
     spinbox.setMaximum(38000)
     shuttleFrame = ShuttleFrame(shuttles={}, shuttle_seq=0, chrome_service=None,
-                                shuttleWidgetGroup=ShuttleWidgetGroup(url_widget=QLineEdit(),
-                                                                      update_list_widget=QTextEdit(),
-                                                                      shuttle_name_widget=QLineEdit(),
-                                                                      period_widget=spinbox,
-                                                                      target_classes_widget=QLineEdit(),
-                                                                      parent=None
-                                                                      ),
+                                shuttle_widget_group=ShuttleWidgetGroup(url_widget=QLineEdit(),
+                                                                        update_list_widget=QTextEdit(),
+                                                                        shuttle_name_widget=QLineEdit(),
+                                                                        period_widget=spinbox,
+                                                                        target_classes_widget=QLineEdit(),
+                                                                        parent=None
+                                                                        ),
                                 shuttles_widget=shuttles_widget, time=None)
 
-    shuttleFrame.showSettings()
+    shuttleFrame.show_settings()
     shuttleFrame.draft_shuttleWidgets.url.setText("testUrl")
     shuttleFrame.draft_shuttleWidgets.period.setValue(3600)
     shuttleFrame.draft_shuttleWidgets.name.setText("No Name")
@@ -52,20 +52,20 @@ def test_apply_draft_shuttle(qapp):
     spinbox = QSpinBox()
     spinbox.setMaximum(86000)
     shuttleFrame = ShuttleFrame(shuttles={}, shuttle_seq=0, chrome_service=None,
-                                shuttleWidgetGroup=ShuttleWidgetGroup(url_widget=QLineEdit(),
-                                                                      update_list_widget=QTextEdit(),
-                                                                      shuttle_name_widget=QLineEdit(),
-                                                                      period_widget=spinbox,
-                                                                      target_classes_widget=QLineEdit(),
-                                                                      parent=None
-                                                                      ),
+                                shuttle_widget_group=ShuttleWidgetGroup(url_widget=QLineEdit(),
+                                                                        update_list_widget=QTextEdit(),
+                                                                        shuttle_name_widget=QLineEdit(),
+                                                                        period_widget=spinbox,
+                                                                        target_classes_widget=QLineEdit(),
+                                                                        parent=None
+                                                                        ),
                                 shuttles_widget=shuttles_widget, time=None)
     shuttleFrame.draft_shuttleWidgets.url.setText("url")
     shuttleFrame.draft_shuttleWidgets.name.setText("name")
     shuttleFrame.draft_shuttleWidgets.target_classes.setText("targetClasses")
     shuttleFrame.draft_shuttleWidgets.period.setValue(3600)
 
-    shuttleFrame.applyDraft(QWidget())
+    shuttleFrame.apply_draft(QWidget())
 
     assert shuttleFrame.shuttleWidgets.url_widget.text() == shuttleFrame.draft_shuttleWidgets.url.text()
     assert shuttleFrame.shuttleWidgets.shuttle_name_widget.text() == shuttleFrame.draft_shuttleWidgets.name.text()
@@ -80,16 +80,16 @@ def test_UI_of_showSettings_QDialog(qapp):
     spinbox = QSpinBox()
     spinbox.setMaximum(86000)
     shuttleFrame = ShuttleFrame(shuttles={}, shuttle_seq=0, chrome_service=None,
-                                shuttleWidgetGroup=ShuttleWidgetGroup(url_widget=QLineEdit(),
-                                                                      update_list_widget=QTextEdit(),
-                                                                      shuttle_name_widget=QLineEdit(),
-                                                                      period_widget=spinbox,
-                                                                      target_classes_widget=QLineEdit(),
-                                                                      parent=None
-                                                                      ),
+                                shuttle_widget_group=ShuttleWidgetGroup(url_widget=QLineEdit(),
+                                                                        update_list_widget=QTextEdit(),
+                                                                        shuttle_name_widget=QLineEdit(),
+                                                                        period_widget=spinbox,
+                                                                        target_classes_widget=QLineEdit(),
+                                                                        parent=None
+                                                                        ),
                                 shuttles_widget=parent, time=None)
 
-    shuttleFrame.setSettingsLayout()
+    shuttleFrame.init_settings_layout()
 
     layout: QVBoxLayout = shuttleFrame.vBoxLayout
     assert layout.count() == 5

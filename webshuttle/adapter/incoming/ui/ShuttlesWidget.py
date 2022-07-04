@@ -96,7 +96,7 @@ class ShuttlesWidget(QWidget):
         shuttle_frame = ShuttleFrame(shuttles=self.shuttles,
                                      shuttle_seq=self.shuttle_seq,
                                      chrome_service=self.chrome_service,
-                                     shuttleWidgetGroup=ShuttleWidgetGroup(
+                                     shuttle_widget_group=ShuttleWidgetGroup(
                                          shuttle_name_widget=shuttle_name_widget,
                                          url_widget=url_widget,
                                          target_classes_widget=target_classes_widget,
@@ -107,9 +107,9 @@ class ShuttlesWidget(QWidget):
 
         self.shuttle_frames[self.shuttle_seq] = shuttle_frame
         shuttleLayout = QHBoxLayout()
-        shuttleLayout.addWidget(shuttle_frame.getFrame())
+        shuttleLayout.addWidget(shuttle_frame.get_frame())
         shuttleLayout.addWidget(
-            self._delete_button(shuttle_frame=shuttle_frame.getFrame(), shuttle_name_widget=shuttle_name_widget,
+            self._delete_button(shuttle_frame=shuttle_frame.get_frame(), shuttle_name_widget=shuttle_name_widget,
                                 log_edittext_widget=log_edittext_widget, shuttle_seq=self.shuttle_seq, file_name=file_name))
         self.shuttles_vbox_layout.addLayout(shuttleLayout)
         self.shuttle_seq += 1

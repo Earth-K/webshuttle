@@ -10,7 +10,7 @@ from webshuttle.adapter.incoming.ui.DraftShuttleWidgets import DraftShuttleWidge
 
 
 class ShuttleFrame(QWidget, Observer):
-    def __init__(self, shuttles, shuttle_seq, chrome_service, shuttleWidgetGroup, shuttles_widget, time):
+    def __init__(self, shuttles, shuttle_seq, chrome_service, shuttle_widget_group, shuttles_widget, time):
         super().__init__(shuttles_widget)
         self.shuttles = shuttles
         self.chrome_service = chrome_service
@@ -20,13 +20,13 @@ class ShuttleFrame(QWidget, Observer):
         self.ok = QPushButton("OK")
         self.shuttle_seq = shuttle_seq
 
-        self.shuttleWidgets: ShuttleWidgetGroup = shuttleWidgetGroup
+        self.shuttleWidgets: ShuttleWidgetGroup = shuttle_widget_group
         self.draft_shuttleWidgets = DraftShuttleWidgets(name=self.shuttleWidgets.shuttle_name_widget.text(),
                                                         url=self.shuttleWidgets.url_widget.text(),
                                                         period=self.shuttleWidgets.period_widget.value(),
                                                         target_classes=self.shuttleWidgets.target_classes_widget.text())
         self.settingsButton: QPushButton = QPushButton("설정")
-        self.settingsButton.clicked.connect(self.showSettings)
+        self.settingsButton.clicked.connect(self.show_settings)
         self.shuttles_widget = shuttles_widget
 
         self.start_stop_button = self.start_button(self.shuttle_seq, self.draft_shuttleWidgets.name,
@@ -42,7 +42,7 @@ class ShuttleFrame(QWidget, Observer):
         shuttle_layout.addWidget(self.settingsButton)
         shuttle_layout.addWidget(self.start_stop_button)
         self.frame.setLayout(shuttle_layout)
-        self.shuttle_widget_group: ShuttleWidgetGroup = shuttleWidgetGroup
+        self.shuttle_widget_group: ShuttleWidgetGroup = shuttle_widget_group
         self.shuttle_widget_group.register_observer(self)
 
     def update(self) -> None:
@@ -52,24 +52,24 @@ class ShuttleFrame(QWidget, Observer):
         self.shuttleWidgets.period_widget.setValue(self.draft_shuttleWidgets.period.value())
         self.frame_name.setText(self.draft_shuttleWidgets.name.text())
 
-    def showSettings(self):
-        widget = self.createSettingDialog()
+    def show_settings(self):
+        widget = self.create_setting_dialog()
         widget.show()
 
-    def createSettingDialog(self):
+    def create_setting_dialog(self):
         widget = QDialog(self.shuttles_widget)
         widget.setWindowModality(Qt.ApplicationModal)
         widget.resize(300, 200)
-        self.setSettingsLayout()
+        self.init_settings_layout()
         widget.setLayout(self.vBoxLayout)
         self.cancel.clicked.connect(widget.close)
-        self.ok.clicked.connect(lambda: self.applyDraft(widget))
+        self.ok.clicked.connect(lambda: self.apply_draft(widget))
         return widget
 
-    def getFrame(self):
+    def get_frame(self):
         return self.frame
 
-    def setSettingsLayout(self):
+    def init_settings_layout(self):
         if self.vBoxLayout is not None:
             return
         self.vBoxLayout = QVBoxLayout()
@@ -98,7 +98,7 @@ class ShuttleFrame(QWidget, Observer):
         confirm_hBoxLayout.addWidget(self.cancel)
         self.vBoxLayout.addLayout(confirm_hBoxLayout)
 
-    def applyDraft(self, widget):
+    def apply_draft(self, widget):
         self.shuttle_widget_group.notify_update()
         self.shuttles_widget.save_shuttles()
         widget.close()
