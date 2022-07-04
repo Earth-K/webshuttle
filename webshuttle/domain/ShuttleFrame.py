@@ -2,13 +2,14 @@ import pygame
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFrame, QPushButton, QHBoxLayout, QVBoxLayout, QLabel, QWidget, QDialog
 
+from webshuttle.domain.Observer import Observer
 from webshuttle.domain.LogText import LogText
 from webshuttle.domain.Shuttle import Shuttle
 from webshuttle.domain.ShuttleWidgetGroup import ShuttleWidgetGroup
 from webshuttle.adapter.incoming.ui.DraftShuttleWidgets import DraftShuttleWidgets
 
 
-class ShuttleFrame(QWidget):
+class ShuttleFrame(QWidget, Observer):
     def __init__(self, shuttles, shuttle_seq, chrome_service, shuttleWidgetGroup, shuttles_widget, time):
         super().__init__(shuttles_widget)
         self.shuttles = shuttles
@@ -32,7 +33,6 @@ class ShuttleFrame(QWidget):
                                                    self.draft_shuttleWidgets.url, self.draft_shuttleWidgets.period,
                                                    self.draft_shuttleWidgets.target_classes,
                                                    self.shuttleWidgets.update_list_widget)
-
         self.frame = QFrame()
         self.frame.setFrameShape(QFrame.Box)
         self.frame.setFrameShadow(QFrame.Sunken)
@@ -42,6 +42,15 @@ class ShuttleFrame(QWidget):
         shuttle_layout.addWidget(self.settingsButton)
         shuttle_layout.addWidget(self.start_stop_button)
         self.frame.setLayout(shuttle_layout)
+        self.shuttle_widget_group: ShuttleWidgetGroup = shuttleWidgetGroup
+        self.shuttle_widget_group.register_observer(self)
+
+    def update(self) -> None:
+        self.shuttleWidgets.url_widget.setText(self.draft_shuttleWidgets.url.text())
+        self.shuttleWidgets.shuttle_name_widget.setText(self.draft_shuttleWidgets.name.text())
+        self.shuttleWidgets.target_classes_widget.setText(self.draft_shuttleWidgets.target_classes.text())
+        self.shuttleWidgets.period_widget.setValue(self.draft_shuttleWidgets.period.value())
+        self.frame_name.setText(self.draft_shuttleWidgets.name.text())
 
     def showSettings(self):
         widget = self.createSettingDialog()
@@ -90,11 +99,7 @@ class ShuttleFrame(QWidget):
         self.vBoxLayout.addLayout(confirm_hBoxLayout)
 
     def applyDraft(self, widget):
-        self.shuttleWidgets.url_widget.setText(self.draft_shuttleWidgets.url.text())
-        self.shuttleWidgets.shuttle_name_widget.setText(self.draft_shuttleWidgets.name.text())
-        self.shuttleWidgets.target_classes_widget.setText(self.draft_shuttleWidgets.target_classes.text())
-        self.shuttleWidgets.period_widget.setValue(self.draft_shuttleWidgets.period.value())
-        self.frame_name.setText(self.shuttleWidgets.shuttle_name_widget.text())
+        self.shuttle_widget_group.notify_update()
         self.shuttles_widget.save_shuttles()
         widget.close()
 
