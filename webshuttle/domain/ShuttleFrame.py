@@ -1,6 +1,6 @@
 import pygame
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QFrame, QPushButton, QHBoxLayout, QVBoxLayout, QLabel, QWidget, QDialog
+from PyQt5.QtWidgets import QFrame, QPushButton, QHBoxLayout, QVBoxLayout, QLabel, QWidget, QDialog, QSpinBox, QLineEdit
 
 from webshuttle.domain.Observer import Observer
 from webshuttle.domain.LogText import LogText
@@ -16,17 +16,14 @@ class ShuttleFrame(QWidget, Observer):
         self.chrome_service = chrome_service
         self.time = time
         self.vBoxLayout = None
-        self.cancel = QPushButton("Cancel")
-        self.ok = QPushButton("OK")
         self.shuttle_seq = shuttle_seq
-
         self.shuttleWidgets: ShuttleWidgetGroup = shuttle_widget_group
         self.draft_shuttleWidgets = DraftShuttleWidgets(name=self.shuttleWidgets.shuttle_name_widget.text(),
                                                         url=self.shuttleWidgets.url_widget.text(),
                                                         period=self.shuttleWidgets.period_widget.value(),
                                                         target_classes=self.shuttleWidgets.target_classes_widget.text())
         self.settingsButton: QPushButton = QPushButton("설정")
-        self.settingsButton.clicked.connect(self.show_settings)
+        self.settingsButton.clicked.connect(lambda: self.create_settings_dialog().show())
         self.shuttles_widget = shuttles_widget
 
         self.start_stop_button = self.start_button(self.shuttle_seq, self.draft_shuttleWidgets.name,
@@ -52,56 +49,55 @@ class ShuttleFrame(QWidget, Observer):
         self.shuttleWidgets.period_widget.setValue(self.draft_shuttleWidgets.period.value())
         self.frame_name.setText(self.draft_shuttleWidgets.name.text())
 
-    def show_settings(self):
-        widget = self.create_setting_dialog()
-        widget.show()
-
-    def create_setting_dialog(self):
-        widget = QDialog(self.shuttles_widget)
-        widget.setWindowModality(Qt.ApplicationModal)
-        widget.resize(300, 200)
-        self.init_settings_layout()
-        widget.setLayout(self.vBoxLayout)
-        self.cancel.clicked.connect(widget.close)
-        self.ok.clicked.connect(lambda: self.apply_draft(widget))
-        return widget
-
-    def get_frame(self):
-        return self.frame
-
-    def init_settings_layout(self):
-        if self.vBoxLayout is not None:
-            return
-        self.vBoxLayout = QVBoxLayout()
-        name_hBoxLayout = QHBoxLayout()
-        name_hBoxLayout.addWidget(QLabel("셔틀 이름 : "))
-        name_hBoxLayout.addWidget(self.draft_shuttleWidgets.name)
-        self.vBoxLayout.addLayout(name_hBoxLayout)
-
-        url_hBoxLayout = QHBoxLayout()
-        url_hBoxLayout.addWidget(QLabel("URL : "))
-        url_hBoxLayout.addWidget(self.draft_shuttleWidgets.url)
-        self.vBoxLayout.addLayout(url_hBoxLayout)
-
-        period_hBoxLayout = QHBoxLayout()
-        period_hBoxLayout.addWidget(QLabel("반복 주기(초) : "))
-        period_hBoxLayout.addWidget(self.draft_shuttleWidgets.period)
-        self.vBoxLayout.addLayout(period_hBoxLayout)
-
-        classes_hBoxLayout = QHBoxLayout()
-        classes_hBoxLayout.addWidget(QLabel("타깃 클래스 : "))
-        classes_hBoxLayout.addWidget(self.draft_shuttleWidgets.target_classes)
-        self.vBoxLayout.addLayout(classes_hBoxLayout)
-
-        confirm_hBoxLayout = QHBoxLayout()
-        confirm_hBoxLayout.addWidget(self.ok)
-        confirm_hBoxLayout.addWidget(self.cancel)
-        self.vBoxLayout.addLayout(confirm_hBoxLayout)
-
     def apply_draft(self, widget):
         self.shuttle_widget_group.notify_update()
         self.shuttles_widget.save_shuttles()
         widget.close()
+
+    def cancel_change(self, widget):
+        self.draft_shuttleWidgets.url.setText(self.shuttleWidgets.url_widget.text())
+        self.draft_shuttleWidgets.name.setText(self.shuttleWidgets.shuttle_name_widget.text())
+        self.draft_shuttleWidgets.target_classes.setText(self.shuttleWidgets.target_classes_widget.text())
+        self.draft_shuttleWidgets.period.setValue(self.shuttleWidgets.period_widget.value())
+        self.draft_shuttleWidgets.name.setText(self.frame_name.text())
+        widget.close()
+
+    def create_settings_dialog(self):
+        dialog = QDialog(self.shuttles_widget)
+        dialog.setWindowModality(Qt.ApplicationModal)
+        dialog.resize(300, 200)
+
+        vBoxLayout = QVBoxLayout()
+        name_hBoxLayout = QHBoxLayout()
+        name_hBoxLayout.addWidget(QLabel("셔틀 이름 : "))
+        name_hBoxLayout.addWidget(self.draft_shuttleWidgets.name)
+        vBoxLayout.addLayout(name_hBoxLayout)
+        url_hBoxLayout = QHBoxLayout()
+        url_hBoxLayout.addWidget(QLabel("URL : "))
+        url_hBoxLayout.addWidget(self.draft_shuttleWidgets.url)
+        vBoxLayout.addLayout(url_hBoxLayout)
+        period_hBoxLayout = QHBoxLayout()
+        period_hBoxLayout.addWidget(QLabel("반복 주기(초) : "))
+        period_hBoxLayout.addWidget(self.draft_shuttleWidgets.period)
+        vBoxLayout.addLayout(period_hBoxLayout)
+        classes_hBoxLayout = QHBoxLayout()
+        classes_hBoxLayout.addWidget(QLabel("타깃 클래스 : "))
+        classes_hBoxLayout.addWidget(self.draft_shuttleWidgets.target_classes)
+        vBoxLayout.addLayout(classes_hBoxLayout)
+        confirm_hBoxLayout = QHBoxLayout()
+        ok_button = QPushButton("OK")
+        ok_button.clicked.connect(lambda: self.apply_draft(dialog))
+        confirm_hBoxLayout.addWidget(ok_button)
+        cancel_button = QPushButton("Cancel")
+        cancel_button.clicked.connect(lambda: self.cancel_change(dialog))
+        confirm_hBoxLayout.addWidget(cancel_button)
+        vBoxLayout.addLayout(confirm_hBoxLayout)
+
+        dialog.setLayout(vBoxLayout)
+        return dialog
+
+    def get_frame(self):
+        return self.frame
 
     def start_button(self, shuttle_seq, shuttle_name_widget, url_widget, period_widget, target_classes_widget,
                      log_edittext_widget):

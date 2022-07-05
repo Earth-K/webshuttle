@@ -9,14 +9,11 @@ class ShuttleWidgetGroup(Subject):
                  shuttle_name_widget, parent=None):
 
         self.update_list_widget: QTextEdit = update_list_widget
-        self.update_list_widget.setReadOnly(True)
         self.target_classes_widget = target_classes_widget
         self.period_widget = period_widget
         self.url_widget = url_widget
         self.shuttle_name_widget = shuttle_name_widget
         self.parent = parent
-        self._saveButtonWidget: QPushButton = QPushButton("저장")
-        self._saveButtonWidget.clicked.connect(self.saveSettings)
         self.observer_list: list = []
 
     def register_observer(self, observer: Observer):
@@ -31,6 +28,3 @@ class ShuttleWidgetGroup(Subject):
 
     def updated_list(self):
         return self.update_list_widget
-
-    def saveSettings(self):
-        self.notify_update()

@@ -30,12 +30,12 @@ def test_settings_are_applied_when_clicked_ok(qapp):
                                                                         ),
                                 shuttles_widget=shuttles_widget, time=None)
 
-    shuttleFrame.show_settings()
+    dialog = shuttleFrame.create_settings_dialog()
     shuttleFrame.draft_shuttleWidgets.url.setText("testUrl")
     shuttleFrame.draft_shuttleWidgets.period.setValue(3600)
     shuttleFrame.draft_shuttleWidgets.name.setText("No Name")
     shuttleFrame.draft_shuttleWidgets.target_classes.setText("class1 class2")
-    shuttleFrame.ok.click()
+    shuttleFrame.apply_draft(dialog)
 
     assert shuttleFrame.shuttleWidgets.url_widget.text() == "testUrl"
     assert shuttleFrame.shuttleWidgets.period_widget.value() == 3600
@@ -89,9 +89,9 @@ def test_UI_of_showSettings_QDialog(qapp):
                                                                         ),
                                 shuttles_widget=parent, time=None)
 
-    shuttleFrame.init_settings_layout()
+    dialog = shuttleFrame.create_settings_dialog()
 
-    layout: QVBoxLayout = shuttleFrame.vBoxLayout
+    layout: QVBoxLayout = dialog.layout()
     assert layout.count() == 5
     assert layout.itemAt(0).layout().itemAt(0).widget().text() == "셔틀 이름 : "
     assert type(layout.itemAt(0).layout().itemAt(1).widget()) == QLineEdit
