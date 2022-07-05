@@ -11,8 +11,6 @@ from webshuttle.application.port.incoming.GetShuttlesUseCase import GetShuttlesU
 from webshuttle.application.port.incoming.ExportShuttlesUseCase import ExportShuttlesUseCase
 from webshuttle.application.port.incoming.ImportShuttlesUseCase import ImportShuttlesUseCase
 from webshuttle.domain.ShuttleWidgetGroup import ShuttleWidgetGroup
-from webshuttle.application.AddShuttleService import AddShuttleService
-from webshuttle.application.port.incoming.AddShuttleUseCase import AddShuttleUseCase
 from webshuttle.adapter.incoming.ui import StateWidget
 from webshuttle.domain.ShuttleFrame import ShuttleFrame
 from webshuttle.application.ExportShuttlesService import ExportShuttlesService
@@ -85,9 +83,6 @@ class ShuttlesWidget(QWidget):
         self.show()
 
     def add_shuttle(self, url, period, target_classes, name, log_edittext_widget, file_name="shuttles.json"):
-        add_shuttle_service: AddShuttleUseCase = AddShuttleService()
-        add_shuttle_service.add_shuttle()
-
         shuttle_name_widget = shuttle_name_lineedit(name)
         target_classes_widget = target_classes_lineedit(target_classes)
         url_widget = url_lineedit(url)
