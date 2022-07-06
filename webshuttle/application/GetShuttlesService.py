@@ -7,12 +7,12 @@ class GetShuttlesService(GetShuttlesUseCase):
         if shuttles_vbox_layout is None:
             return {}
         result = {}
-        for i in shuttle_frames:
-            frame: ShuttleFrame = shuttle_frames[i]
-            shuttle_id = "shuttle" + str(i)
+        for index, shuttle_seq in enumerate(shuttle_frames):
+            frame: ShuttleFrame = shuttle_frames[shuttle_seq]
+            new_shuttle_id = "shuttle" + str(index)
             shuttle_property = {"name": frame.shuttleWidgets.shuttle_name_widget.text(),
                                 "url": frame.shuttleWidgets.url_widget.text(),
                                 "period": frame.shuttleWidgets.period_widget.text(),
                                 "element_classes": frame.shuttleWidgets.target_classes_widget.text()}
-            result[shuttle_id] = shuttle_property
+            result[new_shuttle_id] = shuttle_property
         return result
