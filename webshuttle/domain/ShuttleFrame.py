@@ -54,7 +54,7 @@ class ShuttleFrame(QWidget, Observer):
         self.shuttles_widget.save_shuttles()
         widget.close()
 
-    def cancel_change(self, widget):
+    def cancel_draft(self, widget):
         self.draft_shuttleWidgets.url.setText(self.shuttleWidgets.url_widget.text())
         self.draft_shuttleWidgets.name.setText(self.shuttleWidgets.shuttle_name_widget.text())
         self.draft_shuttleWidgets.target_classes.setText(self.shuttleWidgets.target_classes_widget.text())
@@ -89,7 +89,7 @@ class ShuttleFrame(QWidget, Observer):
         ok_button.clicked.connect(lambda: self.apply_draft(dialog))
         confirm_hBoxLayout.addWidget(ok_button)
         cancel_button = QPushButton("Cancel")
-        cancel_button.clicked.connect(lambda: self.cancel_change(dialog))
+        cancel_button.clicked.connect(lambda: self.cancel_draft(dialog))
         confirm_hBoxLayout.addWidget(cancel_button)
         vBoxLayout.addLayout(confirm_hBoxLayout)
 

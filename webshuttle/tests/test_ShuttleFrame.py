@@ -45,12 +45,42 @@ def test_settings_are_applied_when_clicked_ok(qapp):
     mock_save_shuttles.assert_called_once()
 
 
-def test_apply_draft_shuttle(qapp):
+def test_cancel_draft(qapp):
     shuttles_widget = ShuttlesWidget(None, None, None)
     mock_save_shuttles = MagicMock()
     shuttles_widget.save_shuttles = mock_save_shuttles
     spinbox = QSpinBox()
-    spinbox.setMaximum(86000)
+    spinbox.setMaximum(86400)
+    shuttleFrame = ShuttleFrame(shuttles={}, shuttle_seq=0, chrome_service=None,
+                                shuttle_widget_group=ShuttleWidgetGroup(url_widget=QLineEdit(),
+                                                                        update_list_widget=QTextEdit(),
+                                                                        shuttle_name_widget=QLineEdit(),
+                                                                        period_widget=spinbox,
+                                                                        target_classes_widget=QLineEdit(),
+                                                                        parent=None
+                                                                        ),
+                                shuttles_widget=shuttles_widget, time=None)
+    shuttleFrame.draft_shuttleWidgets.url.setText("url")
+    shuttleFrame.draft_shuttleWidgets.name.setText("name")
+    shuttleFrame.draft_shuttleWidgets.target_classes.setText("targetClasses")
+    shuttleFrame.draft_shuttleWidgets.period.setValue(3600)
+
+    shuttleFrame.cancel_draft(QWidget())
+
+    assert shuttleFrame.shuttleWidgets.url_widget.text() == ""
+    assert shuttleFrame.shuttleWidgets.shuttle_name_widget.text() == ""
+    assert shuttleFrame.shuttleWidgets.target_classes_widget.text() == ""
+    assert shuttleFrame.shuttleWidgets.period_widget.value() == 0
+    assert shuttleFrame.frame_name.text() == ""
+    mock_save_shuttles.assert_not_called()
+
+
+def test_apply_draft(qapp):
+    shuttles_widget = ShuttlesWidget(None, None, None)
+    mock_save_shuttles = MagicMock()
+    shuttles_widget.save_shuttles = mock_save_shuttles
+    spinbox = QSpinBox()
+    spinbox.setMaximum(86400)
     shuttleFrame = ShuttleFrame(shuttles={}, shuttle_seq=0, chrome_service=None,
                                 shuttle_widget_group=ShuttleWidgetGroup(url_widget=QLineEdit(),
                                                                         update_list_widget=QTextEdit(),
