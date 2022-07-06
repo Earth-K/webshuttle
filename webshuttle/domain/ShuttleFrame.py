@@ -66,6 +66,7 @@ class ShuttleFrame(QWidget, Observer):
         dialog = QDialog(self.shuttles_widget)
         dialog.setWindowModality(Qt.ApplicationModal)
         dialog.resize(300, 200)
+        dialog.setWindowTitle("셔틀 설정")
 
         vBoxLayout = QVBoxLayout()
         name_hBoxLayout = QHBoxLayout()
