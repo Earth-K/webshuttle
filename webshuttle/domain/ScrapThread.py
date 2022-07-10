@@ -13,9 +13,9 @@ def get_text_list(elements):
 
 
 class ScrapThread(QThread):
-    def __init__(self, parent, id, shuttle_widget_group, time, sound, shuttle_list, chrome_service):
+    def __init__(self, parent, shuttle_id, shuttle_widget_group, time, sound, shuttle_list, chrome_service):
         super().__init__(parent)
-        self.id = id
+        self.id = shuttle_id
         self.shuttle_widget_group = shuttle_widget_group
         self.time = time
         self.sound = sound

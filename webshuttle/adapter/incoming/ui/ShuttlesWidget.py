@@ -3,6 +3,8 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit, QPushButton, QSpinBox, QFrame, \
     QMessageBox
 
+from webshuttle.application.CreateShuttleFrameService import CreateShuttleFrameService
+from webshuttle.application.port.incoming import CreateShuttleFrameUseCase
 from webshuttle.domain.DefaultTime import DefaultTime
 from webshuttle.domain.LogText import LogText
 from webshuttle.application.GetShuttlesService import GetShuttlesService
@@ -12,7 +14,6 @@ from webshuttle.application.port.incoming.ExportShuttlesUseCase import ExportShu
 from webshuttle.application.port.incoming.ImportShuttlesUseCase import ImportShuttlesUseCase
 from webshuttle.domain.ShuttleWidgetGroup import ShuttleWidgetGroup
 from webshuttle.adapter.incoming.ui import StateWidget
-from webshuttle.domain.ShuttleFrame import ShuttleFrame
 from webshuttle.application.ExportShuttlesService import ExportShuttlesService
 
 pygame.init()
@@ -67,6 +68,7 @@ class ShuttlesWidget(QWidget):
         self.shuttles_widget_service: ExportShuttlesUseCase = ExportShuttlesService()
         self.get_shuttles_service: GetShuttlesUseCase = GetShuttlesService()
         self.import_shuttles_service: ImportShuttlesUseCase = ImportShuttlesService()
+        self.create_shuttle_frame_service: CreateShuttleFrameUseCase = CreateShuttleFrameService()
         self._init_ui()
 
     def _init_ui(self):
@@ -87,18 +89,17 @@ class ShuttlesWidget(QWidget):
         target_classes_widget = target_classes_lineedit(target_classes)
         url_widget = url_lineedit(url)
         period_widget = period_spinbox(period)
-
-        shuttle_frame = ShuttleFrame(shuttles=self.shuttles,
-                                     shuttle_seq=self.shuttle_seq,
-                                     chrome_service=self.chrome_service,
-                                     shuttle_widget_group=ShuttleWidgetGroup(
-                                         shuttle_name_widget=shuttle_name_widget,
-                                         url_widget=url_widget,
-                                         target_classes_widget=target_classes_widget,
-                                         period_widget=period_widget,
-                                         update_list_widget=log_edittext_widget,
-                                         parent=None
-                                     ), shuttles_widget=self, time=self.time)
+        shuttle_frame = self.create_shuttle_frame_service.create_shuttle_frame(shuttles=self.shuttles,
+                                                                               shuttle_seq=self.shuttle_seq,
+                                                                               chrome_service=self.chrome_service,
+                                                                               shuttle_widget_group=ShuttleWidgetGroup(
+                                                                                   shuttle_name_widget=shuttle_name_widget,
+                                                                                   url_widget=url_widget,
+                                                                                   target_classes_widget=target_classes_widget,
+                                                                                   period_widget=period_widget,
+                                                                                   update_list_widget=log_edittext_widget,
+                                                                                   parent=None
+                                                                               ), shuttles_widget=self, time=self.time)
 
         self.shuttle_frames[self.shuttle_seq] = shuttle_frame
         shuttleLayout = QHBoxLayout()
