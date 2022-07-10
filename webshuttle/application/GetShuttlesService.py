@@ -3,9 +3,7 @@ from webshuttle.domain.ShuttleFrame import ShuttleFrame
 
 
 class GetShuttlesService(GetShuttlesUseCase):
-    def get_shuttles(self, shuttles_vbox_layout, shuttle_frames):
-        if shuttles_vbox_layout is None:
-            return {}
+    def saved_shuttles_to_json(self, shuttle_frames):
         result = {}
         for index, shuttle_seq in enumerate(shuttle_frames):
             frame: ShuttleFrame = shuttle_frames[shuttle_seq]

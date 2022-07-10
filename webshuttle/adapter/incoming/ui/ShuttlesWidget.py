@@ -65,9 +65,9 @@ class ShuttlesWidget(QWidget):
         self.shuttles = {}
         self.chrome_service = chrome_service
         self.time = time
-        self.shuttles_widget_service: ExportShuttlesUseCase = ExportShuttlesService()
         self.get_shuttles_service: GetShuttlesUseCase = GetShuttlesService()
         self.import_shuttles_service: ImportShuttlesUseCase = ImportShuttlesService()
+        self.export_shuttles_service: ExportShuttlesUseCase = ExportShuttlesService()
         self.create_shuttle_frame_service: CreateShuttleFrameUseCase = CreateShuttleFrameService()
         self._init_ui()
 
@@ -115,10 +115,12 @@ class ShuttlesWidget(QWidget):
         self.import_shuttles_service.import_external_shuttles(shuttles_widget=self, state_widget=state_widget)
 
     def save_shuttles(self, file_name="shuttles.json"):
-        self.shuttles_widget_service.save_shuttles_to_json(self.get_saved_shuttles_array(), file_name)
+        self.export_shuttles_service.save_shuttles_to_json(self.saved_shuttles_json(), file_name)
 
-    def get_saved_shuttles_array(self):
-        return self.get_shuttles_service.get_shuttles(self.shuttles_vbox_layout, self.shuttle_frames)
+    def saved_shuttles_json(self):
+        if self.shuttles_vbox_layout is None:
+            return {}
+        return self.get_shuttles_service.saved_shuttles_to_json(self.shuttle_frames)
 
     def _delete_button(self, shuttle_frame, shuttle_name_widget, log_edittext_widget, shuttle_seq, file_name):
         delete_btn = QPushButton()

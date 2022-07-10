@@ -23,7 +23,7 @@ def test_saved_shuttle_frames_are_imported_to_list(qapp):
                               log_edittext_widget=QLineEdit(),
                               file_name="shuttles_test.json")
 
-    result = shuttleWidget.get_saved_shuttles_array()
+    result = shuttleWidget.saved_shuttles_json()
 
     assert result == {'shuttle0': {'name': 'Shuttle Name', 'url': 'https://google.com', 'period': '300', 'element_classes': 'Target Class Names'}}
     with open('shuttles_test.json', 'r', encoding="utf-8") as shuttles_file:

@@ -27,7 +27,7 @@ def test_get_shuttles(qapp):
                                                          QWidget(), None)
 
     shuttle_frames.pop("shuttle1")
-    result = getShuttlesService.get_shuttles("", shuttle_frames)
+    result = getShuttlesService.saved_shuttles_to_json(shuttle_frames)
 
     shuttle_widget_group_2: dict = result["shuttle2"]
     assert shuttle_widget_group_2["name"] == "셔틀3"
