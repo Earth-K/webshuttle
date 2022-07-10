@@ -1,4 +1,4 @@
-import sys
+import atexit
 
 from PyQt5.QtWidgets import QApplication, QDesktopWidget, QMainWindow
 from selenium.webdriver.chrome.service import Service
@@ -14,10 +14,10 @@ class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
 
-        chrome_service = Service(ChromeDriverManager().install())
-        chrome_service.creationflags = 0x08000000
+        self.chrome_service = Service(ChromeDriverManager().install())
+        self.chrome_service.creationflags = 0x08000000
 
-        self.shuttles_widget = ShuttlesWidget(self, chrome_service)
+        self.shuttles_widget = ShuttlesWidget(self, self.chrome_service)
         self.statusBar()
         self.state_widget = StateWidget(self)
         self.shuttle_add_widget = ShuttleAddWidget(self, self.shuttles_widget, self.state_widget, chrome_service)
@@ -30,6 +30,7 @@ class MainWindow(QMainWindow):
         self._move_to_center()
         self.setWindowTitle('WebShuttle')
         self.show()
+        self.register_destroy_functions()
 
     def _move_to_center(self):
         qRect = self.frameGeometry()
@@ -37,3 +38,5 @@ class MainWindow(QMainWindow):
         qRect.moveCenter(centerPos)
         self.move(qRect.topLeft())
 
+    def register_destroy_functions(self):
+        atexit.register(self.chrome_service.stop)
