@@ -1,14 +1,14 @@
-from PyQt5.QtWidgets import QTextEdit, QPushButton
+from PyQt5.QtWidgets import QTextEdit
 
 from webshuttle.domain.Observer import Observer
 from webshuttle.domain.Subject import Subject
 
 
 class ShuttleWidgetGroup(Subject):
-    def __init__(self, update_list_widget, target_classes_widget, period_widget, url_widget,
+    def __init__(self, state_widget, target_classes_widget, period_widget, url_widget,
                  shuttle_name_widget, parent=None):
 
-        self.update_list_widget: QTextEdit = update_list_widget
+        self.update_list_widget: QTextEdit = state_widget
         self.target_classes_widget = target_classes_widget
         self.period_widget = period_widget
         self.url_widget = url_widget

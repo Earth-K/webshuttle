@@ -113,7 +113,7 @@ class ShuttleAddWidget(QWidget):
                                     url=self.url_line_edit.text(),
                                     period=300,
                                     target_classes=self.element_class_names,
-                                    log_edittext_widget=state_widget.get_edittext())
+                                    state_widget=state_widget.get_edittext())
         QMessageBox.information(self, '성공', '셔틀이 셔틀 목록에 저장되었습니다.',
                                 QMessageBox.Yes, QMessageBox.NoButton)
 

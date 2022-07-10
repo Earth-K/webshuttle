@@ -20,7 +20,7 @@ def test_shuttle_is_become_None_when_stopped(qapp):
                                                               url_widget=QLineEdit(),
                                                               period_widget=QSpinBox(),
                                                               target_classes_widget=QLineEdit(),
-                                                              update_list_widget=QTextEdit(),
+                                                              state_widget=QTextEdit(),
                                                               parent=None),
                       shuttle_id=0, shuttles=[], chrome_service=None, time=DefaultTime(), mixer_sound=None)
     shuttle.shuttle_list.append(shuttle)

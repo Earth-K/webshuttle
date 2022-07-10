@@ -55,9 +55,9 @@ class ScrapThread(QThread):
                         no_newline_text += e.text.replace("\n", " | ") + "\n"
             if len(no_newline_text) > 0:
                 log_text = LogText(self.time.localtime())
-                self.shuttle_widget_group.update_list_widget.append(
+                self.shuttle_widget_group.state_widget.append(
                     log_text.updated_shuttle_name(self.shuttle_widget_group.shuttle_name_widget.text()))
-                self.shuttle_widget_group.update_list_widget.append(f"{no_newline_text}\n")
+                self.shuttle_widget_group.state_widget.append(f"{no_newline_text}\n")
                 self.sound.play()
 
             self.time.sleep(int(self.shuttle_widget_group.period_widget.text()))

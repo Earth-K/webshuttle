@@ -22,7 +22,7 @@ def test_settings_are_applied_when_clicked_ok(qapp):
     spinbox.setMaximum(38000)
     shuttleFrame = ShuttleFrame(shuttles={}, shuttle_seq=0, chrome_service=None,
                                 shuttle_widget_group=ShuttleWidgetGroup(url_widget=QLineEdit(),
-                                                                        update_list_widget=QTextEdit(),
+                                                                        state_widget=QTextEdit(),
                                                                         shuttle_name_widget=QLineEdit(),
                                                                         period_widget=spinbox,
                                                                         target_classes_widget=QLineEdit(),
@@ -53,7 +53,7 @@ def test_cancel_draft(qapp):
     spinbox.setMaximum(86400)
     shuttleFrame = ShuttleFrame(shuttles={}, shuttle_seq=0, chrome_service=None,
                                 shuttle_widget_group=ShuttleWidgetGroup(url_widget=QLineEdit(),
-                                                                        update_list_widget=QTextEdit(),
+                                                                        state_widget=QTextEdit(),
                                                                         shuttle_name_widget=QLineEdit(),
                                                                         period_widget=spinbox,
                                                                         target_classes_widget=QLineEdit(),
@@ -83,7 +83,7 @@ def test_apply_draft(qapp):
     spinbox.setMaximum(86400)
     shuttleFrame = ShuttleFrame(shuttles={}, shuttle_seq=0, chrome_service=None,
                                 shuttle_widget_group=ShuttleWidgetGroup(url_widget=QLineEdit(),
-                                                                        update_list_widget=QTextEdit(),
+                                                                        state_widget=QTextEdit(),
                                                                         shuttle_name_widget=QLineEdit(),
                                                                         period_widget=spinbox,
                                                                         target_classes_widget=QLineEdit(),
@@ -111,7 +111,7 @@ def test_UI_of_showSettings_QDialog(qapp):
     spinbox.setMaximum(86000)
     shuttleFrame = ShuttleFrame(shuttles={}, shuttle_seq=0, chrome_service=None,
                                 shuttle_widget_group=ShuttleWidgetGroup(url_widget=QLineEdit(),
-                                                                        update_list_widget=QTextEdit(),
+                                                                        state_widget=QTextEdit(),
                                                                         shuttle_name_widget=QLineEdit(),
                                                                         period_widget=spinbox,
                                                                         target_classes_widget=QLineEdit(),

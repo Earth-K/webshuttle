@@ -14,5 +14,5 @@ class ImportShuttlesService(ImportShuttlesUseCase):
                                         url=shuttle_attributes["url"],
                                         period=shuttle_attributes["period"],
                                         target_classes=shuttle_attributes["element_classes"],
-                                        log_edittext_widget=state_widget.get_edittext(),
+                                        state_widget=state_widget.get_edittext(),
                                         file_name="shuttles.json")

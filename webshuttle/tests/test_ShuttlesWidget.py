@@ -20,7 +20,7 @@ def test_saved_shuttle_frames_are_imported_to_list(qapp):
                               url="https://google.com",
                               target_classes="Target Class Names",
                               period=300,
-                              log_edittext_widget=QLineEdit(),
+                              state_widget=QLineEdit(),
                               file_name="shuttles_test.json")
 
     result = shuttleWidget.saved_shuttles_json()
@@ -41,7 +41,7 @@ def test_shuttle_is_added_with_data_and_gui(qapp):
                               url="https://targetcoders.com",
                               target_classes="class1 class2",
                               period=500,
-                              log_edittext_widget=QTextEdit(),
+                              state_widget=QTextEdit(),
                               file_name="shuttles_test.json")
 
     # Check Data
@@ -68,7 +68,7 @@ def test_remove_shuttle(qapp):
                               url="https://targetcoders.com",
                               target_classes="class1 class2",
                               period=500,
-                              log_edittext_widget=QTextEdit(),
+                              state_widget=QTextEdit(),
                               file_name="shuttles_test.json")
     layout = shuttleWidget.shuttles_vbox_layout.itemAt(0).layout()
     delete_button = layout.itemAt(1).widget()

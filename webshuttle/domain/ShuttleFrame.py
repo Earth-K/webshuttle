@@ -124,7 +124,7 @@ class ShuttleFrame(QWidget, Observer):
                                                                     url_widget=url_widget,
                                                                     period_widget=period_widget,
                                                                     target_classes_widget=target_classes_widget,
-                                                                    update_list_widget=log_edittext_widget),
+                                                                    state_widget=log_edittext_widget),
                                                  self.chrome_service, pygame.mixer.Sound("resource/sounds/sound.wav"))
             self.shuttles[shuttle_seq].start()
         else:

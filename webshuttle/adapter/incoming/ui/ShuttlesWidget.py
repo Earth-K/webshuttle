@@ -3,18 +3,19 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit, QPushButton, QSpinBox, QFrame, \
     QMessageBox
 
+from webshuttle.adapter.incoming.ui import StateWidget
 from webshuttle.application.CreateShuttleFrameService import CreateShuttleFrameService
-from webshuttle.application.port.incoming import CreateShuttleFrameUseCase
-from webshuttle.domain.DefaultTime import DefaultTime
-from webshuttle.domain.LogText import LogText
+from webshuttle.application.CreateShuttleWidgetGroupService import CreateShuttleWidgetGroupService
+from webshuttle.application.ExportShuttlesService import ExportShuttlesService
 from webshuttle.application.GetShuttlesService import GetShuttlesService
 from webshuttle.application.ImportShuttlesService import ImportShuttlesService
-from webshuttle.application.port.incoming.GetShuttlesUseCase import GetShuttlesUseCase
+from webshuttle.application.port.incoming import CreateShuttleFrameUseCase
+from webshuttle.application.port.incoming.CreateShuttleWidgetGroupUseCase import CreateShuttleWidgetGroupUseCase
 from webshuttle.application.port.incoming.ExportShuttlesUseCase import ExportShuttlesUseCase
+from webshuttle.application.port.incoming.GetShuttlesUseCase import GetShuttlesUseCase
 from webshuttle.application.port.incoming.ImportShuttlesUseCase import ImportShuttlesUseCase
-from webshuttle.domain.ShuttleWidgetGroup import ShuttleWidgetGroup
-from webshuttle.adapter.incoming.ui import StateWidget
-from webshuttle.application.ExportShuttlesService import ExportShuttlesService
+from webshuttle.domain.DefaultTime import DefaultTime
+from webshuttle.domain.LogText import LogText
 
 pygame.init()
 
@@ -69,6 +70,7 @@ class ShuttlesWidget(QWidget):
         self.import_shuttles_service: ImportShuttlesUseCase = ImportShuttlesService()
         self.export_shuttles_service: ExportShuttlesUseCase = ExportShuttlesService()
         self.create_shuttle_frame_service: CreateShuttleFrameUseCase = CreateShuttleFrameService()
+        self.create_shuttle_widget_group_service: CreateShuttleWidgetGroupUseCase = CreateShuttleWidgetGroupService()
         self._init_ui()
 
     def _init_ui(self):
@@ -84,29 +86,28 @@ class ShuttlesWidget(QWidget):
         self.setLayout(wrap_vbox_layout)
         self.show()
 
-    def add_shuttle(self, url, period, target_classes, name, log_edittext_widget, file_name="shuttles.json"):
+    def add_shuttle(self, url, period, target_classes, name, state_widget, file_name="shuttles.json"):
         shuttle_name_widget = shuttle_name_lineedit(name)
         target_classes_widget = target_classes_lineedit(target_classes)
         url_widget = url_lineedit(url)
         period_widget = period_spinbox(period)
+
+        shuttle_widget_group = self.create_shuttle_widget_group_service.create_shuttle_widget_group(
+            shuttle_name_widget=shuttle_name_widget, url_widget=url_widget, target_classes_widget=target_classes_widget,
+            period_widget=period_widget, state_widget=state_widget, parent=None)
         shuttle_frame = self.create_shuttle_frame_service.create_shuttle_frame(shuttles=self.shuttles,
                                                                                shuttle_seq=self.shuttle_seq,
                                                                                chrome_service=self.chrome_service,
-                                                                               shuttle_widget_group=ShuttleWidgetGroup(
-                                                                                   shuttle_name_widget=shuttle_name_widget,
-                                                                                   url_widget=url_widget,
-                                                                                   target_classes_widget=target_classes_widget,
-                                                                                   period_widget=period_widget,
-                                                                                   update_list_widget=log_edittext_widget,
-                                                                                   parent=None
-                                                                               ), shuttles_widget=self, time=self.time)
+                                                                               shuttle_widget_group=shuttle_widget_group,
+                                                                               shuttles_widget=self, time=self.time)
 
         self.shuttle_frames[self.shuttle_seq] = shuttle_frame
         shuttleLayout = QHBoxLayout()
         shuttleLayout.addWidget(shuttle_frame.get_frame())
         shuttleLayout.addWidget(
             self._delete_button(shuttle_frame=shuttle_frame.get_frame(), shuttle_name_widget=shuttle_name_widget,
-                                log_edittext_widget=log_edittext_widget, shuttle_seq=self.shuttle_seq, file_name=file_name))
+                                log_edittext_widget=state_widget, shuttle_seq=self.shuttle_seq,
+                                file_name=file_name))
         self.shuttles_vbox_layout.addLayout(shuttleLayout)
         self.shuttle_seq += 1
         self.save_shuttles(file_name=file_name)
@@ -133,7 +134,8 @@ class ShuttlesWidget(QWidget):
                                          delete_btn, file_name))
         return delete_btn
 
-    def _remove_shuttle(self, shuttle_frame: QFrame, shuttle_name_widget, log_edittext_widget, shuttle_seq, delete_btn, file_name):
+    def _remove_shuttle(self, shuttle_frame: QFrame, shuttle_name_widget, log_edittext_widget, shuttle_seq, delete_btn,
+                        file_name):
         reply = self._confirm(shuttle_name_widget)
         if reply == QMessageBox.No:
             return
