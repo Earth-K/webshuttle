@@ -15,7 +15,7 @@ def qapp():
 
 
 def test_settings_are_applied_when_clicked_ok(qapp):
-    shuttles_widget = ShuttlesWidget(None, None, None)
+    shuttles_widget = ShuttlesWidget(None, None)
     mock_save_shuttles = MagicMock()
     shuttles_widget.save_shuttles = mock_save_shuttles
     spinbox = QSpinBox()
@@ -27,8 +27,7 @@ def test_settings_are_applied_when_clicked_ok(qapp):
                                                                         period_widget=spinbox,
                                                                         target_classes_widget=QLineEdit(),
                                                                         parent=None
-                                                                        ),
-                                shuttles_widget=shuttles_widget, time=None)
+                                                                        ), shuttles_widget=shuttles_widget)
 
     dialog = shuttleFrame.create_settings_dialog()
     shuttleFrame.draft_shuttleWidgets.url.setText("testUrl")
@@ -46,7 +45,7 @@ def test_settings_are_applied_when_clicked_ok(qapp):
 
 
 def test_cancel_draft(qapp):
-    shuttles_widget = ShuttlesWidget(None, None, None)
+    shuttles_widget = ShuttlesWidget(None, None)
     mock_save_shuttles = MagicMock()
     shuttles_widget.save_shuttles = mock_save_shuttles
     spinbox = QSpinBox()
@@ -58,8 +57,7 @@ def test_cancel_draft(qapp):
                                                                         period_widget=spinbox,
                                                                         target_classes_widget=QLineEdit(),
                                                                         parent=None
-                                                                        ),
-                                shuttles_widget=shuttles_widget, time=None)
+                                                                        ), shuttles_widget=shuttles_widget)
     shuttleFrame.draft_shuttleWidgets.url.setText("url")
     shuttleFrame.draft_shuttleWidgets.name.setText("name")
     shuttleFrame.draft_shuttleWidgets.target_classes.setText("targetClasses")
@@ -76,7 +74,7 @@ def test_cancel_draft(qapp):
 
 
 def test_apply_draft(qapp):
-    shuttles_widget = ShuttlesWidget(None, None, None)
+    shuttles_widget = ShuttlesWidget(None, None)
     mock_save_shuttles = MagicMock()
     shuttles_widget.save_shuttles = mock_save_shuttles
     spinbox = QSpinBox()
@@ -88,8 +86,7 @@ def test_apply_draft(qapp):
                                                                         period_widget=spinbox,
                                                                         target_classes_widget=QLineEdit(),
                                                                         parent=None
-                                                                        ),
-                                shuttles_widget=shuttles_widget, time=None)
+                                                                        ), shuttles_widget=shuttles_widget)
     shuttleFrame.draft_shuttleWidgets.url.setText("url")
     shuttleFrame.draft_shuttleWidgets.name.setText("name")
     shuttleFrame.draft_shuttleWidgets.target_classes.setText("targetClasses")
@@ -116,8 +113,7 @@ def test_UI_of_showSettings_QDialog(qapp):
                                                                         period_widget=spinbox,
                                                                         target_classes_widget=QLineEdit(),
                                                                         parent=None
-                                                                        ),
-                                shuttles_widget=parent, time=None)
+                                                                        ), shuttles_widget=parent)
 
     dialog = shuttleFrame.create_settings_dialog()
 

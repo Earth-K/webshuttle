@@ -20,7 +20,7 @@ class MainWindow(QMainWindow):
         self.shuttles_widget = ShuttlesWidget(self, self.chrome_service)
         self.statusBar()
         self.state_widget = StateWidget(self)
-        self.shuttle_add_widget = ShuttleAddWidget(self, self.shuttles_widget, self.state_widget, chrome_service)
+        self.shuttle_add_widget = ShuttleAddWidget(self, self.shuttles_widget, self.state_widget, self.chrome_service)
         self.base_widget = BaseWidget(self, self.shuttle_add_widget, self.shuttles_widget, self.state_widget)
         self.setCentralWidget(self.base_widget)
 

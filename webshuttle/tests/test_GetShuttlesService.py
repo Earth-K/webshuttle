@@ -18,13 +18,15 @@ def test_get_shuttles(qapp):
     shuttle_frames = {}
     for i in range(4):
         str_i = str(i)
-        shuttle_frames["shuttle" + str_i] = ShuttleFrame({}, i, None,
-                                                         ShuttleWidgetGroup(QWidget(),
-                                                                            shuttle_name_widget=QLineEdit(f"셔틀{str_i}"),
-                                                                            url_widget=QLineEdit(f"http://{str_i}.com"),
-                                                                            period_widget=QSpinBox(),
-                                                                            target_classes_widget=QLineEdit(f"targetClasses{str_i}")),
-                                                         QWidget(), None)
+        shuttle_frames["shuttle" + str_i] = ShuttleFrame({}, i, None, ShuttleWidgetGroup(QWidget(),
+                                                                                         shuttle_name_widget=QLineEdit(
+                                                                                             f"셔틀{str_i}"),
+                                                                                         url_widget=QLineEdit(
+                                                                                             f"http://{str_i}.com"),
+                                                                                         period_widget=QSpinBox(),
+                                                                                         target_classes_widget=QLineEdit(
+                                                                                             f"targetClasses{str_i}")),
+                                                         QWidget())
 
     shuttle_frames.pop("shuttle1")
     result = getShuttlesService.saved_shuttles_to_json(shuttle_frames)

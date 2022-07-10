@@ -2,6 +2,7 @@ import pygame
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFrame, QPushButton, QHBoxLayout, QVBoxLayout, QLabel, QWidget, QDialog, QSpinBox, QLineEdit
 
+from webshuttle.domain.DefaultTime import DefaultTime
 from webshuttle.domain.Observer import Observer
 from webshuttle.domain.LogText import LogText
 from webshuttle.domain.Shuttle import Shuttle
@@ -10,11 +11,10 @@ from webshuttle.adapter.incoming.ui.DraftShuttleWidgets import DraftShuttleWidge
 
 
 class ShuttleFrame(QWidget, Observer):
-    def __init__(self, shuttles, shuttle_seq, chrome_service, shuttle_widget_group, shuttles_widget, time):
+    def __init__(self, shuttles, shuttle_seq, chrome_service, shuttle_widget_group, shuttles_widget):
         super().__init__(shuttles_widget)
         self.shuttles = shuttles
         self.chrome_service = chrome_service
-        self.time = time
         self.vBoxLayout = None
         self.shuttle_seq = shuttle_seq
         self.shuttleWidgets: ShuttleWidgetGroup = shuttle_widget_group
@@ -29,7 +29,7 @@ class ShuttleFrame(QWidget, Observer):
         self.start_stop_button = self.start_button(self.shuttle_seq, self.draft_shuttleWidgets.name,
                                                    self.draft_shuttleWidgets.url, self.draft_shuttleWidgets.period,
                                                    self.draft_shuttleWidgets.target_classes,
-                                                   self.shuttleWidgets.update_list_widget)
+                                                   self.shuttleWidgets.state_widget)
         self.frame = QFrame()
         self.frame.setFrameShape(QFrame.Box)
         self.frame.setFrameShadow(QFrame.Sunken)
@@ -115,7 +115,7 @@ class ShuttleFrame(QWidget, Observer):
             shuttle_name = shuttle_name_widget.text()
             if shuttle_name == "":
                 shuttle_name = "이름 없음"
-            message = LogText(self.time.localtime()).started_shuttle(shuttle_name)
+            message = LogText(shuttle_name, DefaultTime().localtime()).started_shuttle()
             log_edittext_widget.append(message)
             period_widget.setReadOnly(True)
             start_btn_widget.setText('중지')
@@ -129,7 +129,10 @@ class ShuttleFrame(QWidget, Observer):
             self.shuttles[shuttle_seq].start()
         else:
             self.settingsButton.setDisabled(False)
-            message = LogText(self.time.localtime()).stopped_shuttle(shuttle_name_widget.text())
+            shuttle_name = shuttle_name_widget.text()
+            if shuttle_name == "":
+                shuttle_name = "이름 없음"
+            message = LogText(shuttle_name, DefaultTime().localtime()).stopped_shuttle()
             log_edittext_widget.append(message)
             period_widget.setReadOnly(False)
             self.shuttles[shuttle_seq] = None

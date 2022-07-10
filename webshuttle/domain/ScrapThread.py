@@ -1,6 +1,7 @@
 from PyQt5.QtCore import QThread
 from selenium import webdriver
 
+from webshuttle.domain.DefaultTime import DefaultTime
 from webshuttle.domain.LogText import LogText
 from webshuttle.domain.WebScraper import WebScraper
 
@@ -13,11 +14,11 @@ def get_text_list(elements):
 
 
 class ScrapThread(QThread):
-    def __init__(self, parent, shuttle_id, shuttle_widget_group, time, sound, shuttle_list, chrome_service):
+    def __init__(self, parent, shuttle_id, shuttle_widget_group, sound, shuttle_list, chrome_service):
         super().__init__(parent)
         self.id = shuttle_id
         self.shuttle_widget_group = shuttle_widget_group
-        self.time = time
+        self.time = DefaultTime()
         self.sound = sound
         self.shuttle_list = shuttle_list
         self.chrome_service = chrome_service
@@ -54,9 +55,8 @@ class ScrapThread(QThread):
                         # 한 번에 보이는 정보의 양을 늘리기 위해 줄 바꿈 문자를 | 로 변경함
                         no_newline_text += e.text.replace("\n", " | ") + "\n"
             if len(no_newline_text) > 0:
-                log_text = LogText(self.time.localtime())
-                self.shuttle_widget_group.state_widget.append(
-                    log_text.updated_shuttle_name(self.shuttle_widget_group.shuttle_name_widget.text()))
+                log_text = LogText(self.shuttle_widget_group.shuttle_name_widget.text(), self.time.localtime())
+                self.shuttle_widget_group.state_widget.append(log_text.updated_shuttle_name())
                 self.shuttle_widget_group.state_widget.append(f"{no_newline_text}\n")
                 self.sound.play()
 

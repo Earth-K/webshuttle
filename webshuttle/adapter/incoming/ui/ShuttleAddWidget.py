@@ -92,7 +92,7 @@ class ShuttleAddWidget(QWidget):
         result: WebElement = self._webScraper.get_target_element()
         self.element_class_names = self._webScraper.get_element_class_names_of_target()
         self.text_edit.setText(
-            '{0} - get target element data.\n'.format(LogText(time.localtime()).formatted_localtime()))
+            '{0} - get target element data.\n'.format(LogText(time.localtime()).localtime()))
         self.text_edit.append('class names : {0}'.format(self.element_class_names))
         self.text_edit.append('id : {0}'.format(self._webScraper.get_element_id()))
         elements = self._webScraper.get_elements_by_classnames(self.element_class_names)

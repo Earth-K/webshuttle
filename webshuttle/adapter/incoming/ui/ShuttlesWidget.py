@@ -4,18 +4,18 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit
     QMessageBox
 
 from webshuttle.adapter.incoming.ui import StateWidget
+from webshuttle.application.CreateLogTextService import CreateLogTextService
 from webshuttle.application.CreateShuttleFrameService import CreateShuttleFrameService
 from webshuttle.application.CreateShuttleWidgetGroupService import CreateShuttleWidgetGroupService
 from webshuttle.application.ExportShuttlesService import ExportShuttlesService
 from webshuttle.application.GetShuttlesService import GetShuttlesService
 from webshuttle.application.ImportShuttlesService import ImportShuttlesService
 from webshuttle.application.port.incoming import CreateShuttleFrameUseCase
+from webshuttle.application.port.incoming.CreateLogTextUseCase import CreateLogTextUseCase
 from webshuttle.application.port.incoming.CreateShuttleWidgetGroupUseCase import CreateShuttleWidgetGroupUseCase
 from webshuttle.application.port.incoming.ExportShuttlesUseCase import ExportShuttlesUseCase
 from webshuttle.application.port.incoming.GetShuttlesUseCase import GetShuttlesUseCase
 from webshuttle.application.port.incoming.ImportShuttlesUseCase import ImportShuttlesUseCase
-from webshuttle.domain.DefaultTime import DefaultTime
-from webshuttle.domain.LogText import LogText
 
 pygame.init()
 
@@ -59,18 +59,18 @@ def _stop(period, start_btn, stop_btn):
 
 
 class ShuttlesWidget(QWidget):
-    def __init__(self, parent, chrome_service, time=DefaultTime()):
+    def __init__(self, parent, chrome_service):
         super(ShuttlesWidget, self).__init__(parent)
         self.shuttle_seq = 0
         self.shuttle_frames = {}
         self.shuttles = {}
         self.chrome_service = chrome_service
-        self.time = time
         self.get_shuttles_service: GetShuttlesUseCase = GetShuttlesService()
         self.import_shuttles_service: ImportShuttlesUseCase = ImportShuttlesService()
         self.export_shuttles_service: ExportShuttlesUseCase = ExportShuttlesService()
         self.create_shuttle_frame_service: CreateShuttleFrameUseCase = CreateShuttleFrameService()
         self.create_shuttle_widget_group_service: CreateShuttleWidgetGroupUseCase = CreateShuttleWidgetGroupService()
+        self.create_log_text_service: CreateLogTextUseCase = CreateLogTextService()
         self._init_ui()
 
     def _init_ui(self):
@@ -99,7 +99,7 @@ class ShuttlesWidget(QWidget):
                                                                                shuttle_seq=self.shuttle_seq,
                                                                                chrome_service=self.chrome_service,
                                                                                shuttle_widget_group=shuttle_widget_group,
-                                                                               shuttles_widget=self, time=self.time)
+                                                                               shuttles_widget=self)
 
         self.shuttle_frames[self.shuttle_seq] = shuttle_frame
         shuttleLayout = QHBoxLayout()
@@ -141,10 +141,10 @@ class ShuttlesWidget(QWidget):
             return
 
         if self.shuttles.get(shuttle_seq) is not None:
-            log_edittext_widget.append(LogText(self.time.localtime()).stopped_shuttle(shuttle_name_widget.text()))
+            log_edittext_widget.append(self.create_log_text_service.stopped(shuttle_name_widget.text()))
             self.shuttles[shuttle_seq] = None
 
-        log_edittext_widget.append(LogText(self.time.localtime()).removed_shuttle(shuttle_name_widget.text()))
+        log_edittext_widget.append(self.create_log_text_service.removed(shuttle_name_widget.text()))
         shuttle_frame.deleteLater()
         delete_btn.deleteLater()
         self.shuttles_vbox_layout.takeAt(shuttle_seq)
