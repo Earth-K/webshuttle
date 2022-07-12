@@ -137,5 +137,5 @@ class ShuttleFrame(QWidget, Observer):
             message = LogText(shuttle_name, DefaultTime().localtime()).stopped_shuttle()
             log_edittext_widget.append(message)
             period_widget.setReadOnly(False)
-            self.shuttles[shuttle_seq] = None
+            self.shuttles[shuttle_seq].stop()
             start_btn_widget.setText('시작')

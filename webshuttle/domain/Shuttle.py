@@ -1,5 +1,4 @@
 from PyQt5.QtCore import QThread
-from selenium.webdriver.chrome.service import Service
 
 from webshuttle.domain.ScrapThread import ScrapThread
 
@@ -16,6 +15,7 @@ class Shuttle:
         self.sound = mixer_sound
 
     def start(self):
+        self.shuttle_list[self.id] = self
         if self.shuttle_thread is None:
             self.shuttle_thread: QThread = ScrapThread(self.parent_widget, self.id, self.shuttle_widget_group,
                                                        self.sound, self.shuttle_list, self.chrome_driver)
@@ -24,4 +24,4 @@ class Shuttle:
     def stop(self):
         self.shuttle_list[self.id] = None
         if self.shuttle_thread is not None:
-            self.shuttle_thread.close()
+            self.shuttle_thread.stop()
