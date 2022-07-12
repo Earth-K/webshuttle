@@ -20,7 +20,7 @@ def test_settings_are_applied_when_clicked_ok(qapp):
     shuttles_widget.save_shuttles = mock_save_shuttles
     spinbox = QSpinBox()
     spinbox.setMaximum(38000)
-    shuttleFrame = ShuttleFrame(shuttles={}, shuttle_seq=0, chrome_service=None,
+    shuttleFrame = ShuttleFrame(shuttles={}, shuttle_seq=0, chrome_driver=None,
                                 shuttle_widget_group=ShuttleWidgetGroup(url_widget=QLineEdit(),
                                                                         state_widget=QTextEdit(),
                                                                         shuttle_name_widget=QLineEdit(),
@@ -50,7 +50,7 @@ def test_cancel_draft(qapp):
     shuttles_widget.save_shuttles = mock_save_shuttles
     spinbox = QSpinBox()
     spinbox.setMaximum(86400)
-    shuttleFrame = ShuttleFrame(shuttles={}, shuttle_seq=0, chrome_service=None,
+    shuttleFrame = ShuttleFrame(shuttles={}, shuttle_seq=0, chrome_driver=None,
                                 shuttle_widget_group=ShuttleWidgetGroup(url_widget=QLineEdit(),
                                                                         state_widget=QTextEdit(),
                                                                         shuttle_name_widget=QLineEdit(),
@@ -79,7 +79,7 @@ def test_apply_draft(qapp):
     shuttles_widget.save_shuttles = mock_save_shuttles
     spinbox = QSpinBox()
     spinbox.setMaximum(86400)
-    shuttleFrame = ShuttleFrame(shuttles={}, shuttle_seq=0, chrome_service=None,
+    shuttleFrame = ShuttleFrame(shuttles={}, shuttle_seq=0, chrome_driver=None,
                                 shuttle_widget_group=ShuttleWidgetGroup(url_widget=QLineEdit(),
                                                                         state_widget=QTextEdit(),
                                                                         shuttle_name_widget=QLineEdit(),
@@ -106,7 +106,7 @@ def test_UI_of_showSettings_QDialog(qapp):
     parent = QWidget()
     spinbox = QSpinBox()
     spinbox.setMaximum(86000)
-    shuttleFrame = ShuttleFrame(shuttles={}, shuttle_seq=0, chrome_service=None,
+    shuttleFrame = ShuttleFrame(shuttles={}, shuttle_seq=0, chrome_driver=None,
                                 shuttle_widget_group=ShuttleWidgetGroup(url_widget=QLineEdit(),
                                                                         state_widget=QTextEdit(),
                                                                         shuttle_name_widget=QLineEdit(),

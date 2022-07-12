@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import QWidget, QPushButton, QVBoxLayout, QTextEdit, QLineE
     QHBoxLayout, QLabel, QMessageBox
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.remote.webelement import WebElement
 
 from webshuttle.domain.EventListenerInjector import EventListenerInjector
@@ -23,17 +24,18 @@ def init_event_listener(web_scraper):
 
 
 class ShuttleAddWidget(QWidget):
-    def __init__(self, parent, shuttles_widget: ShuttlesWidget, state_widget: StateWidget, chrome_service):
+    def __init__(self, parent, shuttles_widget: ShuttlesWidget, state_widget: StateWidget, chrome_driver):
         super(ShuttleAddWidget, self).__init__(parent)
         self.text_edit = QTextEdit()
         self.shuttle_name_line_edit = QLineEdit()
         self.url_line_edit = QLineEdit()
         self.addshuttle_button = QPushButton()
         self.element_class_names = None
+        self.chrome_driver = chrome_driver
         self._webScraper = None
-        self._init_ui(shuttles_widget, state_widget, chrome_service)
+        self._init_ui(shuttles_widget, state_widget)
 
-    def _init_ui(self, shuttles_widget, state_widget, chrome_service):
+    def _init_ui(self, shuttles_widget, state_widget):
         main_layout = QVBoxLayout()
 
         shuttlename_layout = QHBoxLayout()
@@ -47,7 +49,7 @@ class ShuttleAddWidget(QWidget):
         self.url_line_edit.setPlaceholderText('스크랩 하고 싶은 웹 페이지의 URL ')
         url_layout.addWidget(self.url_line_edit)
         open_browser_button = QPushButton('영역 선택하러 가기', self)
-        open_browser_button.clicked.connect(lambda: self._open_browser(self.url_line_edit, chrome_service))
+        open_browser_button.clicked.connect(lambda: self._open_browser(self.url_line_edit))
         url_layout.addWidget(open_browser_button)
         main_layout.addLayout(url_layout)
 
@@ -69,7 +71,9 @@ class ShuttleAddWidget(QWidget):
         self.setLayout(main_layout)
         self.show()
 
-    def _open_browser(self, lineedit, chrome_service):
+    def _open_browser(self, lineedit):
+        chrome_service = Service(self.chrome_driver)
+        chrome_service.creationflags = 0x08000000
         try:
             self._webScraper = WebScraper(start_url=lineedit.text(),
                                           driver=webdriver.Chrome(service=chrome_service))

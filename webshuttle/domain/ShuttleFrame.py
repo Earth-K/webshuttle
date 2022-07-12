@@ -1,6 +1,7 @@
 import pygame
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFrame, QPushButton, QHBoxLayout, QVBoxLayout, QLabel, QWidget, QDialog, QSpinBox, QLineEdit
+from selenium.webdriver.chrome.service import Service
 
 from webshuttle.domain.DefaultTime import DefaultTime
 from webshuttle.domain.Observer import Observer
@@ -11,10 +12,11 @@ from webshuttle.adapter.incoming.ui.DraftShuttleWidgets import DraftShuttleWidge
 
 
 class ShuttleFrame(QWidget, Observer):
-    def __init__(self, shuttles, shuttle_seq, chrome_service, shuttle_widget_group, shuttles_widget):
+    def __init__(self, shuttles, shuttle_seq, chrome_driver, shuttle_widget_group, shuttles_widget):
         super().__init__(shuttles_widget)
         self.shuttles = shuttles
-        self.chrome_service = chrome_service
+        self.chrome_driver = chrome_driver
+
         self.vBoxLayout = None
         self.shuttle_seq = shuttle_seq
         self.shuttleWidgets: ShuttleWidgetGroup = shuttle_widget_group
@@ -125,7 +127,7 @@ class ShuttleFrame(QWidget, Observer):
                                                                     period_widget=period_widget,
                                                                     target_classes_widget=target_classes_widget,
                                                                     state_widget=log_edittext_widget),
-                                                 self.chrome_service, pygame.mixer.Sound("resource/sounds/sound.wav"))
+                                                 self.chrome_driver, pygame.mixer.Sound("resource/sounds/sound.wav"))
             self.shuttles[shuttle_seq].start()
         else:
             self.settingsButton.setDisabled(False)

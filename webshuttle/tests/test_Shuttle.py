@@ -21,7 +21,7 @@ def test_shuttle_is_become_None_when_stopped(qapp):
                                                               period_widget=QSpinBox(),
                                                               target_classes_widget=QLineEdit(),
                                                               state_widget=QTextEdit(),
-                                                              parent=None), chrome_service=None, mixer_sound=None)
+                                                              parent=None), chrome_driver=None, mixer_sound=None)
     shuttle.shuttle_list.append(shuttle)
 
     shuttle.stop()

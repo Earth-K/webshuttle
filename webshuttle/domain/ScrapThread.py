@@ -1,5 +1,6 @@
 from PyQt5.QtCore import QThread
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
 
 from webshuttle.domain.DefaultTime import DefaultTime
 from webshuttle.domain.LogText import LogText
@@ -14,17 +15,19 @@ def get_text_list(elements):
 
 
 class ScrapThread(QThread):
-    def __init__(self, parent, shuttle_id, shuttle_widget_group, sound, shuttle_list, chrome_service):
+    def __init__(self, parent, shuttle_id, shuttle_widget_group, sound, shuttle_list, chrome_driver):
         super().__init__(parent)
         self.id = shuttle_id
         self.shuttle_widget_group = shuttle_widget_group
         self.time = DefaultTime()
         self.sound = sound
         self.shuttle_list = shuttle_list
-        self.chrome_service = chrome_service
+        self.chrome_driver = chrome_driver
 
     def run(self) -> None:
         pre_shuttle_thread = self.shuttle_list[self.id]
+        chrome_service = Service(self.chrome_driver)
+        chrome_service.creationflags = 0x08000000
         text_list = []
         options = webdriver.ChromeOptions()
         options.add_argument('headless')
@@ -32,7 +35,7 @@ class ScrapThread(QThread):
         options.add_argument('window-size=1920x1080')
         options.add_argument("disable-gpu")
         tmp_web_crawler = WebScraper(start_url=self.shuttle_widget_group.url_widget.text(),
-                                     driver=webdriver.Chrome(service=self.chrome_service, options=options))
+                                     driver=webdriver.Chrome(service=chrome_service, options=options))
         while True:
             if pre_shuttle_thread != self.shuttle_list[self.id]:
                 break

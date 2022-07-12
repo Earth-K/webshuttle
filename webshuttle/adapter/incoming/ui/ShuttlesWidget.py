@@ -2,6 +2,7 @@ import pygame
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit, QPushButton, QSpinBox, QFrame, \
     QMessageBox
+from webdriver_manager.chrome import ChromeDriverManager
 
 from webshuttle.adapter.incoming.ui import StateWidget
 from webshuttle.application.CreateLogTextService import CreateLogTextService
@@ -59,12 +60,12 @@ def _stop(period, start_btn, stop_btn):
 
 
 class ShuttlesWidget(QWidget):
-    def __init__(self, parent, chrome_service):
+    def __init__(self, parent, chrome_driver):
         super(ShuttlesWidget, self).__init__(parent)
         self.shuttle_seq = 0
         self.shuttle_frames = {}
         self.shuttles = {}
-        self.chrome_service = chrome_service
+        self.driver_chrome = chrome_driver
         self.get_shuttles_service: GetShuttlesUseCase = GetShuttlesService()
         self.import_shuttles_service: ImportShuttlesUseCase = ImportShuttlesService()
         self.export_shuttles_service: ExportShuttlesUseCase = ExportShuttlesService()
@@ -97,7 +98,7 @@ class ShuttlesWidget(QWidget):
             period_widget=period_widget, state_widget=state_widget, parent=None)
         shuttle_frame = self.create_shuttle_frame_service.create_shuttle_frame(shuttles=self.shuttles,
                                                                                shuttle_seq=self.shuttle_seq,
-                                                                               chrome_service=self.chrome_service,
+                                                                               chrome_driver=self.driver_chrome,
                                                                                shuttle_widget_group=shuttle_widget_group,
                                                                                shuttles_widget=self)
 

@@ -15,7 +15,7 @@ def qapp():
 
 def test_saved_shuttle_frames_are_imported_to_list(qapp):
     parent = QMainWindow()
-    shuttleWidget = ShuttlesWidget(parent=parent, chrome_service=None)
+    shuttleWidget = ShuttlesWidget(parent=parent, chrome_driver=None)
     shuttleWidget.add_shuttle(name="Shuttle Name",
                               url="https://google.com",
                               target_classes="Target Class Names",
@@ -34,7 +34,7 @@ def test_saved_shuttle_frames_are_imported_to_list(qapp):
 
 def test_shuttle_is_added_with_data_and_gui(qapp):
     parent = QMainWindow()
-    shuttleWidget = ShuttlesWidget(parent=parent, chrome_service=None)
+    shuttleWidget = ShuttlesWidget(parent=parent, chrome_driver=None)
     shuttleWidget.shuttles_vbox_layout = QVBoxLayout()
 
     shuttleWidget.add_shuttle(name="Shuttle Name",
@@ -61,7 +61,7 @@ def test_shuttle_is_added_with_data_and_gui(qapp):
 
 def test_remove_shuttle(qapp):
     parent = QMainWindow()
-    shuttleWidget = ShuttlesWidget(parent=parent, chrome_service=None)
+    shuttleWidget = ShuttlesWidget(parent=parent, chrome_driver=None)
     shuttleWidget.shuttles_vbox_layout = QVBoxLayout()
 
     shuttleWidget.add_shuttle(name="Shuttle Name",
