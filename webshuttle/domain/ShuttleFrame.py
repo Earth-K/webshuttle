@@ -127,7 +127,7 @@ class ShuttleFrame(QWidget, Observer):
                                                                     period_widget=period_widget,
                                                                     target_classes_widget=target_classes_widget,
                                                                     state_widget=log_edittext_widget),
-                                                 self.chrome_driver, pygame.mixer.Sound("resource/sounds/sound.wav"))
+                                                 self.chrome_driver)
             self.shuttles[shuttle_seq].start()
         else:
             self.settingsButton.setDisabled(False)
