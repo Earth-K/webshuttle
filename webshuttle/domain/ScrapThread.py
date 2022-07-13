@@ -5,71 +5,29 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 
 from webshuttle.domain.DefaultTime import DefaultTime
-from webshuttle.domain.LogText import LogText
 from webshuttle.domain.WebScraper import WebScraper
 
 
-def get_text_list(elements):
-    result = []
-    for e in elements:
-        result.append(e.text)
-    return result
-
-
 class ScrapThread(QThread):
-    def __init__(self, parent, shuttle_id, shuttle_widget_group, sound, shuttle_list, chrome_driver):
+    def __init__(self, parent, shuttle_seq, shuttle_widget_group, shuttle_list, chrome_driver):
         super().__init__(parent)
-        self.id = shuttle_id
+        self.shuttle_seq = shuttle_seq
         self.shuttle_widget_group = shuttle_widget_group
         self.time = DefaultTime()
-        self.sound = sound
         self.shuttle_list = shuttle_list
         self.chrome_driver = chrome_driver
         self.web_scraper = None
-        self.event = threading.Event()
 
     def run(self) -> None:
-        pre_shuttle_thread = self.shuttle_list[self.id]
         chrome_service = Service(self.chrome_driver)
         chrome_service.creationflags = 0x08000000
-        text_list = []
         options = webdriver.ChromeOptions()
         options.add_argument('headless')
         options.add_argument("--start-maximized")
         options.add_argument('window-size=1920x1080')
         options.add_argument("disable-gpu")
-        self.web_scraper = WebScraper(start_url=self.shuttle_widget_group.url_widget.text(),
-                                      driver=webdriver.Chrome(service=chrome_service, options=options))
-        while True:
-            if pre_shuttle_thread != self.shuttle_list[self.id]:
-                break
-            self.web_scraper.driver.refresh()
-            self.time.sleep(1)
-            elements = self.web_scraper.get_elements_by_classnames(self.shuttle_widget_group.target_classes_widget.text())
-            no_newline_text = ""
-            if len(text_list) > 0:
-                new_text_list = get_text_list(elements)
-                for new_text in new_text_list:
-                    if new_text not in text_list:
-                        if len(new_text) > 0:
-                            # 한 번에 보이는 정보의 양을 늘리기 위해 줄 바꿈 문자를 | 로 변경함
-                            no_newline_text += new_text.replace("\n", " | ") + "\n"
-                text_list = new_text_list
-            else:
-                for e in elements:
-                    if len(e.text) > 0:
-                        text_list.append(e.text)
-                        # 한 번에 보이는 정보의 양을 늘리기 위해 줄 바꿈 문자를 | 로 변경함
-                        no_newline_text += e.text.replace("\n", " | ") + "\n"
-            if len(no_newline_text) > 0:
-                log_text = LogText(self.shuttle_widget_group.shuttle_name_widget.text(), self.time.localtime())
-                self.shuttle_widget_group.state_widget.append(log_text.updated_shuttle_name())
-                self.shuttle_widget_group.state_widget.append(f"{no_newline_text}\n")
-                self.sound.play()
-
-            self.event.wait(timeout=int(self.shuttle_widget_group.period_widget.text()))
-        self.web_scraper.quit_driver()
-
-    def stop(self):
-        self.shuttle_list[self.id] = None
-        self.event.set()
+        self.web_scraper = WebScraper(shuttle_widget_group=self.shuttle_widget_group,
+                                      driver=webdriver.Chrome(service=chrome_service, options=options),
+                                      shuttle_list=self.shuttle_list, shuttle_seq=self.shuttle_seq)
+        self.web_scraper.get()
+        self.web_scraper.scrap()

@@ -14,7 +14,7 @@ def qapp():
 
 def test_shuttle_is_become_none_when_stopped(qapp):
     shuttles = []
-    shuttle = Shuttle(parent_widget=QWidget(), shuttles=shuttles, shuttle_id=0,
+    shuttle = Shuttle(parent_widget=QWidget(), shuttles=shuttles, shuttle_seq=0,
                       shuttle_widget_group=ShuttleWidgetGroup(shuttle_name_widget=QLineEdit(),
                                                               url_widget=QLineEdit(),
                                                               period_widget=QSpinBox(),
@@ -25,4 +25,4 @@ def test_shuttle_is_become_none_when_stopped(qapp):
 
     shuttle.stop()
 
-    assert shuttles[shuttle.id] is None
+    assert shuttles[shuttle.shuttle_seq] is None

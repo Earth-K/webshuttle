@@ -75,7 +75,7 @@ class ShuttleAddWidget(QWidget):
         chrome_service = Service(self.chrome_driver)
         chrome_service.creationflags = 0x08000000
         try:
-            self._webScraper = WebScraper(start_url=lineedit.text(),
+            self._webScraper = WebScraper(shuttle_widget_group=lineedit.text(),
                                           driver=webdriver.Chrome(service=chrome_service))
         except WebDriverException:
             return

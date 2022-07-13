@@ -1,9 +1,13 @@
+import sys
 from unittest.mock import Mock, MagicMock
 
+import pytest
+from PyQt5.QtWidgets import QWidget, QLineEdit, QApplication
 from selenium.webdriver.chrome import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 
+from webshuttle.domain.ShuttleWidgetGroup import ShuttleWidgetGroup
 from webshuttle.domain.WebScraper import WebScraper
 
 
@@ -16,93 +20,106 @@ def _create_mock_webdriver():
     return mock
 
 
-def test_driver_execute_script():
+def _default_shuttle_widget_group():
+    return ShuttleWidgetGroup(QWidget(), QLineEdit(), QLineEdit(), QLineEdit(), QLineEdit())
+
+
+def _default_web_scraper(mock):
+    return WebScraper(shuttle_widget_group=_default_shuttle_widget_group(), driver=mock, shuttle_list=[], shuttle_seq=0)
+
+
+@pytest.fixture
+def qapp():
+    return QApplication(sys.argv)
+
+
+def test_driver_execute_script(qapp):
     script = """
     let body = document.getElementByTag('body');
     return body;
     """
     mock = _create_mock_webdriver()
     mock.execute_script = MagicMock(return_value=script)
-    sut = WebScraper(start_url="", driver=mock)
+    sut = _default_web_scraper(mock)
 
-    result = sut.execute_script(script)
+    sut.execute_script(script)
 
     mock.execute_script.assert_called_once_with(script)
 
 
-def test_scroll_to():
+def test_scroll_to(qapp):
     x, y = 0, 100
     script = "window.scrollBy({0}, {1});".format(x, y)
     mock = _create_mock_webdriver()
     mock.execute_script = MagicMock(return_value=None)
-    sut = WebScraper(start_url="", driver=mock)
+    sut = _default_web_scraper(mock)
 
     sut.scroll_to(x, y)
 
     mock.execute_script.assert_called_once_with(script)
 
 
-def test_get_target_element():
+def test_get_target_element(qapp):
     mock = _create_mock_webdriver()
     mock.find_elements = MagicMock(return_value=[WebElement(None, None)])
-    sut = WebScraper(start_url="", driver=mock)
+    sut = _default_web_scraper(mock)
 
     result = sut.get_target_element()
 
     mock.find_elements.assert_called_once_with(By.CSS_SELECTOR, ".ws-target-element")
 
 
-def test_get_scroll_y():
+def test_get_scroll_y(qapp):
     script = "return window.scrollY;"
     mock = _create_mock_webdriver()
     mock.execute_script = MagicMock(return_value=None)
-    sut = WebScraper(start_url="", driver=mock)
+    sut = _default_web_scraper(mock)
 
     result = sut.get_scroll_y()
 
     mock.execute_script.assert_called_once_with(script)
 
 
-def test_get_scroll_x():
+def test_get_scroll_x(qapp):
     script = "return window.scrollX;"
     mock = _create_mock_webdriver()
     mock.execute_script = MagicMock(return_value=None)
-    sut = WebScraper(start_url="", driver=mock)
+    sut = _default_web_scraper(mock)
 
     result = sut.get_scroll_x()
 
     mock.execute_script.assert_called_once_with(script)
 
 
-def test_get_element_pos_x():
+def test_get_element_pos_x(qapp):
     script = """
             let targetElement = document.getElementById('ws-tooltip');
             return targetElement.getBoundingClientRect().left-3;
             """
     mock = _create_mock_webdriver()
     mock.execute_script = MagicMock(return_value=None)
-    sut = WebScraper(start_url="", driver=mock)
+    sut = _default_web_scraper(mock)
 
     result = sut.get_element_pos_x()
 
     mock.execute_script.assert_called_once_with(script)
 
 
-def test_get_element_pos_y():
+def test_get_element_pos_y(qapp):
     script = """
             let targetElement = document.getElementById('ws-tooltip');
             return targetElement.getBoundingClientRect().top-3;
             """
     mock = _create_mock_webdriver()
     mock.execute_script = MagicMock(return_value=None)
-    sut = WebScraper(start_url="", driver=mock)
+    sut = _default_web_scraper(mock)
 
     result = sut.get_element_pos_y()
 
     mock.execute_script.assert_called_once_with(script)
 
 
-def test_get_element_class_names_of_target():
+def test_get_element_class_names_of_target(qapp):
     class_names_of_target = "class1 class2"
     script = '''
             const ws_target_element = document.getElementsByClassName('ws-target-element')[0];
@@ -112,7 +129,7 @@ def test_get_element_class_names_of_target():
             '''
     mock = _create_mock_webdriver()
     mock.execute_script = MagicMock(return_value=class_names_of_target)
-    sut = WebScraper(start_url="", driver=mock)
+    sut = _default_web_scraper(mock)
 
     result = sut.get_element_class_names_of_target()
 
@@ -120,14 +137,14 @@ def test_get_element_class_names_of_target():
     assert (class_names_of_target == result)
 
 
-def test_get_element_id():
+def test_get_element_id(qapp):
     script = '''
             const ws_target_element = document.getElementsByClassName('ws-target-element')[0];
             return ws_target_element.id;
             '''
     mock = _create_mock_webdriver()
     mock.execute_script = MagicMock(return_value="id")
-    sut = WebScraper(start_url="", driver=mock)
+    sut = _default_web_scraper(mock)
 
     result = sut.get_element_id()
 
@@ -135,12 +152,12 @@ def test_get_element_id():
     assert (result == "id")
 
 
-def test_get_elements_by_classnames():
+def test_get_elements_by_classnames(qapp):
     class_names = "class1 class2"
     script = 'return document.getElementsByClassName("' + class_names + '")'
     mock = _create_mock_webdriver()
     mock.execute_script = MagicMock(return_value="class1 class2")
-    sut = WebScraper(start_url="", driver=mock)
+    sut = _default_web_scraper(mock)
 
     result = sut.get_elements_by_classnames(class_names)
 
@@ -148,14 +165,14 @@ def test_get_elements_by_classnames():
     assert (class_names == result)
 
 
-def test_is_selected_elements():
+def test_is_selected_elements(qapp):
     script = '''
             const len = document.getElementsByClassName('ws-target-element').length;
             return len > 0 ? true : false;
             '''
     mock = _create_mock_webdriver()
     mock.execute_script = MagicMock(return_value=bool())
-    sut = WebScraper(start_url="", driver=mock)
+    sut = _default_web_scraper(mock)
 
     result = sut.is_selected_elements()
 
@@ -163,10 +180,10 @@ def test_is_selected_elements():
     assert (type(result) == bool)
 
 
-def test_quit_driver():
+def test_quit_driver(qapp):
     mock = _create_mock_webdriver()
     mock.quit = MagicMock(return_value=None)
-    sut = WebScraper(start_url="", driver=mock)
+    sut = _default_web_scraper(mock)
 
     sut.quit_driver()
 

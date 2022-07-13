@@ -25,3 +25,6 @@ class ShuttleWidgetGroup(Subject):
     def notify_update(self):
         for observer in self.observer_list:
             observer.update()
+
+    def get_url_widget(self):
+        return self.url_widget
