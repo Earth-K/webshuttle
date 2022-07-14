@@ -2,7 +2,6 @@ import pygame
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit, QPushButton, QSpinBox, QFrame, \
     QMessageBox
-from webdriver_manager.chrome import ChromeDriverManager
 
 from webshuttle.adapter.incoming.ui import StateWidget
 from webshuttle.application.CreateLogTextService import CreateLogTextService
@@ -96,36 +95,39 @@ class ShuttlesWidget(QWidget):
         url_widget = url_lineedit(url)
         period_widget = period_spinbox(period)
 
-        shuttle_widget_group = self.create_shuttle_widget_group_service.create_shuttle_widget_group(
-            shuttle_name_widget=shuttle_name_widget, url_widget=url_widget, target_classes_widget=target_classes_widget,
-            period_widget=period_widget, state_widget=state_widget, parent=None)
-        shuttle_frame = self.create_shuttle_frame_service.create_shuttle_frame(shuttles=self.shuttles,
-                                                                               shuttle_seq=self.shuttle_seq,
-                                                                               chrome_driver=self.driver_chrome,
-                                                                               shuttle_widget_group=shuttle_widget_group,
-                                                                               shuttles_widget=self)
-
-        self.shuttle_frames[self.shuttle_seq] = shuttle_frame
-        shuttleLayout = QHBoxLayout()
-        shuttleLayout.addWidget(shuttle_frame.get_frame())
-        shuttleLayout.addWidget(
-            self._delete_button(shuttle_frame=shuttle_frame.get_frame(), shuttle_name_widget=shuttle_name_widget,
-                                log_edittext_widget=state_widget, shuttle_seq=self.shuttle_seq,
-                                file_name=file_name))
-        self.shuttles_vbox_layout.addLayout(shuttleLayout)
+        shuttle_frame = self._add_shuttle_frame(period_widget, shuttle_name_widget, state_widget, target_classes_widget, url_widget)
+        self._add_shuttle_hbox_layout_to_vbox_layout(file_name, shuttle_frame, shuttle_name_widget, state_widget)
         self.shuttle_seq += 1
         self.save_shuttles(file_name=file_name)
 
-    def import_external_shuttles(self, state_widget: StateWidget):
-        self.import_shuttles_service.import_external_shuttles(shuttles_widget=self, state_widget=state_widget)
+    def _add_shuttle_frame(self, period_widget, shuttle_name_widget, state_widget, target_classes_widget, url_widget):
+        shuttle_frame = self._create_shuttle_frame(period_widget, shuttle_name_widget, state_widget, target_classes_widget, url_widget)
+        self.shuttle_frames[self.shuttle_seq] = shuttle_frame
+        return shuttle_frame
 
-    def save_shuttles(self, file_name="shuttles.json"):
-        self.export_shuttles_service.save_shuttles_to_json(self.saved_shuttles_json(), file_name)
+    def _create_shuttle_frame(self, period_widget, shuttle_name_widget, state_widget, target_classes_widget, url_widget):
+        shuttle_widget_group = self.create_shuttle_widget_group_service.create(shuttle_name_widget=shuttle_name_widget,
+                                                                               url_widget=url_widget,
+                                                                               target_classes_widget=target_classes_widget,
+                                                                               period_widget=period_widget,
+                                                                               state_widget=state_widget, parent=None)
+        shuttle_frame = self.create_shuttle_frame_service.create(shuttles=self.shuttles,
+                                                                 shuttle_seq=self.shuttle_seq,
+                                                                 chrome_driver=self.driver_chrome,
+                                                                 shuttle_widget_group=shuttle_widget_group,
+                                                                 shuttles_widget=self)
+        return shuttle_frame
 
-    def saved_shuttles_json(self):
-        if self.shuttles_vbox_layout is None:
-            return {}
-        return self.get_shuttles_service.saved_shuttles_to_json(self.shuttle_frames)
+    def _add_shuttle_hbox_layout_to_vbox_layout(self, file_name, shuttle_frame, shuttle_name_widget, state_widget):
+        shuttle_hbox_layout = self._shuttle_hbox_layout(file_name, shuttle_frame, shuttle_name_widget, state_widget)
+        self.shuttles_vbox_layout.addLayout(shuttle_hbox_layout)
+
+    def _shuttle_hbox_layout(self, file_name, shuttle_frame, shuttle_name_widget, state_widget):
+        shuttleLayout = QHBoxLayout()
+        shuttleLayout.addWidget(shuttle_frame.get_frame())
+        shuttleLayout.addWidget(self._delete_button(shuttle_frame=shuttle_frame.get_frame(), shuttle_name_widget=shuttle_name_widget,
+                                log_edittext_widget=state_widget, shuttle_seq=self.shuttle_seq, file_name=file_name))
+        return shuttleLayout
 
     def _delete_button(self, shuttle_frame, shuttle_name_widget, log_edittext_widget, shuttle_seq, file_name):
         delete_btn = QPushButton()
@@ -138,8 +140,7 @@ class ShuttlesWidget(QWidget):
                                          delete_btn, file_name))
         return delete_btn
 
-    def _delete_shuttle(self, shuttle_frame: QFrame, shuttle_name_widget, log_edittext_widget, shuttle_seq, delete_btn,
-                        file_name):
+    def _delete_shuttle(self, shuttle_frame: QFrame, shuttle_name_widget, log_edittext_widget, shuttle_seq, delete_btn, file_name):
         reply = self._confirm(shuttle_name_widget)
         if reply == QMessageBox.No:
             return
@@ -148,13 +149,28 @@ class ShuttlesWidget(QWidget):
             log_edittext_widget.append(self.create_log_text_service.stopped(shuttle_name_widget.text()))
             self.shuttles[shuttle_seq] = None
 
-        log_edittext_widget.append(self.create_log_text_service.removed(shuttle_name_widget.text()))
+        log_edittext_widget.append(self.create_log_text_service.deleted(shuttle_name_widget.text()))
         shuttle_frame.deleteLater()
         delete_btn.deleteLater()
+        self._delete_layout_and_frame(shuttle_seq)
+        self.save_shuttles(file_name)
+
+    def _delete_layout_and_frame(self, shuttle_seq):
         self.shuttles_vbox_layout.takeAt(shuttle_seq)
         self.shuttle_frames.pop(shuttle_seq)
-        self.save_shuttles(file_name)
 
     def _confirm(self, shuttle_name_widget):
         return QMessageBox.question(self, '삭제 확인', f'\'{shuttle_name_widget.text()}\' 셔틀이 삭제됩니다.',
                                     QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+
+    def import_external_shuttles(self, state_widget: StateWidget):
+        self.import_shuttles_service.import_external_shuttles(shuttles_widget=self, state_widget=state_widget)
+
+    def save_shuttles(self, file_name="shuttles.json"):
+        self.export_shuttles_service.save_shuttles_to_json(self.saved_shuttles_json(), file_name)
+
+    def saved_shuttles_json(self):
+        if self.shuttles_vbox_layout is None:
+            return {}
+        return self.get_shuttles_service.saved_shuttles_to_json(self.shuttle_frames)
+

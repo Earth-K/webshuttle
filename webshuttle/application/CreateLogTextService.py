@@ -13,7 +13,7 @@ class CreateLogTextService(CreateLogTextUseCase):
     def stopped(self, shuttle_name) -> str:
         return LogText(shuttle_name, self.time.localtime()).stopped_shuttle()
 
-    def removed(self, shuttle_name) -> str:
+    def deleted(self, shuttle_name) -> str:
         return LogText(shuttle_name, self.time.localtime()).removed_shuttle()
 
     def shuttle_name(self, shuttle_name) -> str:
