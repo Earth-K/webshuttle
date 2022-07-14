@@ -66,13 +66,16 @@ class ShuttlesWidget(QWidget):
         self.shuttle_frames = {}
         self.shuttles = {}
         self.driver_chrome = chrome_driver
+        self._init_service()
+        self._init_ui()
+
+    def _init_service(self):
         self.get_shuttles_service: GetShuttlesUseCase = GetShuttlesService()
         self.import_shuttles_service: ImportShuttlesUseCase = ImportShuttlesService()
         self.export_shuttles_service: ExportShuttlesUseCase = ExportShuttlesService()
         self.create_shuttle_frame_service: CreateShuttleFrameUseCase = CreateShuttleFrameService()
         self.create_shuttle_widget_group_service: CreateShuttleWidgetGroupUseCase = CreateShuttleWidgetGroupService()
         self.create_log_text_service: CreateLogTextUseCase = CreateLogTextService()
-        self._init_ui()
 
     def _init_ui(self):
         self.title_vbox_layout = QVBoxLayout()
@@ -131,11 +134,11 @@ class ShuttlesWidget(QWidget):
         delete_btn.setFixedWidth(30)
         delete_btn.setFixedHeight(30)
         delete_btn.clicked.connect(
-            lambda: self._remove_shuttle(shuttle_frame, shuttle_name_widget, log_edittext_widget, shuttle_seq,
+            lambda: self._delete_shuttle(shuttle_frame, shuttle_name_widget, log_edittext_widget, shuttle_seq,
                                          delete_btn, file_name))
         return delete_btn
 
-    def _remove_shuttle(self, shuttle_frame: QFrame, shuttle_name_widget, log_edittext_widget, shuttle_seq, delete_btn,
+    def _delete_shuttle(self, shuttle_frame: QFrame, shuttle_name_widget, log_edittext_widget, shuttle_seq, delete_btn,
                         file_name):
         reply = self._confirm(shuttle_name_widget)
         if reply == QMessageBox.No:
