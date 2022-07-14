@@ -9,7 +9,7 @@ from webshuttle.domain.WebScraper import WebScraper
 
 
 class ScrapThread(QThread):
-    def __init__(self, parent, shuttle_seq, shuttle_widget_group, shuttle_list, chrome_driver):
+    def __init__(self, parent, shuttle_seq, shuttle_widget_group, shuttle_list, chrome_driver, waiting_event):
         super().__init__(parent)
         self.shuttle_seq = shuttle_seq
         self.shuttle_widget_group = shuttle_widget_group
@@ -17,6 +17,7 @@ class ScrapThread(QThread):
         self.shuttle_list = shuttle_list
         self.chrome_driver = chrome_driver
         self.web_scraper = None
+        self.waiting_event = waiting_event
 
     def run(self) -> None:
         chrome_service = Service(self.chrome_driver)
@@ -28,6 +29,10 @@ class ScrapThread(QThread):
         options.add_argument("disable-gpu")
         self.web_scraper = WebScraper(shuttle_widget_group=self.shuttle_widget_group,
                                       driver=webdriver.Chrome(service=chrome_service, options=options),
-                                      shuttle_list=self.shuttle_list, shuttle_seq=self.shuttle_seq)
+                                      shuttle_list=self.shuttle_list, shuttle_seq=self.shuttle_seq,
+                                      waiting_event=self.waiting_event)
         self.web_scraper.get()
         self.web_scraper.scrap()
+
+    def stop(self) -> None:
+        self.web_scraper.stop()

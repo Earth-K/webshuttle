@@ -1,3 +1,4 @@
+import threading
 import time
 
 from PyQt5.QtGui import QIcon
@@ -34,6 +35,7 @@ class ShuttleAddWidget(QWidget):
         self.chrome_driver = chrome_driver
         self._webScraper = None
         self._init_ui(shuttles_widget, state_widget)
+        self.shuttles_widget = shuttles_widget
 
     def _init_ui(self, shuttles_widget, state_widget):
         main_layout = QVBoxLayout()
@@ -61,7 +63,7 @@ class ShuttleAddWidget(QWidget):
         self.addshuttle_button.setText("셔틀 추가")
         self.addshuttle_button.setStatusTip('Add this webshuttle')
         self.addshuttle_button.setDisabled(True)
-        self.addshuttle_button.clicked.connect(lambda: self._push_shuttle(shuttles_widget, state_widget))
+        self.addshuttle_button.clicked.connect(lambda: self._add_shuttle(shuttles_widget, state_widget))
         execution_layout.addWidget(self.addshuttle_button)
         main_layout.addLayout(execution_layout)
 
@@ -76,7 +78,10 @@ class ShuttleAddWidget(QWidget):
         chrome_service.creationflags = 0x08000000
         try:
             self._webScraper = WebScraper(shuttle_widget_group=lineedit.text(),
-                                          driver=webdriver.Chrome(service=chrome_service))
+                                          driver=webdriver.Chrome(service=chrome_service),
+                                          shuttle_list=self.shuttles_widget.shuttle_list,
+                                          shuttle_seq=len(self.shuttles_widget.shuttle_list),
+                                          waiting_event=threading.Event())
         except WebDriverException:
             return
         init_event_listener(self._webScraper)
@@ -107,7 +112,7 @@ class ShuttleAddWidget(QWidget):
         self.text_edit.append(result.text)
         self.addshuttle_button.setDisabled(False)
 
-    def _push_shuttle(self, shuttles_widget, state_widget):
+    def _add_shuttle(self, shuttles_widget, state_widget):
         if self.url_line_edit.text() is None or self.element_class_names is None:
             QMessageBox.information(self, '에러',
                                     "먼저 선택 영역 데이터를 불러와주세요.",
@@ -120,4 +125,3 @@ class ShuttleAddWidget(QWidget):
                                     state_widget=state_widget.get_edittext())
         QMessageBox.information(self, '성공', '셔틀이 셔틀 목록에 저장되었습니다.',
                                 QMessageBox.Yes, QMessageBox.NoButton)
-

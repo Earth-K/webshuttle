@@ -1,3 +1,5 @@
+import threading
+
 import pygame
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFrame, QPushButton, QHBoxLayout, QVBoxLayout, QLabel, QWidget, QDialog, QSpinBox, QLineEdit
@@ -113,22 +115,25 @@ class ShuttleFrame(QWidget, Observer):
     def _start(self, shuttle_seq, shuttle_name_widget, url_widget, period_widget, target_classes_widget,
                log_edittext_widget, start_btn_widget):
         if start_btn_widget.text() == '시작':
-            self.settingsButton.setDisabled(True)
             shuttle_name = shuttle_name_widget.text()
             if shuttle_name == "":
                 shuttle_name = "이름 없음"
             message = LogText(shuttle_name, DefaultTime().localtime()).started_shuttle()
             log_edittext_widget.append(message)
             period_widget.setReadOnly(True)
-            start_btn_widget.setText('중지')
+            waiting_event = threading.Event()
             self.shuttles[shuttle_seq] = Shuttle(self, self.shuttles, shuttle_seq,
                                                  ShuttleWidgetGroup(shuttle_name_widget=shuttle_name_widget,
                                                                     url_widget=url_widget,
                                                                     period_widget=period_widget,
                                                                     target_classes_widget=target_classes_widget,
                                                                     state_widget=log_edittext_widget),
-                                                 self.chrome_driver)
+                                                 self.chrome_driver, waiting_event)
             self.shuttles[shuttle_seq].start()
+            waiting_event.wait(timeout=60)
+            self.settingsButton.setDisabled(True)
+            start_btn_widget.setText('중지')
+
         else:
             self.settingsButton.setDisabled(False)
             shuttle_name = shuttle_name_widget.text()

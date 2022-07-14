@@ -1,4 +1,5 @@
 import sys
+import threading
 
 import pytest as pytest
 from PyQt5.QtWidgets import QApplication, QLineEdit, QTextEdit, QWidget, QSpinBox
@@ -14,13 +15,15 @@ def qapp():
 
 def test_shuttle_is_become_none_when_stopped(qapp):
     shuttles = []
+    waiting_event = threading.Event()
     shuttle = Shuttle(parent_widget=QWidget(), shuttles=shuttles, shuttle_seq=0,
                       shuttle_widget_group=ShuttleWidgetGroup(shuttle_name_widget=QLineEdit(),
                                                               url_widget=QLineEdit(),
                                                               period_widget=QSpinBox(),
                                                               target_classes_widget=QLineEdit(),
                                                               state_widget=QTextEdit(),
-                                                              parent=None), chrome_driver=None)
+                                                              parent=None), chrome_driver=None,
+                      waiting_event=waiting_event)
     shuttles.append(shuttle)
 
     shuttle.stop()

@@ -10,7 +10,8 @@ from webshuttle.domain.ShuttleWidgetGroup import ShuttleWidgetGroup
 
 
 class WebScraper:
-    def __init__(self, shuttle_widget_group: ShuttleWidgetGroup, driver: webdriver.Chrome, shuttle_list: list, shuttle_seq: int):
+    def __init__(self, shuttle_widget_group: ShuttleWidgetGroup, driver: webdriver.Chrome, shuttle_list: list,
+                 shuttle_seq: int, waiting_event: threading.Event):
         pygame.init()
         self.shuttle_widget_group = shuttle_widget_group
         self.url = self._safe_url(shuttle_widget_group.get_url_widget().text())
@@ -18,8 +19,9 @@ class WebScraper:
         self.shuttle_list = shuttle_list
         self.driver = driver
         self.text_list = []
-        self.event = threading.Event()
+        self.stop_event = threading.Event()
         self.sound = pygame.mixer.Sound("resource/sounds/sound.wav")
+        self.waiting_event = waiting_event
 
     def _safe_url(self, url):
         result = url
@@ -40,12 +42,11 @@ class WebScraper:
             if pre_shuttle_thread != self.shuttle_list[self.shuttle_seq]:
                 break
             self.driver.refresh()
-            DefaultTime().sleep(1)
             elements = self.get_elements_by_classnames(
                 self.shuttle_widget_group.target_classes_widget.text())
             no_newline_text = ""
             if len(self.text_list) > 0:
-                new_text_list = self._get_text_list(elements)
+                new_text_list = self._text_list(elements)
                 for new_text in new_text_list:
                     if new_text not in self.text_list:
                         if len(new_text) > 0:
@@ -63,21 +64,19 @@ class WebScraper:
                 self.shuttle_widget_group.state_widget.append(log_text.updated_shuttle_name())
                 self.shuttle_widget_group.state_widget.append(f"{no_newline_text}\n")
                 self.sound.play()
-            self.event.wait(timeout=int(self.shuttle_widget_group.period_widget.text()))
-        self.quit_driver()
+            self.waiting_event.set()
+            self.stop_event.wait(timeout=int(self.shuttle_widget_group.period_widget.text()))
+        self.driver.quit()
 
-    def _get_text_list(self, elements):
+    def _text_list(self, elements):
         result = []
         for e in elements:
             result.append(e.text)
         return result
 
-    def quit_driver(self):
-        self.driver.quit()
-
     def stop(self):
         self.shuttle_list[self.shuttle_seq] = None
-        self.event.set()
+        self.stop_event.set()
 
     def execute_script(self, script):
         return self.driver.execute_script(script)

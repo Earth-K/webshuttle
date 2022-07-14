@@ -1,4 +1,5 @@
 import sys
+import threading
 from unittest.mock import Mock, MagicMock
 
 import pytest
@@ -25,7 +26,8 @@ def _default_shuttle_widget_group():
 
 
 def _default_web_scraper(mock):
-    return WebScraper(shuttle_widget_group=_default_shuttle_widget_group(), driver=mock, shuttle_list=[], shuttle_seq=0)
+    return WebScraper(shuttle_widget_group=_default_shuttle_widget_group(), driver=mock, shuttle_list=[], shuttle_seq=0,
+                      waiting_event=threading.Event())
 
 
 @pytest.fixture
@@ -178,13 +180,3 @@ def test_is_selected_elements(qapp):
 
     mock.execute_script.assert_called_once_with(script)
     assert (type(result) == bool)
-
-
-def test_quit_driver(qapp):
-    mock = _create_mock_webdriver()
-    mock.quit = MagicMock(return_value=None)
-    sut = _default_web_scraper(mock)
-
-    sut.quit_driver()
-
-    mock.quit.assert_called_once()
