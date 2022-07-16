@@ -1,28 +1,14 @@
-import threading
 import time
 
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QPushButton, QVBoxLayout, QTextEdit, QLineEdit, \
     QHBoxLayout, QLabel, QMessageBox
-from selenium import webdriver
-from selenium.common.exceptions import WebDriverException
-from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.remote.webelement import WebElement
 
-from webshuttle.domain.EventListenerInjector import EventListenerInjector
-from webshuttle.domain.LogText import LogText
-from webshuttle.domain.ShuttleWidgetGroup import ShuttleWidgetGroup
-from webshuttle.domain.WebScraper import WebScraper
 from webshuttle.adapter.incoming.ui import ShuttlesWidget, StateWidget
-
-
-def init_event_listener(web_scraper):
-    injector = EventListenerInjector(web_scraper)
-    injector.add_mouseover()
-    injector.add_mouseleave()
-    injector.add_mousedown_right()
-    injector.add_tooltip()
-    injector.add_startpopup()
+from webshuttle.application.SelectAreaService import SelectAreaService
+from webshuttle.application.port.incoming.SelectAreaUseCase import SelectAreaUseCase
+from webshuttle.domain.LogText import LogText
 
 
 class ShuttleAddWidget(QWidget):
@@ -37,6 +23,7 @@ class ShuttleAddWidget(QWidget):
         self._webScraper = None
         self._init_ui(shuttles_widget, state_widget)
         self.shuttles_widget = shuttles_widget
+        self.select_area_service: SelectAreaUseCase = SelectAreaService(self.url_line_edit, self.chrome_driver)
 
     def _init_ui(self, shuttles_widget, state_widget):
         main_layout = QVBoxLayout()
@@ -52,7 +39,7 @@ class ShuttleAddWidget(QWidget):
         self.url_line_edit.setPlaceholderText('스크랩 하고 싶은 웹 페이지의 URL ')
         url_layout.addWidget(self.url_line_edit)
         open_browser_button = QPushButton('영역 선택하러 가기', self)
-        open_browser_button.clicked.connect(lambda: self._open_browser(self.url_line_edit))
+        open_browser_button.clicked.connect(lambda: self._open_browser())
         url_layout.addWidget(open_browser_button)
         main_layout.addLayout(url_layout)
 
@@ -74,20 +61,9 @@ class ShuttleAddWidget(QWidget):
         self.setLayout(main_layout)
         self.show()
 
-    def _open_browser(self, lineedit):
-        chrome_service = Service(self.chrome_driver)
-        chrome_service.creationflags = 0x08000000
-        shuttle_widget_group = ShuttleWidgetGroup(None, None, None, lineedit, None, self)
-        try:
-            self._webScraper = WebScraper(shuttle_widget_group=shuttle_widget_group,
-                                          driver=webdriver.Chrome(service=chrome_service),
-                                          shuttle_list=[],
-                                          shuttle_seq=0,
-                                          waiting_event=threading.Event())
-            self._webScraper.get()
-        except WebDriverException:
-            return
-        init_event_listener(self._webScraper)
+    def _open_browser(self):
+        self.select_area_service.open_browser()
+        self._webScraper = self.select_area_service.get_web_scraper()
         self.addshuttle_button.setDisabled(True)
 
     def _get_target_element_data(self):
