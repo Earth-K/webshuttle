@@ -11,6 +11,7 @@ from selenium.webdriver.remote.webelement import WebElement
 
 from webshuttle.domain.EventListenerInjector import EventListenerInjector
 from webshuttle.domain.LogText import LogText
+from webshuttle.domain.ShuttleWidgetGroup import ShuttleWidgetGroup
 from webshuttle.domain.WebScraper import WebScraper
 from webshuttle.adapter.incoming.ui import ShuttlesWidget, StateWidget
 
@@ -76,12 +77,14 @@ class ShuttleAddWidget(QWidget):
     def _open_browser(self, lineedit):
         chrome_service = Service(self.chrome_driver)
         chrome_service.creationflags = 0x08000000
+        shuttle_widget_group = ShuttleWidgetGroup(None, None, None, lineedit, None, self)
         try:
-            self._webScraper = WebScraper(shuttle_widget_group=lineedit.text(),
+            self._webScraper = WebScraper(shuttle_widget_group=shuttle_widget_group,
                                           driver=webdriver.Chrome(service=chrome_service),
-                                          shuttle_list=self.shuttles_widget.shuttle_list,
-                                          shuttle_seq=len(self.shuttles_widget.shuttle_list),
+                                          shuttle_list=[],
+                                          shuttle_seq=0,
                                           waiting_event=threading.Event())
+            self._webScraper.get()
         except WebDriverException:
             return
         init_event_listener(self._webScraper)
@@ -101,7 +104,7 @@ class ShuttleAddWidget(QWidget):
         result: WebElement = self._webScraper.get_target_element()
         self.element_class_names = self._webScraper.get_element_class_names_of_target()
         self.text_edit.setText(
-            '{0} - get target element data.\n'.format(LogText(time.localtime()).localtime()))
+            '{0} - get target element data.\n'.format(LogText('New Shuttle', time.localtime()).localtime()))
         self.text_edit.append('class names : {0}'.format(self.element_class_names))
         self.text_edit.append('id : {0}'.format(self._webScraper.get_element_id()))
         elements = self._webScraper.get_elements_by_classnames(self.element_class_names)
