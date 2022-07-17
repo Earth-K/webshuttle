@@ -1,6 +1,6 @@
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QPushButton, QVBoxLayout, QTextEdit, QLineEdit, \
-    QHBoxLayout, QLabel, QMessageBox
+    QHBoxLayout, QLabel, QMessageBox, QSpinBox
 from selenium.common.exceptions import WebDriverException
 
 from webshuttle.adapter.incoming.ui import ShuttlesWidget, StateWidget
@@ -8,6 +8,7 @@ from webshuttle.application.ParseTargetElementsService import ParseTargetElement
 from webshuttle.application.SelectAreaService import SelectAreaService
 from webshuttle.application.port.incoming.ParseTargetElementsUseCase import ParseTargetElementsUseCase
 from webshuttle.application.port.incoming.SelectAreaUseCase import SelectAreaUseCase
+from webshuttle.domain.ShuttleWidgetGroup import ShuttleWidgetGroup
 
 
 class ShuttleAddWidget(QWidget):
@@ -17,12 +18,14 @@ class ShuttleAddWidget(QWidget):
         self.shuttle_name_widget = QLineEdit()
         self.url_widget = QLineEdit()
         self.addshuttle_button = QPushButton()
-        self._init_ui(shuttles_widget, state_widget)
+        self._init_ui()
         self.shuttles_widget = shuttles_widget
         self.select_area_service: SelectAreaUseCase = SelectAreaService(self.url_widget, chrome_driver)
         self.parse_target_elements_service: ParseTargetElementsUseCase
+        self.shuttles_widget = shuttles_widget
+        self.state_widget = state_widget
 
-    def _init_ui(self, shuttles_widget, state_widget):
+    def _init_ui(self):
         main_layout = QVBoxLayout()
 
         shuttlename_layout = QHBoxLayout()
@@ -48,7 +51,7 @@ class ShuttleAddWidget(QWidget):
         self.addshuttle_button.setText("셔틀 추가")
         self.addshuttle_button.setStatusTip('Add this webshuttle')
         self.addshuttle_button.setDisabled(True)
-        self.addshuttle_button.clicked.connect(lambda: self._add_shuttle(shuttles_widget, state_widget))
+        self.addshuttle_button.clicked.connect(lambda: self._add_shuttle())
         execution_layout.addWidget(self.addshuttle_button)
         main_layout.addLayout(execution_layout)
 
@@ -67,18 +70,21 @@ class ShuttleAddWidget(QWidget):
     def _parse_target_elements(self):
         assert self.parse_target_elements_service is not None
         self.parse_target_elements_service.parse()
+        self.element_class_names = self.parse_target_elements_service.get_class_names()
         self.addshuttle_button.setDisabled(False)
 
-    def _add_shuttle(self, shuttles_widget, state_widget):
-        if self.url_widget.text() is None or self.element_class_names is None:
+    def _add_shuttle(self):
+        if self.element_class_names is None:
             QMessageBox.information(self, '에러',
                                     "먼저 선택 영역 데이터를 불러와주세요.",
                                     QMessageBox.Yes, QMessageBox.NoButton)
             return
-        shuttles_widget.add_shuttle(name=self.shuttle_name_widget.text(),
-                                    url=self.url_widget.text(),
-                                    period=300,
-                                    target_classes=self.element_class_names,
-                                    state_widget=state_widget.get_edittext())
+        period_widget = QSpinBox()
+        period_widget.setValue(300)
+        self.shuttles_widget.add_shuttle(ShuttleWidgetGroup(state_widget=self.state_widget.get_text_edit(),
+                                                            target_classes_widget=QLineEdit(self.element_class_names),
+                                                            period_widget=period_widget,
+                                                            url_widget=self.url_widget,
+                                                            shuttle_name_widget=self.shuttle_name_widget))
         QMessageBox.information(self, '성공', '셔틀이 셔틀 목록에 저장되었습니다.',
                                 QMessageBox.Yes, QMessageBox.NoButton)

@@ -16,6 +16,7 @@ from webshuttle.application.port.incoming.CreateShuttleWidgetGroupUseCase import
 from webshuttle.application.port.incoming.ExportShuttlesUseCase import ExportShuttlesUseCase
 from webshuttle.application.port.incoming.GetShuttlesUseCase import GetShuttlesUseCase
 from webshuttle.application.port.incoming.ImportShuttlesUseCase import ImportShuttlesUseCase
+from webshuttle.domain.ShuttleWidgetGroup import ShuttleWidgetGroup
 
 pygame.init()
 
@@ -89,16 +90,15 @@ class ShuttlesWidget(QWidget):
         self.setLayout(wrap_vbox_layout)
         self.show()
 
-    def add_shuttle(self, url, period, target_classes, name, state_widget, file_name="shuttles.json"):
-        shuttle_name_widget = shuttle_name_lineedit(name)
-        target_classes_widget = target_classes_lineedit(target_classes)
-        url_widget = url_lineedit(url)
-        period_widget = period_spinbox(period)
+    def add_shuttle(self, shuttle_widget_group: ShuttleWidgetGroup):
+        shuttle_name_widget = shuttle_name_lineedit(shuttle_widget_group.shuttle_name_widget.text())
+        target_classes_widget = target_classes_lineedit(shuttle_widget_group.target_classes_widget.text())
+        url_widget = url_lineedit(shuttle_widget_group.url_widget.text())
 
-        shuttle_frame = self._add_shuttle_frame(period_widget, shuttle_name_widget, state_widget, target_classes_widget, url_widget)
-        self._add_shuttle_hbox_layout_to_vbox_layout(file_name, shuttle_frame, shuttle_name_widget, state_widget)
+        shuttle_frame = self._add_shuttle_frame(shuttle_widget_group.period_widget, shuttle_name_widget, shuttle_widget_group.state_widget, target_classes_widget, url_widget)
+        self._add_shuttle_hbox_layout_to_vbox_layout("shuttles.json", shuttle_frame, shuttle_name_widget, shuttle_widget_group.state_widget)
         self.shuttle_seq += 1
-        self.save_shuttles(file_name=file_name)
+        self.save_shuttles(file_name="shuttles.json")
 
     def _add_shuttle_frame(self, period_widget, shuttle_name_widget, state_widget, target_classes_widget, url_widget):
         shuttle_frame = self._create_shuttle_frame(period_widget, shuttle_name_widget, state_widget, target_classes_widget, url_widget)

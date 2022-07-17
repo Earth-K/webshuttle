@@ -20,7 +20,7 @@ class StateWidget(QWidget):
         self.setLayout(self._vbox_layout)
         self.show()
 
-    def get_edittext(self):
+    def get_text_edit(self):
         return self._log_textedit
 
     def clear_text(self):
