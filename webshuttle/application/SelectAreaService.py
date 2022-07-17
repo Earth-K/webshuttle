@@ -24,7 +24,6 @@ class SelectAreaService(SelectAreaUseCase):
         self._web_scraper = None
         self.url_widget = url_widget
         self.chrome_driver = chrome_driver
-        pass
 
     def open_browser(self):
         chrome_service = Service(self.chrome_driver)
@@ -37,9 +36,10 @@ class SelectAreaService(SelectAreaUseCase):
                                            shuttle_seq=0,
                                            waiting_event=threading.Event())
             self._web_scraper.get()
+            init_event_listener(self._web_scraper)
         except WebDriverException:
-            return
-        init_event_listener(self._web_scraper)
+            chrome_service.stop()
+            self._web_scraper.driver.quit()
 
     def get_web_scraper(self):
         return self._web_scraper

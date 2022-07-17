@@ -1,16 +1,13 @@
-import time
-
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QPushButton, QVBoxLayout, QTextEdit, QLineEdit, \
     QHBoxLayout, QLabel, QMessageBox
-from selenium.webdriver.remote.webelement import WebElement
+from selenium.common.exceptions import WebDriverException
 
 from webshuttle.adapter.incoming.ui import ShuttlesWidget, StateWidget
 from webshuttle.application.ParseTargetElementsService import ParseTargetElementsService
 from webshuttle.application.SelectAreaService import SelectAreaService
 from webshuttle.application.port.incoming.ParseTargetElementsUseCase import ParseTargetElementsUseCase
 from webshuttle.application.port.incoming.SelectAreaUseCase import SelectAreaUseCase
-from webshuttle.domain.LogText import LogText
 
 
 class ShuttleAddWidget(QWidget):
@@ -20,11 +17,10 @@ class ShuttleAddWidget(QWidget):
         self.shuttle_name_widget = QLineEdit()
         self.url_widget = QLineEdit()
         self.addshuttle_button = QPushButton()
-        self.chrome_driver = chrome_driver
         self._init_ui(shuttles_widget, state_widget)
         self.shuttles_widget = shuttles_widget
-        self.select_area_service: SelectAreaUseCase = SelectAreaService(self.url_widget, self.chrome_driver)
-        self.parse_target_elements_service: ParseTargetElementsUseCase = None
+        self.select_area_service: SelectAreaUseCase = SelectAreaService(self.url_widget, chrome_driver)
+        self.parse_target_elements_service: ParseTargetElementsUseCase
 
     def _init_ui(self, shuttles_widget, state_widget):
         main_layout = QVBoxLayout()
@@ -69,11 +65,9 @@ class ShuttleAddWidget(QWidget):
         self.addshuttle_button.setDisabled(True)
 
     def _parse_target_elements(self):
-        try:
-            self.parse_target_elements_service.parse()
-            self.addshuttle_button.setDisabled(False)
-        except Exception:
-            return
+        assert self.parse_target_elements_service is not None
+        self.parse_target_elements_service.parse()
+        self.addshuttle_button.setDisabled(False)
 
     def _add_shuttle(self, shuttles_widget, state_widget):
         if self.url_widget.text() is None or self.element_class_names is None:

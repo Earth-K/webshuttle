@@ -1,4 +1,5 @@
 from PyQt5.QtWidgets import QMessageBox
+from selenium.common.exceptions import WebDriverException
 
 from webshuttle.application.port.incoming.ParseTargetElementsUseCase import ParseTargetElementsUseCase
 from webshuttle.domain.DefaultTime import DefaultTime
@@ -22,7 +23,11 @@ class ParseTargetElementsService(ParseTargetElementsUseCase):
                                     QMessageBox.Yes, QMessageBox.NoButton)
             return
 
-        element_class_names = self._web_scraper.get_element_class_names_of_target()
+        try:
+            element_class_names = self._web_scraper.get_element_class_names_of_target()
+        except WebDriverException:
+            return
+
         self._elements_report_widget.setText(
             '{0} - get target element data.\n'.format(LogText('New Shuttle', DefaultTime().localtime()).localtime()))
         self._elements_report_widget.append('class names : {0}'.format(element_class_names))
