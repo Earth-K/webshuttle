@@ -80,6 +80,7 @@ class ShuttleAddWidget(QWidget):
                                     QMessageBox.Yes, QMessageBox.NoButton)
             return
         period_widget = QSpinBox()
+        period_widget.setMaximum(86400)
         period_widget.setValue(300)
         self.shuttles_widget.add_shuttle(ShuttleWidgetGroup(state_widget=self.state_widget.get_text_edit(),
                                                             target_classes_widget=QLineEdit(self.element_class_names),

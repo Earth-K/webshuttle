@@ -2,10 +2,11 @@ import json
 import sys
 
 import pytest
-from PyQt5.QtWidgets import QMainWindow, QApplication, QVBoxLayout, QLineEdit, QTextEdit, QMessageBox
+from PyQt5.QtWidgets import QMainWindow, QApplication, QVBoxLayout, QLineEdit, QTextEdit, QMessageBox, QSpinBox
 
 from webshuttle.domain.ShuttleFrame import ShuttleFrame
 from webshuttle.adapter.incoming.ui.ShuttlesWidget import ShuttlesWidget
+from webshuttle.domain.ShuttleWidgetGroup import ShuttleWidgetGroup
 
 
 @pytest.fixture
@@ -15,13 +16,9 @@ def qapp():
 
 def test_saved_shuttle_frames_are_imported_to_list(qapp):
     parent = QMainWindow()
-    shuttleWidget = ShuttlesWidget(parent=parent, chrome_driver=None)
-    shuttleWidget.add_shuttle(name="Shuttle Name",
-                              url="https://google.com",
-                              target_classes="Target Class Names",
-                              period=300,
-                              state_widget=QLineEdit(),
-                              file_name="shuttles_test.json")
+    shuttleWidget = ShuttlesWidget(parent=parent, chrome_driver=None, file_name="shuttles_test.json")
+    shuttle_widget_group = default_shuttle_widget_group()
+    shuttleWidget.add_shuttle(shuttle_widget_group)
 
     result = shuttleWidget.saved_shuttles_json()
 
@@ -34,22 +31,17 @@ def test_saved_shuttle_frames_are_imported_to_list(qapp):
 
 def test_shuttle_is_added_with_data_and_gui(qapp):
     parent = QMainWindow()
-    shuttleWidget = ShuttlesWidget(parent=parent, chrome_driver=None)
+    shuttleWidget = ShuttlesWidget(parent=parent, chrome_driver=None, file_name="shuttles_test.json")
     shuttleWidget.shuttles_vbox_layout = QVBoxLayout()
 
-    shuttleWidget.add_shuttle(name="Shuttle Name",
-                              url="https://targetcoders.com",
-                              target_classes="class1 class2",
-                              period=500,
-                              state_widget=QTextEdit(),
-                              file_name="shuttles_test.json")
+    shuttleWidget.add_shuttle(default_shuttle_widget_group())
 
     # Check Data
     frame: ShuttleFrame = shuttleWidget.shuttle_frames[0]
     assert frame.shuttleWidgets.shuttle_name_widget.text() == "Shuttle Name"
-    assert frame.shuttleWidgets.url_widget.text() == "https://targetcoders.com"
-    assert frame.shuttleWidgets.period_widget.value() == 500
-    assert frame.shuttleWidgets.target_classes_widget.text() == "class1 class2"
+    assert frame.shuttleWidgets.url_widget.text() == "https://google.com"
+    assert frame.shuttleWidgets.period_widget.value() == 300
+    assert frame.shuttleWidgets.target_classes_widget.text() == "Target Class Names"
     # Check GUI
     shuttle_layout = shuttleWidget.shuttles_vbox_layout.itemAt(0).layout()
     assert shuttle_layout.count() == 2
@@ -61,15 +53,10 @@ def test_shuttle_is_added_with_data_and_gui(qapp):
 
 def test_remove_shuttle(qapp):
     parent = QMainWindow()
-    shuttleWidget = ShuttlesWidget(parent=parent, chrome_driver=None)
+    shuttleWidget = ShuttlesWidget(parent=parent, chrome_driver=None, file_name="shuttles_test.json")
     shuttleWidget.shuttles_vbox_layout = QVBoxLayout()
 
-    shuttleWidget.add_shuttle(name="Shuttle Name",
-                              url="https://targetcoders.com",
-                              target_classes="class1 class2",
-                              period=500,
-                              state_widget=QTextEdit(),
-                              file_name="shuttles_test.json")
+    shuttleWidget.add_shuttle(default_shuttle_widget_group())
     layout = shuttleWidget.shuttles_vbox_layout.itemAt(0).layout()
     delete_button = layout.itemAt(1).widget()
 
@@ -82,3 +69,14 @@ def test_remove_shuttle(qapp):
         shuttles = json.load(shuttles_file)
         assert shuttles == {}
 
+
+def default_shuttle_widget_group():
+    period_widget = QSpinBox()
+    period_widget.setMaximum(86400)
+    period_widget.setValue(300)
+    shuttle_widget_group: ShuttleWidgetGroup = ShuttleWidgetGroup(state_widget=QTextEdit(),
+                                                                  target_classes_widget=QLineEdit("Target Class Names"),
+                                                                  period_widget=period_widget,
+                                                                  url_widget=QLineEdit("https://google.com"),
+                                                                  shuttle_name_widget=QLineEdit("Shuttle Name"))
+    return shuttle_widget_group

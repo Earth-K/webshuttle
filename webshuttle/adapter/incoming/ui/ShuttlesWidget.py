@@ -16,6 +16,7 @@ from webshuttle.application.port.incoming.CreateShuttleWidgetGroupUseCase import
 from webshuttle.application.port.incoming.ExportShuttlesUseCase import ExportShuttlesUseCase
 from webshuttle.application.port.incoming.GetShuttlesUseCase import GetShuttlesUseCase
 from webshuttle.application.port.incoming.ImportShuttlesUseCase import ImportShuttlesUseCase
+from webshuttle.domain.ShuttleFrame import ShuttleFrame
 from webshuttle.domain.ShuttleWidgetGroup import ShuttleWidgetGroup
 
 pygame.init()
@@ -60,7 +61,7 @@ def _stop(period, start_btn, stop_btn):
 
 
 class ShuttlesWidget(QWidget):
-    def __init__(self, parent, chrome_driver):
+    def __init__(self, parent, chrome_driver, file_name="shuttles.json"):
         super(ShuttlesWidget, self).__init__(parent)
         self.shuttle_seq = 0
         self.shuttle_frames = {}
@@ -68,6 +69,7 @@ class ShuttlesWidget(QWidget):
         self.driver_chrome = chrome_driver
         self._init_service()
         self._init_ui()
+        self.file_name = file_name
 
     def _init_service(self):
         self.get_shuttles_service: GetShuttlesUseCase = GetShuttlesService()
@@ -92,9 +94,9 @@ class ShuttlesWidget(QWidget):
 
     def add_shuttle(self, shuttle_widget_group: ShuttleWidgetGroup):
         shuttle_frame = self._add_shuttle_frame(shuttle_widget_group)
-        self._add_shuttle_hbox_layout_to_vbox_layout("shuttles.json", shuttle_frame, shuttle_widget_group)
+        self._add_shuttle_hbox_layout_to_vbox_layout(self.file_name, shuttle_frame, shuttle_widget_group)
         self.shuttle_seq += 1
-        self.save_shuttles(file_name="shuttles.json")
+        self.save_shuttles(file_name=self.file_name)
 
     def _add_shuttle_frame(self, shuttle_widget_group: ShuttleWidgetGroup):
         shuttle_frame = self._create_shuttle_frame(shuttle_widget_group)
@@ -115,19 +117,18 @@ class ShuttlesWidget(QWidget):
     def _shuttle_hbox_layout(self, file_name, shuttle_frame, shuttle_widget_group):
         shuttleLayout = QHBoxLayout()
         shuttleLayout.addWidget(shuttle_frame.get_frame())
-        shuttleLayout.addWidget(self._delete_button(shuttle_frame=shuttle_frame.get_frame(),
-                                                    shuttle_widget_group=shuttle_widget_group,
-                                                    shuttle_seq=self.shuttle_seq, file_name=file_name))
+        delete_shuttle_button = self._delete_button()
+        delete_shuttle_button.clicked.connect(
+            lambda: self._delete_shuttle(shuttle_frame.get_frame(), shuttle_widget_group, shuttle_frame.shuttle_seq, delete_shuttle_button, file_name))
+        shuttleLayout.addWidget(delete_shuttle_button)
         return shuttleLayout
 
-    def _delete_button(self, shuttle_frame, shuttle_widget_group, shuttle_seq, file_name):
+    def _delete_button(self):
         delete_btn = QPushButton()
         delete_btn.setStyleSheet("background-color: rgba(255,255,255,0);")
         delete_btn.setIcon(QIcon('resource/images/remove-48.png'))
         delete_btn.setFixedWidth(30)
         delete_btn.setFixedHeight(30)
-        delete_btn.clicked.connect(
-            lambda: self._delete_shuttle(shuttle_frame, shuttle_widget_group, shuttle_seq, delete_btn, file_name))
         return delete_btn
 
     def _delete_shuttle(self, shuttle_frame: QFrame, shuttle_widget_group, shuttle_seq, delete_btn, file_name):
@@ -136,10 +137,10 @@ class ShuttlesWidget(QWidget):
             return
 
         if self.shuttles.get(shuttle_seq) is not None:
-            shuttle_widget_group.state_widget.append(self.create_log_text_service.stopped(shuttle_widget_group.text()))
+            shuttle_widget_group.state_widget.append(self.create_log_text_service.stopped(shuttle_widget_group.shuttle_name_widget.text()))
             self.shuttles[shuttle_seq] = None
 
-        shuttle_widget_group.state_widget.append(self.create_log_text_service.deleted(shuttle_widget_group.text()))
+        shuttle_widget_group.state_widget.append(self.create_log_text_service.deleted(shuttle_widget_group.shuttle_name_widget.text()))
         shuttle_frame.deleteLater()
         delete_btn.deleteLater()
         self._delete_layout_and_frame(shuttle_seq)
