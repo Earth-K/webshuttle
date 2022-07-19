@@ -34,15 +34,15 @@ class ShuttleFrame(QWidget, Observer):
                                                    self.draft_shuttleWidgets.url, self.draft_shuttleWidgets.period,
                                                    self.draft_shuttleWidgets.target_classes,
                                                    self.shuttleWidgets.state_widget)
-        self.frame = QFrame()
-        self.frame.setFrameShape(QFrame.Box)
-        self.frame.setFrameShadow(QFrame.Sunken)
+        self.frame_widget = QFrame()
+        self.frame_widget.setFrameShape(QFrame.Box)
+        self.frame_widget.setFrameShadow(QFrame.Sunken)
         shuttle_layout: QHBoxLayout = QHBoxLayout()
         self.frame_name = QLabel(self.shuttleWidgets.shuttle_name_widget.text())
         shuttle_layout.addWidget(self.frame_name)
         shuttle_layout.addWidget(self.settingsButton)
         shuttle_layout.addWidget(self.start_stop_button)
-        self.frame.setLayout(shuttle_layout)
+        self.frame_widget.setLayout(shuttle_layout)
         self.shuttle_widget_group: ShuttleWidgetGroup = shuttle_widget_group
         self.shuttle_widget_group.register_observer(self)
 
@@ -101,8 +101,8 @@ class ShuttleFrame(QWidget, Observer):
         dialog.setLayout(vBoxLayout)
         return dialog
 
-    def get_frame(self):
-        return self.frame
+    def get_frame_widget(self):
+        return self.frame_widget
 
     def start_button(self, shuttle_seq, shuttle_name_widget, url_widget, period_widget, target_classes_widget,
                      log_edittext_widget):

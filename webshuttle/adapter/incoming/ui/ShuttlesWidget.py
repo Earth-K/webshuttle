@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit
     QMessageBox
 
 from webshuttle.adapter.incoming.ui import StateWidget
+from webshuttle.adapter.incoming.ui.ShuttleDeleteButton import ShuttleDeleteButton
 from webshuttle.application.CreateLogTextService import CreateLogTextService
 from webshuttle.application.CreateShuttleFrameService import CreateShuttleFrameService
 from webshuttle.application.CreateShuttleWidgetGroupService import CreateShuttleWidgetGroupService
@@ -16,7 +17,6 @@ from webshuttle.application.port.incoming.CreateShuttleWidgetGroupUseCase import
 from webshuttle.application.port.incoming.ExportShuttlesUseCase import ExportShuttlesUseCase
 from webshuttle.application.port.incoming.GetShuttlesUseCase import GetShuttlesUseCase
 from webshuttle.application.port.incoming.ImportShuttlesUseCase import ImportShuttlesUseCase
-from webshuttle.domain.ShuttleFrame import ShuttleFrame
 from webshuttle.domain.ShuttleWidgetGroup import ShuttleWidgetGroup
 
 pygame.init()
@@ -94,9 +94,9 @@ class ShuttlesWidget(QWidget):
 
     def add_shuttle(self, shuttle_widget_group: ShuttleWidgetGroup):
         shuttle_frame = self._add_shuttle_frame(shuttle_widget_group)
-        self._add_shuttle_hbox_layout_to_vbox_layout(self.file_name, shuttle_frame, shuttle_widget_group)
+        self._add_shuttle_hbox_layout_to_vbox_layout(shuttle_frame, shuttle_widget_group)
         self.shuttle_seq += 1
-        self.save_shuttles(file_name=self.file_name)
+        self.save_shuttles()
 
     def _add_shuttle_frame(self, shuttle_widget_group: ShuttleWidgetGroup):
         shuttle_frame = self._create_shuttle_frame(shuttle_widget_group)
@@ -110,55 +110,22 @@ class ShuttlesWidget(QWidget):
                                                         shuttle_widget_group=shuttle_widget_group,
                                                         shuttles_widget=self)
 
-    def _add_shuttle_hbox_layout_to_vbox_layout(self, file_name, shuttle_frame, shuttle_widget_group):
-        shuttle_hbox_layout = self._shuttle_hbox_layout(file_name, shuttle_frame, shuttle_widget_group)
+    def _add_shuttle_hbox_layout_to_vbox_layout(self, shuttle_frame, shuttle_widget_group):
+        shuttle_hbox_layout = self._shuttle_hbox_layout(shuttle_frame, shuttle_widget_group)
         self.shuttles_vbox_layout.addLayout(shuttle_hbox_layout)
 
-    def _shuttle_hbox_layout(self, file_name, shuttle_frame, shuttle_widget_group):
+    def _shuttle_hbox_layout(self, shuttle_frame, shuttle_widget_group):
         shuttleLayout = QHBoxLayout()
-        shuttleLayout.addWidget(shuttle_frame.get_frame())
-        delete_shuttle_button = self._delete_button()
-        delete_shuttle_button.clicked.connect(
-            lambda: self._delete_shuttle(shuttle_frame.get_frame(), shuttle_widget_group, shuttle_frame.shuttle_seq, delete_shuttle_button, file_name))
-        shuttleLayout.addWidget(delete_shuttle_button)
+        shuttleLayout.addWidget(shuttle_frame.get_frame_widget())
+        delete_shuttle_button = ShuttleDeleteButton(self, shuttle_frame, shuttle_widget_group)
+        shuttleLayout.addWidget(delete_shuttle_button.value())
         return shuttleLayout
-
-    def _delete_button(self):
-        delete_btn = QPushButton()
-        delete_btn.setStyleSheet("background-color: rgba(255,255,255,0);")
-        delete_btn.setIcon(QIcon('resource/images/remove-48.png'))
-        delete_btn.setFixedWidth(30)
-        delete_btn.setFixedHeight(30)
-        return delete_btn
-
-    def _delete_shuttle(self, shuttle_frame: QFrame, shuttle_widget_group, shuttle_seq, delete_btn, file_name):
-        reply = self._confirm(shuttle_widget_group.shuttle_name_widget)
-        if reply == QMessageBox.No:
-            return
-
-        if self.shuttles.get(shuttle_seq) is not None:
-            shuttle_widget_group.state_widget.append(self.create_log_text_service.stopped(shuttle_widget_group.shuttle_name_widget.text()))
-            self.shuttles[shuttle_seq] = None
-
-        shuttle_widget_group.state_widget.append(self.create_log_text_service.deleted(shuttle_widget_group.shuttle_name_widget.text()))
-        shuttle_frame.deleteLater()
-        delete_btn.deleteLater()
-        self._delete_layout_and_frame(shuttle_seq)
-        self.save_shuttles(file_name)
-
-    def _delete_layout_and_frame(self, shuttle_seq):
-        self.shuttles_vbox_layout.takeAt(shuttle_seq)
-        self.shuttle_frames.pop(shuttle_seq)
-
-    def _confirm(self, shuttle_name_widget):
-        return QMessageBox.question(self, '삭제 확인', f'\'{shuttle_name_widget.text()}\' 셔틀이 삭제됩니다.',
-                                    QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
 
     def import_external_shuttles(self, state_widget: StateWidget):
         self.import_shuttles_service.import_external_shuttles(shuttles_widget=self, state_widget=state_widget)
 
-    def save_shuttles(self, file_name="shuttles.json"):
-        self.export_shuttles_service.save_shuttles_to_json(self.saved_shuttles_json(), file_name)
+    def save_shuttles(self):
+        self.export_shuttles_service.save_shuttles_to_json(self.saved_shuttles_json(), self.file_name)
 
     def saved_shuttles_json(self):
         if self.shuttles_vbox_layout is None:

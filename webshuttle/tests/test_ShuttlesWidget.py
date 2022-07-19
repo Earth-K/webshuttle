@@ -1,5 +1,6 @@
 import json
 import sys
+from unittest.mock import MagicMock
 
 import pytest
 from PyQt5.QtWidgets import QMainWindow, QApplication, QVBoxLayout, QLineEdit, QTextEdit, QMessageBox, QSpinBox
@@ -14,7 +15,7 @@ def qapp():
     return QApplication(sys.argv)
 
 
-def test_saved_shuttle_frames_are_imported_to_list(qapp):
+def test_saved_shuttle_frames_are_imported_to_dict(qapp):
     parent = QMainWindow()
     shuttleWidget = ShuttlesWidget(parent=parent, chrome_driver=None, file_name="shuttles_test.json")
     shuttle_widget_group = default_shuttle_widget_group()
@@ -29,7 +30,7 @@ def test_saved_shuttle_frames_are_imported_to_list(qapp):
                == "{'shuttle0': {'name': 'Shuttle Name', 'url': 'https://google.com', 'period': '300', 'element_classes': 'Target Class Names'}}"
 
 
-def test_shuttle_is_added_with_data_and_gui(qapp):
+def test_shuttle_frame_is_added(qapp):
     parent = QMainWindow()
     shuttleWidget = ShuttlesWidget(parent=parent, chrome_driver=None, file_name="shuttles_test.json")
     shuttleWidget.shuttles_vbox_layout = QVBoxLayout()
@@ -51,7 +52,7 @@ def test_shuttle_is_added_with_data_and_gui(qapp):
     assert shuttle_layout.itemAt(1).widget().icon() is not None
 
 
-def test_remove_shuttle(qapp):
+def test_shuttle_frame_widget_is_deleted(qapp):
     parent = QMainWindow()
     shuttleWidget = ShuttlesWidget(parent=parent, chrome_driver=None, file_name="shuttles_test.json")
     shuttleWidget.shuttles_vbox_layout = QVBoxLayout()
@@ -61,7 +62,7 @@ def test_remove_shuttle(qapp):
     delete_button = layout.itemAt(1).widget()
 
     assert shuttleWidget.shuttles_vbox_layout.count() == 1
-    shuttleWidget._confirm = lambda x: QMessageBox.Yes
+    QMessageBox.question = MagicMock(return_value=QMessageBox.Yes)
     delete_button.click()
     assert shuttleWidget.shuttle_frames == {}
     assert shuttleWidget.shuttles_vbox_layout.count() == 0
