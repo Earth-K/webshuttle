@@ -1,4 +1,4 @@
-from webshuttle.domain import ShuttleFrame
+from webshuttle.adapter.incoming.ui import ShuttleFrame
 
 
 class CreateShuttleFrameUseCase:

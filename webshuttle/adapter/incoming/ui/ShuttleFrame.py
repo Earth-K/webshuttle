@@ -19,7 +19,6 @@ class ShuttleFrame(QWidget, Observer):
         self.shuttles = shuttles
         self.chrome_driver = chrome_driver
 
-        self.vBoxLayout = None
         self.shuttle_seq = shuttle_seq
         self.shuttleWidgets: ShuttleWidgetGroup = shuttle_widget_group
         self.draft_shuttleWidgets = DraftShuttleWidgets(name=self.shuttleWidgets.shuttle_name_widget.text(),

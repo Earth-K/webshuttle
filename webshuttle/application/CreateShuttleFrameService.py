@@ -1,5 +1,5 @@
 from webshuttle.application.port.incoming.CreateShuttleFrameUseCase import CreateShuttleFrameUseCase
-from webshuttle.domain.ShuttleFrame import ShuttleFrame
+from webshuttle.adapter.incoming.ui.ShuttleFrame import ShuttleFrame
 
 
 class CreateShuttleFrameService(CreateShuttleFrameUseCase):

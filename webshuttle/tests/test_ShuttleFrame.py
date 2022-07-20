@@ -5,7 +5,7 @@ import pytest
 from PyQt5.QtWidgets import QLineEdit, QTextEdit, QApplication, QSpinBox, QWidget, QVBoxLayout
 
 from webshuttle.domain.ShuttleWidgetGroup import ShuttleWidgetGroup
-from webshuttle.domain.ShuttleFrame import ShuttleFrame
+from webshuttle.adapter.incoming.ui.ShuttleFrame import ShuttleFrame
 from webshuttle.adapter.incoming.ui.ShuttlesWidget import ShuttlesWidget
 
 

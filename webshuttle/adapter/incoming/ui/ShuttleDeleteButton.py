@@ -1,7 +1,7 @@
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QPushButton, QWidget, QMessageBox, QFrame
+from PyQt5.QtWidgets import QPushButton, QWidget, QMessageBox
 
-from webshuttle.domain.ShuttleFrame import ShuttleFrame
+from webshuttle.adapter.incoming.ui.ShuttleFrame import ShuttleFrame
 from webshuttle.domain.ShuttleWidgetGroup import ShuttleWidgetGroup
 
 
