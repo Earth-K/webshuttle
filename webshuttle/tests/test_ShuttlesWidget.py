@@ -43,13 +43,6 @@ def test_shuttle_frame_is_added(qapp):
     assert frame.shuttleWidgets.url_widget.text() == "https://google.com"
     assert frame.shuttleWidgets.period_widget.value() == 300
     assert frame.shuttleWidgets.target_classes_widget.text() == "Target Class Names"
-    # Check GUI
-    shuttle_layout = shuttleWidget.shuttles_vbox_layout.itemAt(0).layout()
-    assert shuttle_layout.count() == 2
-    assert shuttle_layout.itemAt(0).widget().layout().itemAt(0).widget().text() == "Shuttle Name"
-    assert shuttle_layout.itemAt(0).widget().layout().itemAt(1).widget().text() == "설정"
-    assert shuttle_layout.itemAt(0).widget().layout().itemAt(2).widget().text() == "시작"
-    assert shuttle_layout.itemAt(1).widget().icon() is not None
 
 
 def test_shuttle_frame_widget_is_deleted(qapp):

@@ -100,31 +100,3 @@ def test_apply_draft(qapp):
     assert shuttleFrame.shuttleWidgets.period_widget.value() == shuttleFrame.draft_shuttleWidgets.period.value()
     assert shuttleFrame.frame_name.text() == "name"
     mock_save_shuttles.assert_called_once()
-
-
-def test_UI_of_showSettings_QDialog(qapp):
-    parent = QWidget()
-    spinbox = QSpinBox()
-    spinbox.setMaximum(86000)
-    shuttleFrame = ShuttleFrame(shuttles={}, shuttle_seq=0, chrome_driver=None,
-                                shuttle_widget_group=ShuttleWidgetGroup(url_widget=QLineEdit(),
-                                                                        state_widget=QTextEdit(),
-                                                                        shuttle_name_widget=QLineEdit(),
-                                                                        period_widget=spinbox,
-                                                                        target_classes_widget=QLineEdit(),
-                                                                        parent=None
-                                                                        ), shuttles_widget=parent)
-
-    dialog = shuttleFrame.create_settings_dialog()
-
-    layout: QVBoxLayout = dialog.layout()
-    assert layout.count() == 5
-    assert layout.itemAt(0).layout().itemAt(0).widget().text() == "셔틀 이름 : "
-    assert type(layout.itemAt(0).layout().itemAt(1).widget()) == QLineEdit
-    assert layout.itemAt(1).layout().itemAt(0).widget().text() == "URL : "
-    assert type(layout.itemAt(1).layout().itemAt(1).widget()) == QLineEdit
-    assert layout.itemAt(2).layout().itemAt(0).widget().text() == "반복 주기(초) : "
-    assert type(layout.itemAt(2).layout().itemAt(1).widget()) == QSpinBox
-    assert layout.itemAt(2).layout().itemAt(1).widget().maximum() == 86000
-    assert layout.itemAt(3).layout().itemAt(0).widget().text() == "타깃 클래스 : "
-    assert type(layout.itemAt(3).layout().itemAt(1).widget()) == QLineEdit

@@ -1,4 +1,3 @@
-import pygame
 from PyQt5.QtCore import QThread
 
 from webshuttle.domain.ScrapThread import ScrapThread
