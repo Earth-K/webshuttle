@@ -14,7 +14,7 @@ class ImportShuttlesService(ImportShuttlesUseCase):
         for index in range(len(shuttles.keys())):
             shuttle_attributes = shuttles[f'shuttle{index}']
             period_widget = QSpinBox()
-            period_widget.setValue(86400)
+            period_widget.setMaximum(86400)
             period_widget.setValue(int(shuttle_attributes["period"]))
             shuttles_widget.add_shuttle(ShuttleWidgetGroup(shuttle_name_widget=QLineEdit(shuttle_attributes["name"]),
                                                            url_widget=QLineEdit(shuttle_attributes["url"]),

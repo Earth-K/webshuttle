@@ -3,9 +3,9 @@ from PyQt5.QtWidgets import QLineEdit, QSpinBox
 
 class DraftShuttleWidgets:
     def __init__(self, name, url, period, target_classes):
-        self.name = QLineEdit(name)
-        self.url = QLineEdit(url)
-        self.period = QSpinBox()
-        self.period.setMaximum(86000)
-        self.period.setValue(period)
-        self.target_classes = QLineEdit(target_classes)
+        self.name_widget = QLineEdit(name)
+        self.url_widget = QLineEdit(url)
+        self.period_widget = QSpinBox()
+        self.period_widget.setMaximum(86400)
+        self.period_widget.setValue(period)
+        self.target_classes_widget = QLineEdit(target_classes)
