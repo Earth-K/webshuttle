@@ -16,8 +16,10 @@ class ImportShuttlesService(ImportShuttlesUseCase):
             period_widget = QSpinBox()
             period_widget.setMaximum(86400)
             period_widget.setValue(int(shuttle_attributes["period"]))
-            shuttles_widget.add_shuttle(ShuttleWidgetGroup(shuttle_name_widget=QLineEdit(shuttle_attributes["name"]),
-                                                           url_widget=QLineEdit(shuttle_attributes["url"]),
+            shuttles_widget.add_shuttle(ShuttleWidgetGroup(state_widget=state_widget.get_text_edit(),
+                                                           target_classes_widget=QLineEdit(
+                                                               shuttle_attributes["element_classes"]),
                                                            period_widget=period_widget,
-                                                           target_classes_widget=QLineEdit(shuttle_attributes["element_classes"]),
-                                                           state_widget=state_widget.get_text_edit()))
+                                                           url_widget=QLineEdit(shuttle_attributes["url"]),
+                                                           shuttle_name_widget=QLineEdit(shuttle_attributes["name"]),
+                                                           filtering_keyword_widget=QLineEdit(shuttle_attributes.get("filtering_keyword"))))

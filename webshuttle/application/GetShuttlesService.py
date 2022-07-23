@@ -11,6 +11,7 @@ class GetShuttlesService(GetShuttlesUseCase):
             shuttle_property = {"name": frame.shuttleWidgets.shuttle_name_widget.text(),
                                 "url": frame.shuttleWidgets.url_widget.text(),
                                 "period": frame.shuttleWidgets.period_widget.text(),
-                                "element_classes": frame.shuttleWidgets.target_classes_widget.text()}
+                                "element_classes": frame.shuttleWidgets.target_classes_widget.text(),
+                                "filtering_keyword": frame.shuttleWidgets.filtering_keyword_widget.text()}
             result[new_shuttle_id] = shuttle_property
         return result

@@ -19,10 +19,7 @@ class ShuttleFrame(QWidget, Observer):
 
         self.shuttle_seq = shuttle_seq
         self.shuttleWidgets: ShuttleWidgetGroup = shuttle_widget_group
-        self.draft_shuttleWidgets = DraftShuttleWidgets(name=self.shuttleWidgets.shuttle_name_widget.text(),
-                                                        url=self.shuttleWidgets.url_widget.text(),
-                                                        period=self.shuttleWidgets.period_widget.value(),
-                                                        target_classes=self.shuttleWidgets.target_classes_widget.text())
+        self.draft_shuttleWidgets = DraftShuttleWidgets(shuttle_widget_group)
         self.settingsButton: QPushButton = QPushButton("설정")
         self.settingsButton.clicked.connect(lambda: self.create_settings_dialog().show())
         self.shuttles_widget = shuttles_widget
@@ -45,6 +42,7 @@ class ShuttleFrame(QWidget, Observer):
         self.shuttleWidgets.shuttle_name_widget.setText(self.draft_shuttleWidgets.name_widget.text())
         self.shuttleWidgets.target_classes_widget.setText(self.draft_shuttleWidgets.target_classes_widget.text())
         self.shuttleWidgets.period_widget.setValue(self.draft_shuttleWidgets.period_widget.value())
+        self.shuttleWidgets.filtering_keyword_widget.setText(self.draft_shuttleWidgets.filtering_keyword_widget.text())
         self.frame_name.setText(self.draft_shuttleWidgets.name_widget.text())
 
     def apply_draft(self, widget):
@@ -57,6 +55,7 @@ class ShuttleFrame(QWidget, Observer):
         self.draft_shuttleWidgets.name_widget.setText(self.shuttleWidgets.shuttle_name_widget.text())
         self.draft_shuttleWidgets.target_classes_widget.setText(self.shuttleWidgets.target_classes_widget.text())
         self.draft_shuttleWidgets.period_widget.setValue(self.shuttleWidgets.period_widget.value())
+        self.draft_shuttleWidgets.filtering_keyword_widget.setText(self.shuttleWidgets.filtering_keyword_widget.text())
         self.draft_shuttleWidgets.name_widget.setText(self.frame_name.text())
         widget.close()
 
@@ -83,6 +82,10 @@ class ShuttleFrame(QWidget, Observer):
         classes_hBoxLayout.addWidget(QLabel("타깃 클래스 : "))
         classes_hBoxLayout.addWidget(self.draft_shuttleWidgets.target_classes_widget)
         vBoxLayout.addLayout(classes_hBoxLayout)
+        filtering_keyword_hBoxLayout = QHBoxLayout()
+        filtering_keyword_hBoxLayout.addWidget(QLabel("필터링 키워드 : "))
+        filtering_keyword_hBoxLayout.addWidget(self.draft_shuttleWidgets.filtering_keyword_widget)
+        vBoxLayout.addLayout(filtering_keyword_hBoxLayout)
         confirm_hBoxLayout = QHBoxLayout()
         ok_button = QPushButton("OK")
         ok_button.clicked.connect(lambda: self.apply_draft(dialog))
@@ -114,12 +117,12 @@ class ShuttleFrame(QWidget, Observer):
             self.draft_shuttleWidgets.period_widget.setReadOnly(True)
             waiting_event = threading.Event()
             self.shuttles[self.shuttle_seq] = Shuttle(self, self.shuttles, self.shuttle_seq,
-                                                      ShuttleWidgetGroup(
-                                                          shuttle_name_widget=self.draft_shuttleWidgets.name_widget,
-                                                          url_widget=self.draft_shuttleWidgets.url_widget,
-                                                          period_widget=self.draft_shuttleWidgets.period_widget,
-                                                          target_classes_widget=self.draft_shuttleWidgets.target_classes_widget,
-                                                          state_widget=self.shuttleWidgets.state_widget),
+                                                      ShuttleWidgetGroup(state_widget=self.shuttleWidgets.state_widget,
+                                                                         target_classes_widget=self.draft_shuttleWidgets.target_classes_widget,
+                                                                         period_widget=self.draft_shuttleWidgets.period_widget,
+                                                                         url_widget=self.draft_shuttleWidgets.url_widget,
+                                                                         shuttle_name_widget=self.draft_shuttleWidgets.name_widget,
+                                                                         filtering_keyword_widget=self.draft_shuttleWidgets.filtering_keyword_widget),
                                                       self.chrome_driver, waiting_event)
             self.shuttles[self.shuttle_seq].start()
             waiting_event.wait(timeout=60)

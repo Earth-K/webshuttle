@@ -1,19 +1,15 @@
 import pygame
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit, QPushButton, QSpinBox, QFrame, \
-    QMessageBox
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit, QSpinBox
 
 from webshuttle.adapter.incoming.ui import StateWidget
 from webshuttle.adapter.incoming.ui.ShuttleDeleteButton import ShuttleDeleteButton
 from webshuttle.application.CreateLogTextService import CreateLogTextService
 from webshuttle.application.CreateShuttleFrameService import CreateShuttleFrameService
-from webshuttle.application.CreateShuttleWidgetGroupService import CreateShuttleWidgetGroupService
 from webshuttle.application.ExportShuttlesService import ExportShuttlesService
 from webshuttle.application.GetShuttlesService import GetShuttlesService
 from webshuttle.application.ImportShuttlesService import ImportShuttlesService
 from webshuttle.application.port.incoming import CreateShuttleFrameUseCase
 from webshuttle.application.port.incoming.CreateLogTextUseCase import CreateLogTextUseCase
-from webshuttle.application.port.incoming.CreateShuttleWidgetGroupUseCase import CreateShuttleWidgetGroupUseCase
 from webshuttle.application.port.incoming.ExportShuttlesUseCase import ExportShuttlesUseCase
 from webshuttle.application.port.incoming.GetShuttlesUseCase import GetShuttlesUseCase
 from webshuttle.application.port.incoming.ImportShuttlesUseCase import ImportShuttlesUseCase
@@ -76,7 +72,6 @@ class ShuttlesWidget(QWidget):
         self.import_shuttles_service: ImportShuttlesUseCase = ImportShuttlesService()
         self.export_shuttles_service: ExportShuttlesUseCase = ExportShuttlesService()
         self.create_shuttle_frame_service: CreateShuttleFrameUseCase = CreateShuttleFrameService()
-        self.create_shuttle_widget_group_service: CreateShuttleWidgetGroupUseCase = CreateShuttleWidgetGroupService()
         self.create_log_text_service: CreateLogTextUseCase = CreateLogTextService()
 
     def _init_ui(self):

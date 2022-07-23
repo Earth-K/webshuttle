@@ -22,7 +22,7 @@ def _create_mock_webdriver():
 
 
 def _default_shuttle_widget_group():
-    return ShuttleWidgetGroup(QWidget(), QLineEdit(), QLineEdit(), QLineEdit(), QLineEdit())
+    return ShuttleWidgetGroup(QWidget(), QLineEdit(), QLineEdit(), QLineEdit(), QLineEdit(), QLineEdit())
 
 
 def _default_web_scraper(mock):

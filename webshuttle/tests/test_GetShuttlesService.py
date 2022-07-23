@@ -24,7 +24,8 @@ def test_sequence_of_shuttle_id_is_renewed_when_saved_shuttle_is_deleted(qapp):
                                                          shuttle_name_widget=QLineEdit(f"셔틀{str_i}"),
                                                          url_widget=QLineEdit(f"http://{str_i}.com"),
                                                          period_widget=QSpinBox(),
-                                                         target_classes_widget=QLineEdit(f"targetClasses{str_i}")),
+                                                         target_classes_widget=QLineEdit(f"targetClasses{str_i}"),
+                                                         filtering_keyword_widget=QLineEdit(f"filteringKeyword{str_i}")),
                                                          shuttles_widget=QWidget())
 
     shuttle_frames.pop("shuttle1")
@@ -34,3 +35,4 @@ def test_sequence_of_shuttle_id_is_renewed_when_saved_shuttle_is_deleted(qapp):
     assert shuttle_widget_group_2["name"] == "셔틀3"
     assert shuttle_widget_group_2["url"] == "http://3.com"
     assert shuttle_widget_group_2["element_classes"] == "targetClasses3"
+    assert shuttle_widget_group_2["filtering_keyword"] == "filteringKeyword3"

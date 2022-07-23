@@ -23,11 +23,11 @@ def test_saved_shuttle_frames_are_imported_to_dict(qapp):
 
     result = shuttleWidget.saved_shuttles_json()
 
-    assert result == {'shuttle0': {'name': 'Shuttle Name', 'url': 'https://google.com', 'period': '300', 'element_classes': 'Target Class Names'}}
+    assert result == {'shuttle0': {'name': 'Shuttle Name', 'url': 'https://google.com', 'period': '300', 'element_classes': 'Target Class Names', 'filtering_keyword': 'Filtering Keyword'}}
     with open('shuttles_test.json', 'r', encoding="utf-8") as shuttles_file:
         shuttles = json.load(shuttles_file)
         assert str(shuttles) \
-               == "{'shuttle0': {'name': 'Shuttle Name', 'url': 'https://google.com', 'period': '300', 'element_classes': 'Target Class Names'}}"
+               == "{'shuttle0': {'name': 'Shuttle Name', 'url': 'https://google.com', 'period': '300', 'element_classes': 'Target Class Names', 'filtering_keyword': 'Filtering Keyword'}}"
 
 
 def test_shuttle_frame_is_added(qapp):
@@ -43,6 +43,7 @@ def test_shuttle_frame_is_added(qapp):
     assert frame.shuttleWidgets.url_widget.text() == "https://google.com"
     assert frame.shuttleWidgets.period_widget.value() == 300
     assert frame.shuttleWidgets.target_classes_widget.text() == "Target Class Names"
+    assert frame.shuttleWidgets.filtering_keyword_widget.text() == "Filtering Keyword"
 
 
 def test_shuttle_frame_widget_is_deleted(qapp):
@@ -72,5 +73,6 @@ def default_shuttle_widget_group():
                                                                   target_classes_widget=QLineEdit("Target Class Names"),
                                                                   period_widget=period_widget,
                                                                   url_widget=QLineEdit("https://google.com"),
-                                                                  shuttle_name_widget=QLineEdit("Shuttle Name"))
+                                                                  shuttle_name_widget=QLineEdit("Shuttle Name"),
+                                                                  filtering_keyword_widget=QLineEdit("Filtering Keyword"))
     return shuttle_widget_group

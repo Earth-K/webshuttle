@@ -28,7 +28,7 @@ class SelectAreaService(SelectAreaUseCase):
     def open_browser(self):
         chrome_service = Service(self.chrome_driver)
         chrome_service.creationflags = 0x08000000
-        shuttle_widget_group = ShuttleWidgetGroup(None, None, None, self.url_widget, None, self)
+        shuttle_widget_group = ShuttleWidgetGroup(None, None, None, self.url_widget, None, None, self)
         try:
             self._web_scraper = WebScraper(shuttle_widget_group=shuttle_widget_group,
                                            driver=webdriver.Chrome(service=chrome_service),
