@@ -13,6 +13,7 @@ from webshuttle.application.port.incoming.CreateLogTextUseCase import CreateLogT
 from webshuttle.application.port.incoming.ExportShuttlesCommand import ExportShuttlesCommand
 from webshuttle.application.port.incoming.ExportShuttlesUseCase import ExportShuttlesUseCase
 from webshuttle.application.port.incoming.GetShuttlesUseCase import GetShuttlesUseCase
+from webshuttle.application.port.incoming.ImportShuttlesCommand import ImportShuttlesCommand
 from webshuttle.application.port.incoming.ImportShuttlesUseCase import ImportShuttlesUseCase
 from webshuttle.domain.ShuttleWidgetGroup import ShuttleWidgetGroup
 
@@ -118,10 +119,11 @@ class ShuttlesWidget(QWidget):
         return shuttleLayout
 
     def import_external_shuttles(self, state_widget: StateWidget):
-        self.import_shuttles_service.import_external_shuttles(shuttles_widget=self, state_widget=state_widget)
+        import_shuttles_command = ImportShuttlesCommand(shuttles_widget=self, state_widget=state_widget)
+        self.import_shuttles_service.import_external_shuttles(import_shuttles_command)
 
     def save_shuttles(self):
-        export_shuttles_command = ExportShuttlesCommand(self.saved_shuttles_json(), self.file_name)
+        export_shuttles_command = ExportShuttlesCommand(shuttle_properties_list=self.saved_shuttles_json(), file_name=self.file_name)
         self.export_shuttles_service.save_shuttles_to_json(export_shuttles_command)
 
     def saved_shuttles_json(self):

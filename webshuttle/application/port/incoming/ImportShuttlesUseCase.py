@@ -1,6 +1,6 @@
-from webshuttle.adapter.incoming.ui import ShuttlesWidget, StateWidget
+from webshuttle.application.port.incoming.ImportShuttlesCommand import ImportShuttlesCommand
 
 
 class ImportShuttlesUseCase:
-    def import_external_shuttles(self, shuttles_widget: ShuttlesWidget, state_widget: StateWidget) -> None:
+    def import_external_shuttles(self, import_shuttles_command: ImportShuttlesCommand) -> None:
         pass
