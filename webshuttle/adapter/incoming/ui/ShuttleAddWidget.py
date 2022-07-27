@@ -86,6 +86,6 @@ class ShuttleAddWidget(QWidget):
                                                             target_classes_widget=QLineEdit(self.element_class_names),
                                                             period_widget=period_widget, url_widget=self.url_widget,
                                                             shuttle_name_widget=self.shuttle_name_widget,
-                                                            filtering_keyword_widget=filtering_keyword))
+                                                            filtering_keyword_widget=QLineEdit()))
         QMessageBox.information(self, '성공', '셔틀이 셔틀 목록에 저장되었습니다.',
                                 QMessageBox.Yes, QMessageBox.NoButton)

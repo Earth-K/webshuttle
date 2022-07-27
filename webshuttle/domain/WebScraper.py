@@ -15,6 +15,7 @@ class WebScraper:
         pygame.init()
         self.shuttle_widget_group = shuttle_widget_group
         self.url = self._safe_url(shuttle_widget_group.get_url_widget().text())
+        self.filtering_keyword = shuttle_widget_group.filtering_keyword_widget.text()
         self.shuttle_seq = shuttle_seq
         self.shuttle_list = shuttle_list
         self.driver = driver
@@ -55,10 +56,13 @@ class WebScraper:
                 self.text_list = new_text_list
             else:
                 for e in elements:
-                    if len(e.text) > 0:
-                        self.text_list.append(e.text)
+                    text: str = e.text
+                    if len(text) > 0:
+                        if text.find(self.filtering_keyword) == -1:
+                            continue
+                        self.text_list.append(text)
                         # 한 번에 보이는 정보의 양을 늘리기 위해 줄 바꿈 문자를 | 로 변경함
-                        no_newline_text += e.text.replace("\n", " | ") + "\n"
+                        no_newline_text += text.replace("\n", " | ") + "\n"
             if len(no_newline_text) > 0:
                 log_text = LogText(self.shuttle_widget_group.shuttle_name_widget.text(), DefaultTime().localtime())
                 self.shuttle_widget_group.state_widget.append(log_text.updated_shuttle_name())
@@ -71,7 +75,10 @@ class WebScraper:
     def _text_list(self, elements):
         result = []
         for e in elements:
-            result.append(e.text)
+            text: str = e.text
+            if text.find(self.filtering_keyword) == -1:
+                continue
+            result.append(text)
         return result
 
     def stop(self):

@@ -6,7 +6,7 @@ from webshuttle.domain.Subject import Subject
 
 class ShuttleWidgetGroup(Subject):
     def __init__(self, state_widget, target_classes_widget, period_widget, url_widget, shuttle_name_widget,
-                 filtering_keyword_widget, parent=None):
+                 filtering_keyword_widget="", parent=None):
 
         self.state_widget: QTextEdit = state_widget
         self.target_classes_widget = target_classes_widget
