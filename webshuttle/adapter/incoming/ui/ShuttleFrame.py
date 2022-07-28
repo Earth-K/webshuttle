@@ -1,4 +1,5 @@
 import threading
+import atexit
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFrame, QPushButton, QHBoxLayout, QVBoxLayout, QLabel, QWidget, QDialog
@@ -128,6 +129,7 @@ class ShuttleFrame(QWidget, Observer):
             waiting_event.wait(timeout=60)
             self.settingsButton.setDisabled(True)
             start_btn_widget.setText('중지')
+            atexit.register(self.shuttles[self.shuttle_seq].stop)
 
         else:
             self.settingsButton.setDisabled(False)
