@@ -7,6 +7,7 @@ from selenium.webdriver.common.by import By
 from webshuttle.domain.DefaultTime import DefaultTime
 from webshuttle.domain.LogText import LogText
 from webshuttle.domain.ShuttleWidgetGroup import ShuttleWidgetGroup
+from webshuttle.domain.UpdatedTextParser import UpdatedTextParser
 
 
 class WebScraper:
@@ -14,18 +15,15 @@ class WebScraper:
                  shuttle_seq: int, waiting_event: threading.Event):
         pygame.init()
         self.shuttle_widget_group = shuttle_widget_group
-        self.url = self._safe_url(shuttle_widget_group.get_url_widget().text())
-        self.filtering_keyword = shuttle_widget_group.filtering_keyword_widget.text()
+        self.url = self._safe_url()
         self.shuttle_seq = shuttle_seq
         self.shuttle_list = shuttle_list
         self.driver = driver
-        self.text_list = []
         self.stop_event = threading.Event()
-        self.sound = pygame.mixer.Sound("resource/sounds/sound.wav")
         self.waiting_event = waiting_event
 
-    def _safe_url(self, url):
-        result = url
+    def _safe_url(self):
+        result = self.shuttle_widget_group.get_url_widget().text()
         if result == '':
             return 'http://google.com'
         if not result.startswith('http://') | result.startswith('https://'):
@@ -38,48 +36,29 @@ class WebScraper:
         self.driver.get(self.url)
 
     def scrap(self):
+        text_list = []
+        sound = pygame.mixer.Sound("resource/sounds/sound.wav")
         pre_shuttle_thread = self.shuttle_list[self.shuttle_seq]
         while True:
             if pre_shuttle_thread != self.shuttle_list[self.shuttle_seq]:
                 break
             self.driver.refresh()
-            elements = self.get_elements_by_classnames(
-                self.shuttle_widget_group.target_classes_widget.text())
-            no_newline_text = ""
-            if len(self.text_list) > 0:
-                new_text_list = self._text_list(elements)
-                for new_text in new_text_list:
-                    if new_text not in self.text_list:
-                        if len(new_text) > 0:
-                            # 한 번에 보이는 정보의 양을 늘리기 위해 줄 바꿈 문자를 | 로 변경함
-                            no_newline_text += new_text.replace("\n", " | ") + "\n"
-                self.text_list = new_text_list
-            else:
-                for e in elements:
-                    text: str = e.text
-                    if len(text) > 0:
-                        if text.find(self.filtering_keyword) == -1:
-                            continue
-                        self.text_list.append(text)
-                        # 한 번에 보이는 정보의 양을 늘리기 위해 줄 바꿈 문자를 | 로 변경함
-                        no_newline_text += text.replace("\n", " | ") + "\n"
-            if len(no_newline_text) > 0:
-                log_text = LogText(self.shuttle_widget_group.shuttle_name_widget.text(), DefaultTime().localtime())
-                self.shuttle_widget_group.state_widget.append(log_text.updated_shuttle_name())
-                self.shuttle_widget_group.state_widget.append(f"{no_newline_text}\n")
-                self.sound.play()
+            elements = self.get_elements_by_classnames(self.shuttle_widget_group.target_classes_widget.text())
+            updated_text_parser = UpdatedTextParser(elements=elements,
+                                                    filtering_keyword=self.shuttle_widget_group.filtering_keyword_widget.text(),
+                                                    text_list=text_list)
+            collected_text = updated_text_parser.parse()
+            if len(collected_text) > 0:
+                self._print_to_state_widget(collected_text)
+                sound.play()
             self.waiting_event.set()
             self.stop_event.wait(timeout=int(self.shuttle_widget_group.period_widget.text()))
         self.driver.quit()
 
-    def _text_list(self, elements):
-        result = []
-        for e in elements:
-            text: str = e.text
-            if text.find(self.filtering_keyword) == -1:
-                continue
-            result.append(text)
-        return result
+    def _print_to_state_widget(self, collected_text):
+        log_text = LogText(self.shuttle_widget_group.shuttle_name_widget.text(), DefaultTime().localtime())
+        self.shuttle_widget_group.state_widget.append(log_text.updated_shuttle_name())
+        self.shuttle_widget_group.state_widget.append(f"{collected_text}\n")
 
     def stop(self):
         self.shuttle_list[self.shuttle_seq] = None
