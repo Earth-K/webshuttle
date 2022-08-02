@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit
 
 from webshuttle.adapter.incoming.ui import StateWidget
 from webshuttle.adapter.incoming.ui.ShuttleDeleteButton import ShuttleDeleteButton
+from webshuttle.adapter.outcoming.persistence.ShuttlePersistenceAdapter import ShuttlePersistenceAdapter
 from webshuttle.application.CreateLogTextService import CreateLogTextService
 from webshuttle.application.CreateShuttleFrameService import CreateShuttleFrameService
 from webshuttle.application.ExportShuttlesService import ExportShuttlesService
@@ -72,7 +73,7 @@ class ShuttlesWidget(QWidget):
     def _init_service(self):
         self.get_shuttles_service: GetShuttlesUseCase = GetShuttlesService()
         self.import_shuttles_service: ImportShuttlesUseCase = ImportShuttlesService()
-        self.export_shuttles_service: ExportShuttlesUseCase = ExportShuttlesService()
+        self.export_shuttles_service: ExportShuttlesUseCase = ExportShuttlesService(ShuttlePersistenceAdapter())
         self.create_shuttle_frame_service: CreateShuttleFrameUseCase = CreateShuttleFrameService()
         self.create_log_text_service: CreateLogTextUseCase = CreateLogTextService()
 

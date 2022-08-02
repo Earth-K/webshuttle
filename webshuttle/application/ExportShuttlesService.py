@@ -1,6 +1,3 @@
-import json
-
-from webshuttle.adapter.outcoming.persistence.ShuttlePersistenceAdapter import ShuttlePersistenceAdapter
 from webshuttle.application.port.incoming.ExportShuttlesCommand import ExportShuttlesCommand
 from webshuttle.application.port.incoming.ExportShuttlesUseCase import ExportShuttlesUseCase
 from webshuttle.application.port.outcoming.ShuttleRepository import ShuttleRepository
@@ -8,8 +5,8 @@ from webshuttle.application.port.outcoming.ShuttleRepository import ShuttleRepos
 
 class ExportShuttlesService(ExportShuttlesUseCase):
 
-    def __init__(self):
-        self.shuttlePersistenceAdapter: ShuttleRepository = ShuttlePersistenceAdapter()
+    def __init__(self, shuttle_repository: ShuttleRepository):
+        self.shuttle_repository: ShuttleRepository = shuttle_repository
 
     def export(self, export_shuttles_command: ExportShuttlesCommand):
-        self.shuttlePersistenceAdapter.export(export_shuttles_command)
+        self.shuttle_repository.export(export_shuttles_command)
