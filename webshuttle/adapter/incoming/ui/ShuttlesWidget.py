@@ -124,7 +124,7 @@ class ShuttlesWidget(QWidget):
 
     def save_shuttles(self):
         export_shuttles_command = ExportShuttlesCommand(shuttle_properties_list=self.saved_shuttles_json(), file_name=self.file_name)
-        self.export_shuttles_service.save_shuttles_to_json(export_shuttles_command)
+        self.export_shuttles_service.export(export_shuttles_command)
 
     def saved_shuttles_json(self):
         if self.shuttles_vbox_layout is None:

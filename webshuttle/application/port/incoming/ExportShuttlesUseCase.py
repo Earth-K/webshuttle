@@ -2,5 +2,5 @@ from webshuttle.application.port.incoming.ExportShuttlesCommand import ExportShu
 
 
 class ExportShuttlesUseCase:
-    def save_shuttles_to_json(self, export_shuttles_command: ExportShuttlesCommand):
+    def export(self, export_shuttles_command: ExportShuttlesCommand):
         pass

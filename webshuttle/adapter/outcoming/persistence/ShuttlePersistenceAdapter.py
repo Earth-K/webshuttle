@@ -5,7 +5,7 @@ from webshuttle.application.port.outcoming.ShuttleRepository import ShuttleRepos
 
 
 class ShuttlePersistenceAdapter(ShuttleRepository):
-    def insert(self, export_shuttles_command: ExportShuttlesCommand):
+    def export(self, export_shuttles_command: ExportShuttlesCommand):
         shuttles_json = {}
         for index in range(len(export_shuttles_command.shuttle_properties_list)):
             shuttle_id = f"shuttle{index}"

@@ -11,5 +11,5 @@ class ExportShuttlesService(ExportShuttlesUseCase):
     def __init__(self):
         self.shuttlePersistenceAdapter: ShuttleRepository = ShuttlePersistenceAdapter()
 
-    def save_shuttles_to_json(self, export_shuttles_command: ExportShuttlesCommand):
-        self.shuttlePersistenceAdapter.insert(export_shuttles_command)
+    def export(self, export_shuttles_command: ExportShuttlesCommand):
+        self.shuttlePersistenceAdapter.export(export_shuttles_command)
