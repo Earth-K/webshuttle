@@ -1,0 +1,9 @@
+{
+  "shuttle0": {
+    "name": "Shuttle Name",
+    "url": "https://google.com",
+    "period": "300",
+    "element_classes": "Target Class Names",
+    "filtering_keyword": "Filtering Keyword"
+  }
+}

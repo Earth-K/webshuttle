@@ -2,7 +2,7 @@ from webshuttle.adapter.incoming.ui import ShuttlesWidget
 from webshuttle.adapter.incoming.ui import StateWidget
 
 
-class ImportShuttlesCommand:
+class LoadShuttlesCommand:
     def __init__(self, shuttles_widget: ShuttlesWidget, state_widget: StateWidget):
         self.shuttles_widget = shuttles_widget
         self.state_widget = state_widget
