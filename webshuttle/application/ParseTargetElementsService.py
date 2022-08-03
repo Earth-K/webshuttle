@@ -35,5 +35,8 @@ class ParseTargetElementsService(ParseTargetElementsUseCase):
         for e in elements:
             self._elements_report_widget.append('{0}\n'.format(e.text))
 
+    def set_web_scraper(self, web_scraper):
+        self._web_scraper = web_scraper
+
     def get_class_names(self):
         return self.element_class_names

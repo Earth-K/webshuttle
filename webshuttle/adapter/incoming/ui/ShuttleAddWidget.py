@@ -1,29 +1,26 @@
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QWidget, QPushButton, QVBoxLayout, QTextEdit, QLineEdit, \
+from PyQt5.QtWidgets import QWidget, QPushButton, QVBoxLayout, QLineEdit, \
     QHBoxLayout, QLabel, QMessageBox, QSpinBox
-from selenium.common.exceptions import WebDriverException
 
+from webshuttle.adapter.incoming.ui import MainWindow
 from webshuttle.adapter.incoming.ui import ShuttlesWidget, StateWidget
 from webshuttle.application.ParseTargetElementsService import ParseTargetElementsService
-from webshuttle.application.SelectAreaService import SelectAreaService
-from webshuttle.application.port.incoming.ParseTargetElementsUseCase import ParseTargetElementsUseCase
-from webshuttle.application.port.incoming.SelectAreaUseCase import SelectAreaUseCase
 from webshuttle.domain.ShuttleWidgetGroup import ShuttleWidgetGroup
 
 
 class ShuttleAddWidget(QWidget):
-    def __init__(self, parent, shuttles_widget: ShuttlesWidget, state_widget: StateWidget, chrome_driver):
+    def __init__(self, parent: MainWindow, shuttles_widget: ShuttlesWidget, state_widget: StateWidget,
+                 elements_report_widget, shuttle_name_widget, url_widget, addshuttle_button, select_area_usecase):
         super(ShuttleAddWidget, self).__init__(parent)
-        self.elements_report_widget = QTextEdit()
-        self.shuttle_name_widget = QLineEdit()
-        self.url_widget = QLineEdit()
-        self.addshuttle_button = QPushButton()
-        self._init_ui()
-        self.shuttles_widget = shuttles_widget
-        self.select_area_service: SelectAreaUseCase = SelectAreaService(self.url_widget, chrome_driver)
-        self.parse_target_elements_service: ParseTargetElementsUseCase
+        self.elements_report_widget = elements_report_widget
+        self.shuttle_name_widget = shuttle_name_widget
+        self.url_widget = url_widget
+        self.addshuttle_button = addshuttle_button
         self.shuttles_widget = shuttles_widget
         self.state_widget = state_widget
+        self.select_area_usecase = select_area_usecase
+        self._init_ui()
+        self.parse_target_elements_service = None
 
     def _init_ui(self):
         main_layout = QVBoxLayout()
@@ -62,8 +59,8 @@ class ShuttleAddWidget(QWidget):
         self.show()
 
     def _open_browser(self):
-        self.select_area_service.open_browser()
-        _web_scraper = self.select_area_service.get_web_scraper()
+        self.select_area_usecase.open_browser()
+        _web_scraper = self.select_area_usecase.get_web_scraper()
         self.parse_target_elements_service = ParseTargetElementsService(self, _web_scraper, self.elements_report_widget)
         self.addshuttle_button.setDisabled(True)
 
