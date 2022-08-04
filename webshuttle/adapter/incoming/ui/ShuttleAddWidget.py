@@ -9,12 +9,22 @@ from webshuttle.domain.ShuttleWidgetGroup import ShuttleWidgetGroup
 
 
 class ShuttleAddWidget(QWidget):
-    def __init__(self, parent: MainWindow, shuttles_widget: ShuttlesWidget, state_widget: StateWidget,
-                 elements_report_widget, shuttle_name_widget, url_widget, addshuttle_button, select_area_usecase):
+    def __init__(self, parent: MainWindow,
+                 shuttles_widget: ShuttlesWidget,
+                 state_widget: StateWidget,
+                 elements_report_widget,
+                 shuttle_name_widget,
+                 url_widget,
+                 period_widget,
+                 filtering_keyword_widget,
+                 addshuttle_button,
+                 select_area_usecase):
         super(ShuttleAddWidget, self).__init__(parent)
         self.elements_report_widget = elements_report_widget
         self.shuttle_name_widget = shuttle_name_widget
         self.url_widget = url_widget
+        self.period_widget = period_widget
+        self.filtering_keyword_widget = filtering_keyword_widget
         self.addshuttle_button = addshuttle_button
         self.shuttles_widget = shuttles_widget
         self.state_widget = state_widget
@@ -76,13 +86,12 @@ class ShuttleAddWidget(QWidget):
                                     "먼저 선택 영역 데이터를 불러와주세요.",
                                     QMessageBox.Yes, QMessageBox.NoButton)
             return
-        period_widget = QSpinBox()
-        period_widget.setMaximum(86400)
-        period_widget.setValue(300)
+
         self.shuttles_widget.add_shuttle(ShuttleWidgetGroup(state_widget=self.state_widget.get_text_edit(),
                                                             target_classes_widget=QLineEdit(self.element_class_names),
-                                                            period_widget=period_widget, url_widget=self.url_widget,
+                                                            period_widget=self.period_widget,
+                                                            url_widget=self.url_widget,
                                                             shuttle_name_widget=self.shuttle_name_widget,
-                                                            filtering_keyword_widget=QLineEdit()))
+                                                            filtering_keyword_widget=self.filtering_keyword_widget))
         QMessageBox.information(self, '성공', '셔틀이 셔틀 목록에 저장되었습니다.',
                                 QMessageBox.Yes, QMessageBox.NoButton)

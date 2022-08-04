@@ -21,15 +21,16 @@ def init_event_listener(web_scraper):
 
 
 class SelectAreaService(SelectAreaUseCase):
-    def __init__(self, url_widget, chrome_driver):
+    def __init__(self, url_widget, filtering_keyword_widget, chrome_driver):
         self._web_scraper = None
         self.url_widget = url_widget
         self.chrome_driver = chrome_driver
+        self.filtering_keyword_widget = filtering_keyword_widget
 
     def open_browser(self):
         chrome_service = Service(self.chrome_driver)
         chrome_service.creationflags = 0x08000000
-        shuttle_widget_group = ShuttleWidgetGroup(None, None, None, self.url_widget, None, QLineEdit(), self)
+        shuttle_widget_group = ShuttleWidgetGroup(None, None, None, self.url_widget, None, self.filtering_keyword_widget, self)
         try:
             self._web_scraper = WebScraper(shuttle_widget_group=shuttle_widget_group,
                                            driver=webdriver.Chrome(service=chrome_service),
