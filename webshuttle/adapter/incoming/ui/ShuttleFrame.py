@@ -105,39 +105,44 @@ class ShuttleFrame(QWidget, Observer):
     def start_button(self):
         start_btn = QPushButton('시작')
         start_btn.clicked.connect(
-            lambda: self._start(start_btn))
+            lambda: self._onclick_scrap(start_btn))
         return start_btn
 
-    def _start(self, start_btn_widget):
+    def _onclick_scrap(self, start_btn_widget):
         if start_btn_widget.text() == '시작':
-            shuttle_name = self.draft_shuttleWidgets.name_widget.text()
-            if shuttle_name == "":
-                shuttle_name = "이름 없음"
-            message = LogText(shuttle_name, DefaultTime().localtime()).started_shuttle()
-            self.shuttleWidgets.state_widget.append(message)
-            self.draft_shuttleWidgets.period_widget.setReadOnly(True)
-            waiting_event = threading.Event()
-            self.shuttles[self.shuttle_seq] = Shuttle(self, self.shuttles, self.shuttle_seq,
-                                                      ShuttleWidgetGroup(state_widget=self.shuttleWidgets.state_widget,
-                                                                         target_classes_widget=self.draft_shuttleWidgets.target_classes_widget,
-                                                                         period_widget=self.draft_shuttleWidgets.period_widget,
-                                                                         url_widget=self.draft_shuttleWidgets.url_widget,
-                                                                         shuttle_name_widget=self.draft_shuttleWidgets.name_widget,
-                                                                         filtering_keyword_widget=self.draft_shuttleWidgets.filtering_keyword_widget),
-                                                      self.chrome_driver, waiting_event)
-            self.shuttles[self.shuttle_seq].start()
-            waiting_event.wait(timeout=60)
-            self.settingsButton.setDisabled(True)
-            start_btn_widget.setText('중지')
-            atexit.register(self.shuttles[self.shuttle_seq].stop)
-
+            self._start_scrap(start_btn_widget)
         else:
-            self.settingsButton.setDisabled(False)
-            shuttle_name = self.draft_shuttleWidgets.name_widget.text()
-            if shuttle_name == "":
-                shuttle_name = "이름 없음"
-            message = LogText(shuttle_name, DefaultTime().localtime()).stopped_shuttle()
-            self.shuttleWidgets.state_widget.append(message)
-            self.draft_shuttleWidgets.period_widget.setReadOnly(False)
-            self.shuttles[self.shuttle_seq].stop()
-            start_btn_widget.setText('시작')
+            self._stop_scrap(start_btn_widget)
+
+    def _start_scrap(self, start_btn_widget):
+        shuttle_name = self.draft_shuttleWidgets.name_widget.text()
+        if shuttle_name == "":
+            shuttle_name = "이름 없음"
+        message = LogText(shuttle_name, DefaultTime().localtime()).started_shuttle()
+        self.shuttleWidgets.state_widget.append(message)
+        self.draft_shuttleWidgets.period_widget.setReadOnly(True)
+        waiting_event = threading.Event()
+        self.shuttles[self.shuttle_seq] = Shuttle(self, self.shuttles, self.shuttle_seq,
+                                                  ShuttleWidgetGroup(state_widget=self.shuttleWidgets.state_widget,
+                                                                     target_classes_widget=self.draft_shuttleWidgets.target_classes_widget,
+                                                                     period_widget=self.draft_shuttleWidgets.period_widget,
+                                                                     url_widget=self.draft_shuttleWidgets.url_widget,
+                                                                     shuttle_name_widget=self.draft_shuttleWidgets.name_widget,
+                                                                     filtering_keyword_widget=self.draft_shuttleWidgets.filtering_keyword_widget),
+                                                  self.chrome_driver, waiting_event)
+        self.shuttles[self.shuttle_seq].start()
+        waiting_event.wait(timeout=60)
+        self.settingsButton.setDisabled(True)
+        start_btn_widget.setText('중지')
+        atexit.register(self.shuttles[self.shuttle_seq].stop)
+
+    def _stop_scrap(self, start_btn_widget):
+        self.settingsButton.setDisabled(False)
+        shuttle_name = self.draft_shuttleWidgets.name_widget.text()
+        if shuttle_name == "":
+            shuttle_name = "이름 없음"
+        message = LogText(shuttle_name, DefaultTime().localtime()).stopped_shuttle()
+        self.shuttleWidgets.state_widget.append(message)
+        self.draft_shuttleWidgets.period_widget.setReadOnly(False)
+        self.shuttles[self.shuttle_seq].stop()
+        start_btn_widget.setText('시작')
