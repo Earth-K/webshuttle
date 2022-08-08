@@ -7,7 +7,6 @@ from webshuttle.adapter.incoming.ui.ShuttlesWidget import ShuttlesWidget
 from webshuttle.adapter.incoming.ui.StateWidget import StateWidget
 from webshuttle.adapter.outcoming.persistence.ShuttlePersistenceAdapter import ShuttlePersistenceAdapter
 from webshuttle.application.CreateLogTextService import CreateLogTextService
-from webshuttle.application.CreateShuttleFrameService import CreateShuttleFrameService
 from webshuttle.application.ExportShuttlesService import ExportShuttlesService
 from webshuttle.application.GetShuttlesService import GetShuttlesService
 from webshuttle.application.LoadShuttlesService import LoadShuttlesService
@@ -30,7 +29,6 @@ class MainWindow(QMainWindow):
                                          get_shuttles_usecase=GetShuttlesService(),
                                          load_shuttles_usecase=LoadShuttlesService(ShuttlePersistenceAdapter()),
                                          export_shuttles_usecase=ExportShuttlesService(ShuttlePersistenceAdapter()),
-                                         create_shuttleframe_usecase=CreateShuttleFrameService(),
                                          create_logtext_usecase=CreateLogTextService(),
                                          file_name="shuttles.json")
         period_widget = QSpinBox()

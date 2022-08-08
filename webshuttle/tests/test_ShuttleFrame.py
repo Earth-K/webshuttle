@@ -15,7 +15,7 @@ def qapp():
 
 
 def test_settings_are_applied_when_clicked_ok(qapp):
-    shuttles_widget = ShuttlesWidget(None, None, None, None, None, None, None, None)
+    shuttles_widget = ShuttlesWidget(None, None, None, None, None, None, None)
     mock_save_shuttles = MagicMock()
     shuttles_widget.save_shuttles = mock_save_shuttles
     spinbox = QSpinBox()
@@ -46,7 +46,7 @@ def test_settings_are_applied_when_clicked_ok(qapp):
 
 
 def test_cancel_draft(qapp):
-    shuttles_widget = ShuttlesWidget(None, None, None, None, None, None, None, None)
+    shuttles_widget = ShuttlesWidget(None, None, None, None, None, None, None)
     mock_save_shuttles = MagicMock()
     shuttles_widget.save_shuttles = mock_save_shuttles
     spinbox = QSpinBox()
@@ -76,7 +76,7 @@ def test_cancel_draft(qapp):
 
 
 def test_apply_draft(qapp):
-    shuttles_widget = ShuttlesWidget(None, None, None, None, None, None, None, None)
+    shuttles_widget = ShuttlesWidget(None, None, None, None, None, None, None)
     mock_save_shuttles = MagicMock()
     shuttles_widget.save_shuttles = mock_save_shuttles
     spinbox = QSpinBox()

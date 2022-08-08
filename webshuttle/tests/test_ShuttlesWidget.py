@@ -9,15 +9,9 @@ from webshuttle.adapter.incoming.ui.ShuttleFrame import ShuttleFrame
 from webshuttle.adapter.incoming.ui.ShuttlesWidget import ShuttlesWidget
 from webshuttle.adapter.outcoming.persistence.ShuttlePersistenceAdapter import ShuttlePersistenceAdapter
 from webshuttle.application.CreateLogTextService import CreateLogTextService
-from webshuttle.application.CreateShuttleFrameService import CreateShuttleFrameService
 from webshuttle.application.ExportShuttlesService import ExportShuttlesService
 from webshuttle.application.GetShuttlesService import GetShuttlesService
 from webshuttle.application.LoadShuttlesService import LoadShuttlesService
-from webshuttle.application.port.incoming.CreateLogTextUseCase import CreateLogTextUseCase
-from webshuttle.application.port.incoming.CreateShuttleFrameUseCase import CreateShuttleFrameUseCase
-from webshuttle.application.port.incoming.ExportShuttlesUseCase import ExportShuttlesUseCase
-from webshuttle.application.port.incoming.GetShuttlesUseCase import GetShuttlesUseCase
-from webshuttle.application.port.incoming.LoadShuttlesUseCase import LoadShuttlesUseCase
 from webshuttle.application.port.outcoming.ShuttleRepository import ShuttleRepository
 from webshuttle.domain.ShuttleWidgetGroup import ShuttleWidgetGroup
 
@@ -29,7 +23,7 @@ def qapp():
 
 def test_saved_shuttle_frames_are_imported_to_dict(qapp):
     parent = QMainWindow()
-    shuttleWidget = ShuttlesWidget(parent=parent, chrome_driver=None, export_shuttles_usecase=ExportShuttlesService(ShuttlePersistenceAdapter()), create_shuttleframe_usecase=CreateShuttleFrameService(), create_logtext_usecase=CreateLogTextService(), load_shuttles_usecase=LoadShuttlesService(ShuttleRepository()), get_shuttles_usecase=GetShuttlesService(), file_name="shuttles_test.json")
+    shuttleWidget = ShuttlesWidget(parent=parent, chrome_driver=None, export_shuttles_usecase=ExportShuttlesService(ShuttlePersistenceAdapter()), create_logtext_usecase=CreateLogTextService(), load_shuttles_usecase=LoadShuttlesService(ShuttleRepository()), get_shuttles_usecase=GetShuttlesService(), file_name="shuttles_test.json")
     shuttle_widget_group = default_shuttle_widget_group()
     shuttleWidget.add_shuttle(shuttle_widget_group)
 
@@ -44,7 +38,7 @@ def test_saved_shuttle_frames_are_imported_to_dict(qapp):
 
 def test_shuttle_frame_is_added(qapp):
     parent = QMainWindow()
-    shuttleWidget = ShuttlesWidget(parent=parent, chrome_driver=None, export_shuttles_usecase=ExportShuttlesService(ShuttlePersistenceAdapter()), create_shuttleframe_usecase=CreateShuttleFrameService(), create_logtext_usecase=CreateLogTextService(), load_shuttles_usecase=LoadShuttlesService(ShuttleRepository()), get_shuttles_usecase=GetShuttlesService(), file_name="shuttles_test.json")
+    shuttleWidget = ShuttlesWidget(parent=parent, chrome_driver=None, export_shuttles_usecase=ExportShuttlesService(ShuttlePersistenceAdapter()), create_logtext_usecase=CreateLogTextService(), load_shuttles_usecase=LoadShuttlesService(ShuttleRepository()), get_shuttles_usecase=GetShuttlesService(), file_name="shuttles_test.json")
     shuttleWidget.shuttles_vbox_layout = QVBoxLayout()
 
     shuttleWidget.add_shuttle(default_shuttle_widget_group())
@@ -60,7 +54,7 @@ def test_shuttle_frame_is_added(qapp):
 
 def test_shuttle_frame_widget_is_deleted(qapp):
     parent = QMainWindow()
-    shuttleWidget = ShuttlesWidget(parent=parent, chrome_driver=None, export_shuttles_usecase=ExportShuttlesService(ShuttlePersistenceAdapter()), create_shuttleframe_usecase=CreateShuttleFrameService(), create_logtext_usecase=CreateLogTextService(), load_shuttles_usecase=LoadShuttlesService(ShuttleRepository()), get_shuttles_usecase=GetShuttlesService(), file_name="shuttles_test.json")
+    shuttleWidget = ShuttlesWidget(parent=parent, chrome_driver=None, export_shuttles_usecase=ExportShuttlesService(ShuttlePersistenceAdapter()), create_logtext_usecase=CreateLogTextService(), load_shuttles_usecase=LoadShuttlesService(ShuttleRepository()), get_shuttles_usecase=GetShuttlesService(), file_name="shuttles_test.json")
     shuttleWidget.shuttles_vbox_layout = QVBoxLayout()
 
     shuttleWidget.add_shuttle(default_shuttle_widget_group())
