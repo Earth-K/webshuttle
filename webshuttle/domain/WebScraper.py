@@ -57,7 +57,8 @@ class WebScraper:
 
     def _print_to_state_widget(self, collected_text):
         log_text = LogText(self.shuttle_widget_group.shuttle_name_widget.text(), DefaultTime().localtime())
-        self.shuttle_widget_group.state_widget.append(log_text.updated_shuttle_name())
+        self.shuttle_widget_group.state_widget.append(f"{log_text.updated_shuttle_name()}")
+        self.shuttle_widget_group.state_widget.append(f"{self.url}\n")
         self.shuttle_widget_group.state_widget.append(f"{collected_text}\n")
 
     def stop(self):
