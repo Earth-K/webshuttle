@@ -103,7 +103,7 @@ class ShuttlesWidget(QWidget):
         shuttleLayout = QHBoxLayout()
         shuttleLayout.addWidget(shuttle_frame.get_frame_widget())
         delete_shuttle_button = ShuttleDeleteButton(self, shuttle_frame, shuttle_widget_group)
-        shuttleLayout.addWidget(delete_shuttle_button.value())
+        shuttleLayout.addWidget(delete_shuttle_button)
         return shuttleLayout
 
     def import_external_shuttles(self, load_shuttles_command: LoadShuttlesCommand):
