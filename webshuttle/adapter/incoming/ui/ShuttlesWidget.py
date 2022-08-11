@@ -1,8 +1,9 @@
 import pygame
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit, QSpinBox
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QSpinBox
 
 from webshuttle.adapter.incoming.ui.ShuttleDeleteButton import ShuttleDeleteButton
 from webshuttle.adapter.incoming.ui.ShuttleFrame import ShuttleFrame
+from webshuttle.adapter.incoming.ui.ShuttleLayout import ShuttleLayout
 from webshuttle.application.port.incoming import LoadShuttlesCommand
 from webshuttle.application.port.incoming import LoadShuttlesUseCase
 from webshuttle.application.port.incoming.CreateLogTextUseCase import CreateLogTextUseCase
@@ -80,34 +81,23 @@ class ShuttlesWidget(QWidget):
         self.setLayout(wrap_vbox_layout)
         self.show()
 
-    def add_shuttle(self, shuttle_widget_group: ShuttleWidgetGroup):
-        shuttle_frame = self._add_shuttle_frame(shuttle_widget_group)
-        self._add_shuttle_hbox_layout_to_vbox_layout(shuttle_frame, shuttle_widget_group)
-        self.shuttle_seq += 1
-        self.save_shuttles()
+    def import_external_shuttles(self, load_shuttles_command: LoadShuttlesCommand):
+        self.load_shuttles_service.load(load_shuttles_command)
 
-    def _add_shuttle_frame(self, shuttle_widget_group: ShuttleWidgetGroup):
+    def add_shuttle(self, shuttle_widget_group: ShuttleWidgetGroup):
         shuttle_frame = ShuttleFrame(shuttles=self.shuttles,
                                      shuttle_seq=self.shuttle_seq,
                                      chrome_driver=self.driver_chrome,
                                      shuttle_widget_group=shuttle_widget_group,
                                      shuttles_widget=self)
         self.shuttle_frames[self.shuttle_seq] = shuttle_frame
-        return shuttle_frame
+        self._add_shuttle_hbox_layout_to_vbox_layout(shuttle_frame, shuttle_widget_group)
+        self.shuttle_seq += 1
+        self.save_shuttles()
 
     def _add_shuttle_hbox_layout_to_vbox_layout(self, shuttle_frame, shuttle_widget_group):
-        shuttle_hbox_layout = self._shuttle_hbox_layout(shuttle_frame, shuttle_widget_group)
-        self.shuttles_vbox_layout.addLayout(shuttle_hbox_layout)
-
-    def _shuttle_hbox_layout(self, shuttle_frame, shuttle_widget_group):
-        shuttleLayout = QHBoxLayout()
-        shuttleLayout.addWidget(shuttle_frame.get_frame_widget())
-        delete_shuttle_button = ShuttleDeleteButton(self, shuttle_frame, shuttle_widget_group)
-        shuttleLayout.addWidget(delete_shuttle_button)
-        return shuttleLayout
-
-    def import_external_shuttles(self, load_shuttles_command: LoadShuttlesCommand):
-        self.load_shuttles_service.load(load_shuttles_command)
+        shuttle_delete_button = ShuttleDeleteButton(self, shuttle_frame, shuttle_widget_group)
+        self.shuttles_vbox_layout.addLayout(ShuttleLayout(shuttle_frame.get_frame_widget(), shuttle_delete_button))
 
     def save_shuttles(self):
         export_shuttles_command = ExportShuttlesCommand(shuttle_properties_list=self.saved_shuttles_json(), file_name=self.file_name)
