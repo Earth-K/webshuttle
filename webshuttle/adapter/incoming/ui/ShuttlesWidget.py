@@ -15,44 +15,6 @@ from webshuttle.domain.ShuttleWidgetGroup import ShuttleWidgetGroup
 pygame.init()
 
 
-def shuttle_setting_layout(hbox_layout):
-    result = QVBoxLayout()
-    result.addLayout(hbox_layout)
-    return result
-
-
-def url_lineedit(url):
-    result = QLineEdit()
-    result.setPlaceholderText('스크랩 하고 싶은 웹 페이지의 URL')
-    result.setText(url)
-    return result
-
-
-def period_spinbox(period):
-    result = QSpinBox()
-    result.setMaximum(86400)
-    result.setValue(int(period))
-    return result
-
-
-def target_classes_lineedit(target_classes):
-    result = QLineEdit()
-    result.setText(target_classes)
-    return result
-
-
-def shuttle_name_lineedit(name):
-    result = QLineEdit(name)
-    result.setPlaceholderText('셔틀의 이름')
-    return result
-
-
-def _stop(period, start_btn, stop_btn):
-    period.setReadOnly(False)
-    stop_btn.setDisabled(True)
-    start_btn.setDisabled(False)
-
-
 class ShuttlesWidget(QWidget):
     def __init__(self, parent, chrome_driver, get_shuttles_usecase, load_shuttles_usecase, export_shuttles_usecase,
                  create_logtext_usecase, file_name="shuttles.json"):
