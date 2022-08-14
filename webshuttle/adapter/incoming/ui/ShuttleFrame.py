@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import QFrame, QPushButton, QHBoxLayout, QVBoxLayout, QLabe
 
 from webshuttle.adapter.incoming.ui.DraftShuttleWidgets import DraftShuttleWidgets
 from webshuttle.adapter.incoming.ui.ShuttleFrameDialogLayout import ShuttleFrameDialogLayout
+from webshuttle.adapter.incoming.ui.ShuttleFrameSettingDialog import ShuttleFrameSettingDialog
 from webshuttle.application.ScrapService import ScrapService
 from webshuttle.application.port.incoming.ScrapUseCase import ScrapUseCase
 from webshuttle.domain.DefaultTime import DefaultTime
@@ -23,7 +24,8 @@ class ShuttleFrame(QWidget, Observer):
         self.shuttleWidgets: ShuttleWidgetGroup = shuttle_widget_group
         self.draft_shuttleWidgets = DraftShuttleWidgets(shuttle_widget_group)
         self.settingsButton: QPushButton = QPushButton("설정")
-        self.settingsButton.clicked.connect(lambda: self.create_settings_dialog().show())
+        self.settingsButton.clicked.connect(
+            lambda: ShuttleFrameSettingDialog(shuttles_widget=self.shuttles_widget, shuttle_frame=self).show())
         self.shuttles_widget = shuttles_widget
 
         self.start_stop_button = QPushButton('시작')
@@ -40,15 +42,6 @@ class ShuttleFrame(QWidget, Observer):
         self.frame_widget.setLayout(shuttle_layout)
         self.shuttle_widget_group: ShuttleWidgetGroup = shuttle_widget_group
         self.shuttle_widget_group.register_observer(self)
-
-    def create_settings_dialog(self):
-        dialog = QDialog(self.shuttles_widget)
-        dialog.setWindowModality(Qt.ApplicationModal)
-        dialog.resize(300, 200)
-        dialog.setWindowTitle("셔틀 설정")
-        vBoxLayout = ShuttleFrameDialogLayout(shuttle_frame=self, dialog=dialog)
-        dialog.setLayout(vBoxLayout)
-        return dialog
 
     def get_frame_widget(self):
         return self.frame_widget
