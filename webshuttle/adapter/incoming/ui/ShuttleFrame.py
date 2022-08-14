@@ -1,10 +1,8 @@
 import atexit
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QFrame, QPushButton, QHBoxLayout, QVBoxLayout, QLabel, QWidget, QDialog
+from PyQt5.QtWidgets import QFrame, QPushButton, QHBoxLayout, QLabel, QWidget
 
 from webshuttle.adapter.incoming.ui.DraftShuttleWidgets import DraftShuttleWidgets
-from webshuttle.adapter.incoming.ui.ShuttleFrameDialogLayout import ShuttleFrameDialogLayout
 from webshuttle.adapter.incoming.ui.ShuttleFrameSettingDialog import ShuttleFrameSettingDialog
 from webshuttle.application.ScrapService import ScrapService
 from webshuttle.application.port.incoming.ScrapUseCase import ScrapUseCase
@@ -42,6 +40,14 @@ class ShuttleFrame(QWidget, Observer):
         self.frame_widget.setLayout(shuttle_layout)
         self.shuttle_widget_group: ShuttleWidgetGroup = shuttle_widget_group
         self.shuttle_widget_group.register_observer(self)
+
+    def update(self) -> None:
+        self.shuttleWidgets.url_widget.setText(self.draft_shuttleWidgets.url_widget.text())
+        self.shuttleWidgets.shuttle_name_widget.setText(self.draft_shuttleWidgets.name_widget.text())
+        self.shuttleWidgets.target_classes_widget.setText(self.draft_shuttleWidgets.target_classes_widget.text())
+        self.shuttleWidgets.period_widget.setValue(self.draft_shuttleWidgets.period_widget.value())
+        self.shuttleWidgets.filtering_keyword_widget.setText(self.draft_shuttleWidgets.filtering_keyword_widget.text())
+        self.frame_name.setText(self.draft_shuttleWidgets.name_widget.text())
 
     def get_frame_widget(self):
         return self.frame_widget
