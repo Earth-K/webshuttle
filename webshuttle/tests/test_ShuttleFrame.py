@@ -34,7 +34,7 @@ def test_cancel_draft(qapp):
     shuttleFrame.draft_shuttleWidgets.filtering_keyword_widget.setText("testFilteringKeyword")
     shuttleFrame.draft_shuttleWidgets.period_widget.setValue(3600)
 
-    shuttle_frame_dialog_layout = ShuttleFrameDialogLayout(shuttle_frame=shuttleFrame, dialog=QDialog())
+    shuttle_frame_dialog_layout = ShuttleFrameDialogLayout(shuttle_frame=shuttleFrame, dialog=QDialog(), shuttles_widget=shuttles_widget)
     shuttle_frame_dialog_layout.cancel_draft(QWidget())
 
     assert shuttleFrame.shuttleWidgets.url_widget.text() == ""
@@ -65,7 +65,7 @@ def test_apply_draft(qapp):
     shuttleFrame.draft_shuttleWidgets.filtering_keyword_widget.setText("testFilteringKeyword")
     shuttleFrame.draft_shuttleWidgets.period_widget.setValue(3600)
 
-    shuttle_frame_dialog_layout = ShuttleFrameDialogLayout(shuttle_frame=shuttleFrame, dialog=QDialog())
+    shuttle_frame_dialog_layout = ShuttleFrameDialogLayout(shuttle_frame=shuttleFrame, dialog=QDialog(), shuttles_widget=shuttles_widget)
     shuttle_frame_dialog_layout.apply_draft(QWidget())
 
     assert shuttleFrame.shuttleWidgets.url_widget.text() == shuttleFrame.draft_shuttleWidgets.url_widget.text()

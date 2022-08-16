@@ -10,4 +10,4 @@ class ShuttleFrameSettingDialog(QDialog):
         self.setWindowModality(Qt.ApplicationModal)
         self.resize(300, 200)
         self.setWindowTitle("셔틀 설정")
-        self.setLayout(ShuttleFrameDialogLayout(shuttle_frame=shuttle_frame, dialog=self))
+        self.setLayout(ShuttleFrameDialogLayout(shuttle_frame=shuttle_frame, dialog=self, shuttles_widget=shuttles_widget))

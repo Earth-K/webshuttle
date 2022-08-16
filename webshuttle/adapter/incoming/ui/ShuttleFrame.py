@@ -24,7 +24,7 @@ class ShuttleFrame(QWidget, Observer):
         self.draft_shuttleWidgets = DraftShuttleWidgets(shuttle_widget_group)
         self.settingsButton: QPushButton = QPushButton("설정")
         self.settingsButton.clicked.connect(
-            lambda: ShuttleFrameSettingDialog(shuttles_widget=shuttles_widget, shuttle_frame=self).show())
+            lambda: ShuttleFrameSettingDialog(shuttles_widget=shuttles_widget, shuttle_frame=self, ).show())
 
         self.start_stop_button = ShuttleFrameScrapButton(self)
 

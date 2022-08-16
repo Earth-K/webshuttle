@@ -4,10 +4,10 @@ from webshuttle.adapter.incoming.ui import ShuttleFrame
 
 
 class ShuttleFrameDialogLayout(QVBoxLayout):
-    def __init__(self, shuttle_frame: ShuttleFrame, dialog):
+    def __init__(self, shuttle_frame: ShuttleFrame, dialog, shuttles_widget):
         super().__init__()
         self.frame_name = shuttle_frame.frame_name.text()
-        self.shuttles_widget = shuttle_frame.shuttles_widget
+        self.shuttles_widget = shuttles_widget
         self.draft_shuttleWidgets = shuttle_frame.draft_shuttleWidgets
         self.shuttle_widget_group = shuttle_frame.shuttle_widget_group
 
