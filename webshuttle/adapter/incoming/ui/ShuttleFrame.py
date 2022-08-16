@@ -3,6 +3,7 @@ import atexit
 from PyQt5.QtWidgets import QFrame, QPushButton, QHBoxLayout, QLabel, QWidget
 
 from webshuttle.adapter.incoming.ui.DraftShuttleWidgets import DraftShuttleWidgets
+from webshuttle.adapter.incoming.ui.ShuttleFrameScrapButton import ShuttleFrameScrapButton
 from webshuttle.adapter.incoming.ui.ShuttleFrameSettingDialog import ShuttleFrameSettingDialog
 from webshuttle.application.ScrapService import ScrapService
 from webshuttle.application.port.incoming.ScrapUseCase import ScrapUseCase
@@ -23,11 +24,9 @@ class ShuttleFrame(QWidget, Observer):
         self.draft_shuttleWidgets = DraftShuttleWidgets(shuttle_widget_group)
         self.settingsButton: QPushButton = QPushButton("설정")
         self.settingsButton.clicked.connect(
-            lambda: ShuttleFrameSettingDialog(shuttles_widget=self.shuttles_widget, shuttle_frame=self).show())
-        self.shuttles_widget = shuttles_widget
+            lambda: ShuttleFrameSettingDialog(shuttles_widget=shuttles_widget, shuttle_frame=self).show())
 
-        self.start_stop_button = QPushButton('시작')
-        self.start_stop_button.clicked.connect(self._onclick_scrap)
+        self.start_stop_button = ShuttleFrameScrapButton(self)
 
         self.frame_widget = QFrame()
         self.frame_widget.setFrameShape(QFrame.Box)
@@ -52,26 +51,4 @@ class ShuttleFrame(QWidget, Observer):
     def get_frame_widget(self):
         return self.frame_widget
 
-    def _onclick_scrap(self):
-        if self.start_stop_button.text() == '시작':
-            self._start_scrap()
-        else:
-            self._stop_scrap()
 
-    def _start_scrap(self):
-        scrap_usecase: ScrapUseCase = ScrapService(self)
-        scrap_usecase.start_scrap()
-        self.settingsButton.setDisabled(True)
-        self.start_stop_button.setText('중지')
-        atexit.register(self.shuttles[self.shuttle_seq].stop)
-
-    def _stop_scrap(self):
-        self.settingsButton.setDisabled(False)
-        shuttle_name = self.draft_shuttleWidgets.name_widget.text()
-        if shuttle_name == "":
-            shuttle_name = "이름 없음"
-        message = LogText(shuttle_name, DefaultTime().localtime()).stopped_shuttle()
-        self.shuttleWidgets.state_widget.append(message)
-        self.draft_shuttleWidgets.period_widget.setReadOnly(False)
-        self.shuttles[self.shuttle_seq].stop()
-        self.start_stop_button.setText('시작')
