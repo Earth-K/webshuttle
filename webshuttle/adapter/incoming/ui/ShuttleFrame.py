@@ -1,14 +1,8 @@
-import atexit
-
 from PyQt5.QtWidgets import QFrame, QPushButton, QHBoxLayout, QLabel, QWidget
 
 from webshuttle.adapter.incoming.ui.DraftShuttleWidgets import DraftShuttleWidgets
 from webshuttle.adapter.incoming.ui.ShuttleFrameScrapButton import ShuttleFrameScrapButton
 from webshuttle.adapter.incoming.ui.ShuttleFrameSettingDialog import ShuttleFrameSettingDialog
-from webshuttle.application.ScrapService import ScrapService
-from webshuttle.application.port.incoming.ScrapUseCase import ScrapUseCase
-from webshuttle.domain.DefaultTime import DefaultTime
-from webshuttle.domain.LogText import LogText
 from webshuttle.domain.Observer import Observer
 from webshuttle.domain.ShuttleWidgetGroup import ShuttleWidgetGroup
 
@@ -24,7 +18,7 @@ class ShuttleFrame(QWidget, Observer):
         self.draft_shuttleWidgets = DraftShuttleWidgets(shuttle_widget_group)
         self.settingsButton: QPushButton = QPushButton("설정")
         self.settingsButton.clicked.connect(
-            lambda: ShuttleFrameSettingDialog(shuttles_widget=shuttles_widget, shuttle_frame=self, ).show())
+            lambda: ShuttleFrameSettingDialog(shuttles_widget=shuttles_widget, shuttle_frame=self).show())
 
         self.start_stop_button = ShuttleFrameScrapButton(self)
 

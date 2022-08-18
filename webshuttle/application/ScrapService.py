@@ -22,7 +22,7 @@ class ScrapService(ScrapUseCase):
         self.chrome_driver = shuttle_frame.chrome_driver
 
     def start_scrap(self):
-        message = LogText(self.shuttle_name, DefaultTime().localtime()).started_shuttle()
+        message = LogText(self.shuttle_name, DefaultTime()).started_shuttle()
         self.state_widget.append(message)
         self.shuttle_widgets.period_widget.setReadOnly(True)
         waiting_event = threading.Event()

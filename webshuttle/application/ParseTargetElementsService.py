@@ -27,7 +27,7 @@ class ParseTargetElementsService(ParseTargetElementsUseCase):
             return
 
         self._elements_report_widget.setText(
-            '{0} - get target element data.\n'.format(LogText('New Shuttle', DefaultTime().localtime()).localtime()))
+            '{0} - get target element data.\n'.format(LogText('New Shuttle', DefaultTime()).localtime()))
         self._elements_report_widget.append('class names : {0}'.format(self.element_class_names))
         self._elements_report_widget.append('id : {0}'.format(self._web_scraper.get_element_id()))
         elements = self._web_scraper.get_elements_by_classnames(self.element_class_names)

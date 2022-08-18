@@ -32,7 +32,7 @@ class ShuttleFrameScrapButton(QPushButton):
         shuttle_name = self.shuttle_frame.draft_shuttleWidgets.name_widget.text()
         if shuttle_name == "":
             shuttle_name = "이름 없음"
-        message = LogText(shuttle_name, DefaultTime().localtime()).stopped_shuttle()
+        message = LogText(shuttle_name, DefaultTime()).stopped_shuttle()
         self.shuttle_frame.shuttleWidgets.state_widget.append(message)
         self.shuttle_frame.draft_shuttleWidgets.period_widget.setReadOnly(False)
         self.shuttle_frame.shuttles[self.shuttle_frame.shuttle_seq].stop()

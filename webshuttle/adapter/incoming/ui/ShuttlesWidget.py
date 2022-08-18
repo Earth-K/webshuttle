@@ -1,12 +1,11 @@
 import pygame
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QSpinBox
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel
 
 from webshuttle.adapter.incoming.ui.ShuttleDeleteButton import ShuttleDeleteButton
 from webshuttle.adapter.incoming.ui.ShuttleFrame import ShuttleFrame
 from webshuttle.adapter.incoming.ui.ShuttleLayout import ShuttleLayout
 from webshuttle.application.port.incoming import LoadShuttlesCommand
 from webshuttle.application.port.incoming import LoadShuttlesUseCase
-from webshuttle.application.port.incoming.CreateLogTextUseCase import CreateLogTextUseCase
 from webshuttle.application.port.incoming.ExportShuttlesCommand import ExportShuttlesCommand
 from webshuttle.application.port.incoming.ExportShuttlesUseCase import ExportShuttlesUseCase
 from webshuttle.application.port.incoming.GetShuttlesUseCase import GetShuttlesUseCase
@@ -17,7 +16,7 @@ pygame.init()
 
 class ShuttlesWidget(QWidget):
     def __init__(self, parent, chrome_driver, get_shuttles_usecase, load_shuttles_usecase, export_shuttles_usecase,
-                 create_logtext_usecase, file_name="shuttles.json"):
+                 file_name="shuttles.json"):
         super(ShuttlesWidget, self).__init__(parent)
         self.shuttle_seq = 0
         self.shuttle_frames = {}
@@ -28,7 +27,6 @@ class ShuttlesWidget(QWidget):
         self.get_shuttles_service: GetShuttlesUseCase = get_shuttles_usecase
         self.load_shuttles_service: LoadShuttlesUseCase = load_shuttles_usecase
         self.export_shuttles_service: ExportShuttlesUseCase = export_shuttles_usecase
-        self.create_log_text_service: CreateLogTextUseCase = create_logtext_usecase
 
     def _init_ui(self):
         self.title_vbox_layout = QVBoxLayout()

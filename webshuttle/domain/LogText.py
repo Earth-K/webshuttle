@@ -1,11 +1,14 @@
+from webshuttle.domain.DefaultTime import DefaultTime
+
+
 class LogText:
 
-    def __init__(self, shuttle_name, local_time):
-        self.now = local_time
+    def __init__(self, shuttle_name, default_time: DefaultTime):
+        self.default_time = default_time
         self.shuttle_name = shuttle_name
 
     def localtime(self):
-        now = self.now
+        now = self.default_time.localtime()
         return "%04d/%02d/%02d %02d:%02d:%02d" % (
             now.tm_year, now.tm_mon, now.tm_mday, now.tm_hour, now.tm_min, now.tm_sec)
 
