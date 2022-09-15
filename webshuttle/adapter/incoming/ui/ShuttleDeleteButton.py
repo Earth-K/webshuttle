@@ -27,7 +27,7 @@ class ShuttleDeleteButton(QPushButton):
             self.shuttle_widget_group.state_widget.append(self.shuttles_widget.create_log_text_service.stopped(self.shuttle_widget_group.shuttle_name_widget.text()))
             self.shuttles_widget.shuttles[self.shuttle_frame.shuttle_seq] = None
 
-        self.shuttle_widget_group.state_widget.append(self.shuttles_widget.create_log_text_service.deleted(self.shuttle_widget_group.shuttle_name_widget.text()))
+        self.shuttle_widget_group.state_widget.append("")
         self.shuttle_frame.get_frame_widget().deleteLater()
         self.deleteLater()
         self.shuttles_widget.shuttles_vbox_layout.takeAt(self.shuttle_frame.shuttle_seq)

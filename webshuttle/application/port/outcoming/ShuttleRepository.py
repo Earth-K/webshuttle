@@ -6,5 +6,5 @@ class ShuttleRepository:
     def export(self, export_shuttles_command: ExportShuttlesCommand):
         pass
 
-    def load(self, load_shuttles_command: LoadShuttlesCommand):
+    def load(self, shuttles_widget, state_widget):
         pass

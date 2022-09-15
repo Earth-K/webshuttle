@@ -41,9 +41,6 @@ class ShuttlesWidget(QWidget):
         self.setLayout(wrap_vbox_layout)
         self.show()
 
-    def import_external_shuttles(self, load_shuttles_command: LoadShuttlesCommand):
-        self.load_shuttles_service.load(load_shuttles_command)
-
     def add_shuttle(self, shuttle_widget_group: ShuttleWidgetGroup):
         shuttle_frame = ShuttleFrame(shuttles=self.shuttles,
                                      shuttle_seq=self.shuttle_seq,

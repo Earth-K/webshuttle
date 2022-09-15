@@ -17,7 +17,7 @@ class ShuttlePersistenceAdapter(ShuttleRepository):
         with open(export_shuttles_command.file_name, 'w', encoding="utf-8") as json_file:
             json_file.write(json.dumps(shuttles_json, ensure_ascii=False, indent=2))
 
-    def load(self, load_shuttles_command: LoadShuttlesCommand) -> None:
+    def load(self, shuttles_widget, state_widget) -> None:
         with open('shuttles.json', 'r', encoding="utf-8") as shuttles_file:
             shuttles: dict = json.load(shuttles_file)
         for index in range(len(shuttles.keys())):
@@ -25,8 +25,8 @@ class ShuttlePersistenceAdapter(ShuttleRepository):
             period_widget = QSpinBox()
             period_widget.setMaximum(86400)
             period_widget.setValue(int(shuttle_attributes["period"]))
-            load_shuttles_command.shuttles_widget.add_shuttle(
-                ShuttleWidgetGroup(state_widget=load_shuttles_command.state_widget.get_text_edit(),
+            shuttles_widget.add_shuttle(
+                ShuttleWidgetGroup(state_widget=state_widget.get_text_edit(),
                                    target_classes_widget=QLineEdit(shuttle_attributes["element_classes"]),
                                    period_widget=period_widget,
                                    url_widget=QLineEdit(shuttle_attributes["url"]),
