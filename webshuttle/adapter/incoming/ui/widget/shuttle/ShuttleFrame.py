@@ -1,8 +1,8 @@
 from PyQt5.QtWidgets import QFrame, QPushButton, QHBoxLayout, QLabel, QWidget
 
-from webshuttle.adapter.incoming.ui.DraftShuttleWidgets import DraftShuttleWidgets
-from webshuttle.adapter.incoming.ui.ShuttleFrameScrapButton import ShuttleFrameScrapButton
-from webshuttle.adapter.incoming.ui.ShuttleFrameSettingDialog import ShuttleFrameSettingDialog
+from webshuttle.adapter.incoming.ui.widget.shuttle.DraftShuttleWidgets import DraftShuttleWidgets
+from webshuttle.adapter.incoming.ui.widget.shuttle.ShuttleFrameScrapButton import ShuttleFrameScrapButton
+from webshuttle.adapter.incoming.ui.widget.shuttle.ShuttleFrameSettingDialog import ShuttleFrameSettingDialog
 from webshuttle.domain.Observer import Observer
 from webshuttle.domain.ShuttleWidgetGroup import ShuttleWidgetGroup
 

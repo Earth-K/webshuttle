@@ -4,9 +4,9 @@ from unittest.mock import MagicMock
 import pytest
 from PyQt5.QtWidgets import QLineEdit, QTextEdit, QApplication, QSpinBox, QWidget, QDialog
 
-from webshuttle.adapter.incoming.ui.ShuttleFrame import ShuttleFrame
-from webshuttle.adapter.incoming.ui.ShuttleFrameDialogLayout import ShuttleFrameDialogLayout
-from webshuttle.adapter.incoming.ui.ShuttlesWidget import ShuttlesWidget
+from webshuttle.adapter.incoming.ui.widget.shuttle.ShuttleFrame import ShuttleFrame
+from webshuttle.adapter.incoming.ui.widget.shuttle.ShuttleFrameDialogLayout import ShuttleFrameDialogLayout
+from webshuttle.adapter.incoming.ui.widget.ShuttlesWidget import ShuttlesWidget
 from webshuttle.domain.ShuttleWidgetGroup import ShuttleWidgetGroup
 
 

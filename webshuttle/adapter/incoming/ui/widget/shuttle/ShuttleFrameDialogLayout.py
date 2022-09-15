@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QPushButton
 
-from webshuttle.adapter.incoming.ui import ShuttleFrame
+from webshuttle.adapter.incoming.ui.widget.shuttle import ShuttleFrame
 
 
 class ShuttleFrameDialogLayout(QVBoxLayout):

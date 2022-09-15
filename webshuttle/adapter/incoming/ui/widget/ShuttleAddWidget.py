@@ -1,9 +1,9 @@
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QPushButton, QVBoxLayout, QLineEdit, \
-    QHBoxLayout, QLabel, QMessageBox, QSpinBox
+    QHBoxLayout, QLabel, QMessageBox
 
 from webshuttle.adapter.incoming.ui import MainWindow
-from webshuttle.adapter.incoming.ui import ShuttlesWidget, StateWidget
+from webshuttle.adapter.incoming.ui.widget import StateWidget, ShuttlesWidget
 from webshuttle.application.ParseTargetElementsService import ParseTargetElementsService
 from webshuttle.domain.ShuttleWidgetGroup import ShuttleWidgetGroup
 

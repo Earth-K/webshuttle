@@ -2,10 +2,10 @@ from PyQt5.QtWidgets import QLineEdit, QTextEdit, QPushButton, QSpinBox
 from webdriver_manager.chrome import ChromeDriverManager
 
 from webshuttle.adapter.incoming.ui import MainWindow
-from webshuttle.adapter.incoming.ui.BaseWidget import BaseWidget
-from webshuttle.adapter.incoming.ui.ShuttleAddWidget import ShuttleAddWidget
-from webshuttle.adapter.incoming.ui.ShuttlesWidget import ShuttlesWidget
-from webshuttle.adapter.incoming.ui.StateWidget import StateWidget
+from webshuttle.adapter.incoming.ui.widget.BaseWidget import BaseWidget
+from webshuttle.adapter.incoming.ui.widget.ShuttleAddWidget import ShuttleAddWidget
+from webshuttle.adapter.incoming.ui.widget.ShuttlesWidget import ShuttlesWidget
+from webshuttle.adapter.incoming.ui.widget.StateWidget import StateWidget
 from webshuttle.adapter.outcoming.persistence.ShuttlePersistenceAdapter import ShuttlePersistenceAdapter
 from webshuttle.application.ExportShuttlesService import ExportShuttlesService
 from webshuttle.application.GetShuttlesService import GetShuttlesService

@@ -1,5 +1,4 @@
-from webshuttle.adapter.incoming.ui import ShuttlesWidget
-from webshuttle.adapter.incoming.ui import StateWidget
+from webshuttle.adapter.incoming.ui.widget import StateWidget, ShuttlesWidget
 
 
 class LoadShuttlesCommand:

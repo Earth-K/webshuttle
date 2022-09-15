@@ -1,5 +1,5 @@
 class ExportShuttlesCommand:
-    def __init__(self, shuttle_properties_list, file_name="shuttles.json"):
+    def __init__(self, shuttle_properties_list, file_name="shuttle.json"):
         self.shuttle_properties_list = shuttle_properties_list
         self.file_name = file_name
 

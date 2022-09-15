@@ -1,10 +1,9 @@
 import pygame
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel
 
-from webshuttle.adapter.incoming.ui.ShuttleDeleteButton import ShuttleDeleteButton
-from webshuttle.adapter.incoming.ui.ShuttleFrame import ShuttleFrame
-from webshuttle.adapter.incoming.ui.ShuttleLayout import ShuttleLayout
-from webshuttle.application.port.incoming import LoadShuttlesCommand
+from webshuttle.adapter.incoming.ui.widget.shuttle.ShuttleDeleteButton import ShuttleDeleteButton
+from webshuttle.adapter.incoming.ui.widget.shuttle.ShuttleFrame import ShuttleFrame
+from webshuttle.adapter.incoming.ui.widget.shuttle.ShuttleLayout import ShuttleLayout
 from webshuttle.application.port.incoming import LoadShuttlesUseCase
 from webshuttle.application.port.incoming.ExportShuttlesCommand import ExportShuttlesCommand
 from webshuttle.application.port.incoming.ExportShuttlesUseCase import ExportShuttlesUseCase
@@ -16,7 +15,7 @@ pygame.init()
 
 class ShuttlesWidget(QWidget):
     def __init__(self, parent, chrome_driver, get_shuttles_usecase, load_shuttles_usecase, export_shuttles_usecase,
-                 file_name="shuttles.json"):
+                 file_name="shuttle.json"):
         super(ShuttlesWidget, self).__init__(parent)
         self.shuttle_seq = 0
         self.shuttle_frames = {}

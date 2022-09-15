@@ -1,7 +1,7 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog
 
-from webshuttle.adapter.incoming.ui.ShuttleFrameDialogLayout import ShuttleFrameDialogLayout
+from webshuttle.adapter.incoming.ui.widget.shuttle.ShuttleFrameDialogLayout import ShuttleFrameDialogLayout
 
 
 class ShuttleFrameSettingDialog(QDialog):

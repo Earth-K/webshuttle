@@ -1,7 +1,9 @@
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QPushButton, QWidget, QMessageBox
 
-from webshuttle.adapter.incoming.ui.ShuttleFrame import ShuttleFrame
+from webshuttle.adapter.incoming.ui.widget.shuttle.ShuttleFrame import ShuttleFrame
+from webshuttle.domain.DefaultTime import DefaultTime
+from webshuttle.domain.LogText import LogText
 from webshuttle.domain.ShuttleWidgetGroup import ShuttleWidgetGroup
 
 
@@ -24,7 +26,8 @@ class ShuttleDeleteButton(QPushButton):
             return
 
         if self.shuttles_widget.shuttles.get(self.shuttle_frame.shuttle_seq) is not None:
-            self.shuttle_widget_group.state_widget.append(self.shuttles_widget.create_log_text_service.stopped(self.shuttle_widget_group.shuttle_name_widget.text()))
+            stop_message = LogText(self.shuttle_widget_group.shuttle_name_widget.text(), DefaultTime()).stopped_shuttle()
+            self.shuttle_widget_group.state_widget.append(stop_message)
             self.shuttles_widget.shuttles[self.shuttle_frame.shuttle_seq] = None
 
         self.shuttle_widget_group.state_widget.append("")

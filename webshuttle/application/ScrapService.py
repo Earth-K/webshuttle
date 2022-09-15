@@ -1,6 +1,6 @@
 import threading
 
-from webshuttle.adapter.incoming.ui import ShuttleFrame
+from webshuttle.adapter.incoming.ui.widget.shuttle import ShuttleFrame
 from webshuttle.application.port.incoming.ScrapUseCase import ScrapUseCase
 from webshuttle.domain.DefaultTime import DefaultTime
 from webshuttle.domain.LogText import LogText

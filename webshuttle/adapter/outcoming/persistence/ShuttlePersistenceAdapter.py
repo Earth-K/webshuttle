@@ -3,7 +3,6 @@ import json
 from PyQt5.QtWidgets import QSpinBox, QLineEdit
 
 from webshuttle.application.port.incoming.ExportShuttlesCommand import ExportShuttlesCommand
-from webshuttle.application.port.incoming.LoadShuttlesCommand import LoadShuttlesCommand
 from webshuttle.application.port.outcoming.ShuttleRepository import ShuttleRepository
 from webshuttle.domain.ShuttleWidgetGroup import ShuttleWidgetGroup
 
